@@ -63,6 +63,14 @@ export * from './realtime/events.schema';
 // has them ready if rich-text input ever ships.
 export * from './sanitize/sanitize';
 
+// Coordinate layer — WGS84 ↔ GCJ-02, zero-dependency offline math
+// (docs/amap/00-constraints.md). Storage and the wire are WGS84; GCJ-02 may
+// exist only inside the AMap boundary, and the converters are lint-gated to
+// client/src/components/Map/engines/amap/** and
+// server/src/nest/maps/providers/amap/** by the client/server eslint configs.
+export * from './geo/coords';
+export * from './geo/gcj02';
+
 // i18n registry (language list + pure helpers — no locale data)
 export * from './i18n/languages';
 
