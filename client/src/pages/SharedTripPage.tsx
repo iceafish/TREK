@@ -433,13 +433,13 @@ export default function SharedTripPage() {
               >
                 {basemap.kind === 'vector' ? (
                   <VectorBasemap style={basemap.style} />
-                ) : (
+                ) : basemap.kind === 'raster' ? (
                   <TileLayer
                     url={basemap.url}
                     attribution={attributionForTile(basemap.url)}
                     referrerPolicy="strict-origin-when-cross-origin"
                   />
-                )}
+                ) : null}
                 <FitBoundsToPlaces places={mapPlaces} framedOnMount={framed !== null} />
                 {selectedDay && mapPlaces.length > 1 && (
                   <Polyline

@@ -246,6 +246,10 @@ export const tripSyncManager = {
 
       // Cache file blobs + map tiles in background (don't block syncAll)
       const cacheTiles = getOfflinePrefs().cacheTiles
+      // AMap (高德) draws its own basemap and its terms forbid storing service
+      // data (docs/amap/00-constraints.md) — no tile prefetch under that
+      // provider, whatever raster template is configured.
+      const provider = useSettingsStore.getState().settings.map_provider
       const tileUrl = useSettingsStore.getState().settings.map_tile_url || undefined
       const cartoKey = useSettingsStore.getState().settings.carto_api_key || undefined
       for (const trip of toSync) {
@@ -258,7 +262,7 @@ export const tripSyncManager = {
       // after login, where the app is still mounting the first screen — starting
       // a bulk tile download into that leaves the UI waiting behind our own
       // background traffic.
-      if (cacheTiles) {
+      if (cacheTiles && provider !== 'amap') {
         whenIdle(async () => {
           for (const trip of toSync) {
             if (!isAuthed() || !navigator.onLine) return
@@ -319,7 +323,10 @@ export const tripSyncManager = {
       }
 
       // 3) Map tiles — awaited, and only when the user opted to store them.
-      if (getOfflinePrefs().cacheTiles) {
+      // Never under the AMap provider: its terms forbid storing its service
+      // data (docs/amap/00-constraints.md).
+      const provider = useSettingsStore.getState().settings.map_provider
+      if (getOfflinePrefs().cacheTiles && provider !== 'amap') {
         const tileUrl = useSettingsStore.getState().settings.map_tile_url || undefined
         const cartoKey = useSettingsStore.getState().settings.carto_api_key || undefined
         i = 0

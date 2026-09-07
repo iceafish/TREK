@@ -77,15 +77,27 @@ export function resolveTileUrl(template: string | null | undefined, fallback: st
 /**
  * The basemap a map should draw, in the one shape every caller can act on.
  *
- * Two kinds exist since the move off CARTO. A raster template goes into a
- * Leaflet TileLayer as before; a vector style is a MapLibre style document that
- * Leaflet cannot render on its own and that VectorBasemap hangs into the tile
- * pane instead. Callers switch on `kind` rather than sniffing the URL, so a
- * self-hosted raster template keeps working exactly as it did.
+ * Three kinds exist: a raster template goes into a Leaflet TileLayer as before;
+ * a vector style is a MapLibre style document that Leaflet cannot render on
+ * its own and that VectorBasemap hangs into the tile pane instead; and AMap
+ * (高德) draws its own basemap server-side — it is neither an XYZ template nor
+ * a style document, so a caller rendering with the amap provider returns
+ * AMAP_BASEMAP instead of resolving one. Callers switch on `kind` rather than
+ * sniffing the URL, so a self-hosted raster template keeps working exactly as
+ * it did.
  */
 export type Basemap =
   | { kind: 'raster'; url: string }
   | { kind: 'vector'; style: string }
+  | { kind: 'amap' }
+
+/**
+ * The basemap answer for the AMap provider: the JSAPI paints its own tiles and
+ * takes no template. Returned by the caller after a provider check — the
+ * resolver below only sees tile templates and style URLs, so it cannot (and
+ * must not) guess AMap from one.
+ */
+export const AMAP_BASEMAP: Basemap = { kind: 'amap' }
 
 /** A MapLibre style document rather than a `{z}/{x}/{y}` tile template. */
 export function isVectorStyle(url: string | null | undefined): boolean {

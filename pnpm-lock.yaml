@@ -42,6 +42,12 @@ importers:
 
   client:
     dependencies:
+      '@amap/amap-jsapi-loader':
+        specifier: ^1.0.1
+        version: 1.0.1
+      '@amap/amap-jsapi-types':
+        specifier: ^0.0.15
+        version: 0.0.15
       '@fontsource/bebas-neue':
         specifier: ^5.3.0
         version: 5.3.0
@@ -552,6 +558,12 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  '@amap/amap-jsapi-loader@1.0.1':
+    resolution: {integrity: sha512-nPyLKt7Ow/ThHLkSvn2etQlUzqxmTVgK7bIgwdBRTg2HK5668oN7xVxkaiRe3YZEzGzfV2XgH5Jmu2T73ljejw==}
+
+  '@amap/amap-jsapi-types@0.0.15':
+    resolution: {integrity: sha512-oqyRqHpVDZh5bUe2mAJh41ZsziSj0eUzwcfIbiaBNB0eiTJnZNhKsTdk77VOklOjwuwNfsblpKW9LjmWNpeQ7A==}
 
   '@apideck/better-ajv-errors@0.3.7':
     resolution: {integrity: sha512-TajUJwGWbDwkCx/CZi7tRE8PVB7simCvKJfHUsSdvps+aTM/PDPP4gkLmKnc+x3CE//y9i/nj74GqdL/hwk7Iw==}
@@ -6872,6 +6884,10 @@ snapshots:
   '@adobe/css-tools@4.5.0': {}
 
   '@alloc/quick-lru@5.2.0': {}
+
+  '@amap/amap-jsapi-loader@1.0.1': {}
+
+  '@amap/amap-jsapi-types@0.0.15': {}
 
   '@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)':
     dependencies:

@@ -858,7 +858,7 @@ export const MapView = memo(function MapView({
         />
       ) : basemap.kind === 'vector' ? (
         <VectorBasemap style={basemap.style} />
-      ) : (
+      ) : basemap.kind === 'raster' ? (
         <TileLayer
           key="raster"
           url={basemap.url}
@@ -869,7 +869,7 @@ export const MapView = memo(function MapView({
           updateWhenIdle={true}
           referrerPolicy="strict-origin-when-cross-origin"
         />
-      )}
+      ) : null}
 
       <MapController center={center} zoom={zoom} />
       <BoundsController places={dayPlaces.length > 0 ? dayPlaces : places} routeCoords={dayPlaces.length > 0 ? routeCoords : []} fitKey={fitKey} paddingOpts={paddingOpts} framedOnMount={initialView.framed} />

@@ -9,6 +9,7 @@ import { tripSyncManager, type PrepareProgress } from './tripSyncManager'
 import { prefetchTilesForTrip } from './tilePrefetcher'
 import { setAuthed } from './authGate'
 import { setCacheTiles, setTripOfflineEnabled, _resetOfflinePrefs } from './offlinePrefs'
+import { useSettingsStore } from '../store/settingsStore'
 import { offlineDb, clearAll, upsertTrip } from '../db/offlineDb'
 import { buildTrip, buildDay, buildPlace, buildTripFile } from '../../tests/helpers/factories'
 import type { Trip, TripFile } from '../types'
@@ -52,6 +53,12 @@ function serveTrips(trips: Trip[], bundles: Record<number, unknown>): void {
 
 function setOnline(v: boolean): void {
   Object.defineProperty(navigator, 'onLine', { value: v, writable: true, configurable: true })
+}
+
+function setProvider(provider: 'leaflet' | 'amap'): void {
+  useSettingsStore.setState({
+    settings: { ...useSettingsStore.getState().settings, map_provider: provider },
+  })
 }
 
 beforeEach(async () => {
@@ -340,6 +347,33 @@ describe('tripSyncManager.syncAll — background tile pass', () => {
     setOnline(false)
     await new Promise(r => setTimeout(r, 50))
 
+    expect(prefetchMock).not.toHaveBeenCalled()
+  })
+
+  // AMap (高德, docs/amap/00-constraints.md): its terms forbid storing service
+  // data, so the whole tile pass is skipped under that provider — the raster
+  // prefetcher must never download anything while it is active.
+  it('FE-SYNC-PREP-022: map_provider=amap skips the background tile pass entirely', async () => {
+    stubIdle()
+    setProvider('amap')
+    const trip = buildTrip({ id: 619, end_date: dateOffset(4) })
+    serveTrips([trip], { 619: bundleFor(trip) })
+
+    await tripSyncManager.syncAll()
+    await new Promise(r => setTimeout(r, 50))
+
+    // The idle work was queued, but the prefetch itself never ran.
+    expect(prefetchMock).not.toHaveBeenCalled()
+  })
+
+  it('FE-SYNC-PREP-023: map_provider=amap skips prepareForOffline tile downloads', async () => {
+    setProvider('amap')
+    setCacheTiles(true)
+    const trip = buildTrip({ id: 620, end_date: dateOffset(4) })
+    serveTrips([trip], { 620: bundleFor(trip) })
+
+    const total = await tripSyncManager.prepareForOffline()
+    expect(total).toBe(1)
     expect(prefetchMock).not.toHaveBeenCalled()
   })
 })

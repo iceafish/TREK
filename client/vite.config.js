@@ -67,8 +67,21 @@ export default defineConfig(({ mode }) => ({
           /^\/oauth\//,
           /^\/.well-known\//,
           /^\/plugin-frame\//,
+          // The AMap security-proxy prefix (docs/amap/) — API traffic, never a
+          // navigation, so the cached shell must never answer it.
+          /^\/_AMapService\//,
         ],
         runtimeCaching: [
+          {
+            // AMap (高德, docs/amap/): the JSAPI hosts and this site's
+            // /_AMapService proxy. The terms forbid storing or caching AMap
+            // service data (docs/amap/00-constraints.md), so the rule is
+            // NetworkOnly — the explicit entry both documents that and keeps
+            // the first-match-wins Workbox router from ever letting a broader
+            // caching rule added later pick these URLs up. Must stay first.
+            urlPattern: /^(?:(?:https?:)?\/\/(?:[\w-]+\.)*amap\.com\/|.*\/_AMapService\/)/i,
+            handler: 'NetworkOnly',
+          },
           {
             // Carto map tiles (default provider)
             // maxEntries MUST stay >= MAX_TILES in src/sync/tilePrefetcher.ts
@@ -322,6 +335,15 @@ export default defineConfig(({ mode }) => ({
         ws: true,
       },
       '/mcp': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+      // AMap security proxy (docs/amap/). The browser points serviceHost at
+      // this site's /_AMapService prefix; package 03 implements the forwarding
+      // route (with the jscode appended server-side) on the API server. Until
+      // that lands, proxied requests 404 here — the map's service calls fail,
+      // tiles still draw.
+      '/_AMapService': {
         target: 'http://localhost:3001',
         changeOrigin: true,
       },

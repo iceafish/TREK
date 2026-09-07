@@ -26,7 +26,7 @@ if (process.platform === 'win32' && SRC.startsWith('/')) SRC = SRC.slice(1);
 // paint, standalone PDF documents) — colors there must stay literal.
 const EXEMPT = [
   /Mapbox/i, /placePopup/i, /marker/i, /popup/i, /TripPDF/, /JourneyBookPDF/,
-  /MapViewGL/, /MapView\./, /JourneyMapGL/, /reservationsMapbox/, /useAtlas/,
+  /MapViewGL/, /MapViewAMap/, /MapView\./, /JourneyMapGL/, /reservationsMapbox/, /useAtlas/,
   /ReservationOverlay/, /\.test\./, /\.spec\./,
 ];
 
