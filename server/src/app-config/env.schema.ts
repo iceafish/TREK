@@ -146,6 +146,11 @@ export const envSchema = z.object({
   PLACES_API_KEY: anyString,
   MAPBOX_ACCESS_TOKEN: anyString,
   CARTO_API_KEY: anyString,
+  // AMap (docs/amap/). JS key is browser-public; the other two are server
+  // secrets consumed by the /_AMapService proxy and never reach a client.
+  AMAP_JS_KEY: anyString,
+  AMAP_SECURITY_CODE: anyString,
+  AMAP_WEB_SERVICE_KEY: anyString,
   DEMO_MODE: boolStr,
   DEMO_ADMIN_USER: anyString,
   DEMO_ADMIN_EMAIL: anyString,

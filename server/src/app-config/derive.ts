@@ -139,6 +139,24 @@ export function deriveMaps(raw: RawEnv) {
     mapboxToken: raw.MAPBOX_ACCESS_TOKEN || undefined,
     /** CARTO basemap key; without one the tiles come back watermarked (#2054). Public too. */
     cartoKey: raw.CARTO_API_KEY || undefined,
+    /**
+     * AMap Web 端 JS key. Browser-public by design — the JS API loader carries it
+     * on every map request — and injected into the settings merge on presence so
+     * an operator provisioning keys through env needs no admin round-trip
+     * (docs/amap/00-constraints.md).
+     */
+    amapJsKey: raw.AMAP_JS_KEY || undefined,
+    /**
+     * AMap securityJsCode. SERVER SECRET: appended to /_AMapService proxy
+     * requests (package 03) and never merged into settings that reach a browser.
+     */
+    amapSecurityCode: raw.AMAP_SECURITY_CODE || undefined,
+    /**
+     * AMap Web 服务 key for server-side REST calls. Same secrecy as the
+     * security code: env-only, never in DEFAULTABLE_USER_SETTING_KEYS, never
+     * in the browser-bound merge.
+     */
+    amapWebServiceKey: raw.AMAP_WEB_SERVICE_KEY || undefined,
   };
 }
 

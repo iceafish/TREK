@@ -9,12 +9,19 @@ import { readEnv } from '../../app-config';
  * allow-list against the live values rather than a copy: a sixth key added here
  * has to fail that assertion, which a hand-typed list would not.
  */
+// The AMap JS key is encrypted at rest like the Mapbox token, but is NOT
+// masked on read: the browser needs the real value to load the JS API
+// (docs/amap/00-constraints.md). The AMap server secrets (security code,
+// web-service key) are env-only and deliberately absent from this set — they
+// are never settings. Keep this literal comment-free: the ROTPAR-007 parity
+// test parses the key names out of this source range.
 export const ENCRYPTED_SETTING_KEYS = new Set([
   'webhook_url',
   'ntfy_token',
   'mapbox_access_token',
   'carto_api_key',
   'llm_api_key',
+  'amap_js_key',
 ]);
 // Encrypted keys that are masked (••••••••) when returned to the client.
 // Keys not in this set but in ENCRYPTED_SETTING_KEYS are decrypted and returned.
@@ -42,6 +49,12 @@ export const DEFAULTABLE_USER_SETTING_KEYS = [
   'maplibre_style',
   'mapbox_3d_enabled',
   'mapbox_quality_mode',
+  // AMap Web 端 JS key (China build, docs/amap/). Browser-public — the JS API
+  // loader sends it with every request — and defaultable so one admin value
+  // covers every user. The AMap security code and web-service key are SERVER
+  // SECRETS: they come from env only (app-config derive) and must never be
+  // added here or to any merge that reaches the browser.
+  'amap_js_key',
   // Per-user LLM fallback config for booking import (used when the admin has not
   // set instance-wide config on the llm_parsing addon). See llmConfig.ts.
   'llm_provider',
@@ -60,7 +73,7 @@ const VALID_VALUES: Partial<Record<DefaultableKey, unknown[]>> = {
   distance_unit: ['metric', 'imperial'],
   time_format: ['12h', '24h'],
   dark_mode: [true, false, 'light', 'dark', 'auto'],
-  map_provider: ['leaflet', 'mapbox-gl', 'maplibre-gl'],
+  map_provider: ['leaflet', 'mapbox-gl', 'maplibre-gl', 'amap'],
   llm_provider: ['local', 'openai', 'anthropic'],
 };
 
@@ -236,6 +249,18 @@ export class SettingsService {
     // renderer the user wants.
     if (readEnv().managed.enabled && managedMaps.cartoKey) {
       merged.carto_api_key = managedMaps.cartoKey;
+    }
+
+    // AMap (China build, docs/amap/): the operator provisions the JS key through
+    // env, and its presence is the operator's intent — no TREK_MANAGED gate, so
+    // a self-hosted install with keys in .env just works. Same shape as the
+    // mapbox injection above minus the provider switch: an AMap key says whose
+    // AMap account the map loads against, nothing about which renderer wins.
+    // Env wins over stored values so a per-user save cannot point the instance
+    // at a different (billable) key. The AMap server secrets
+    // (amapSecurityCode / amapWebServiceKey) must NEVER be added to this merge.
+    if (managedMaps.amapJsKey) {
+      merged.amap_js_key = managedMaps.amapJsKey;
     }
 
     return merged;

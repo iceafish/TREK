@@ -13,6 +13,7 @@ import {
   deriveBackup,
   deriveNet,
   derivePaths,
+  deriveMaps,
   deriveAll,
 } from '../../../src/app-config/derive';
 
@@ -250,6 +251,30 @@ describe('derivePaths', () => {
     expect(derivePaths({ TREK_PLACE_PHOTO_DIR: '/p' }).placePhotoDir).toBe('/p');
     expect(derivePaths({}).wikiDir).toBeUndefined();
     expect(derivePaths({}).placePhotoDir).toBeUndefined();
+  });
+});
+
+describe('deriveMaps', () => {
+  it('AMap keys: the JS key is public-facing; the security code and web-service key stay server-side', () => {
+    const env = deriveMaps({
+      AMAP_JS_KEY: 'js-key',
+      AMAP_SECURITY_CODE: 'sec-code',
+      AMAP_WEB_SERVICE_KEY: 'web-key',
+    });
+    expect(env.amapJsKey).toBe('js-key');
+    expect(env.amapSecurityCode).toBe('sec-code');
+    expect(env.amapWebServiceKey).toBe('web-key');
+  });
+
+  it('AMap keys: unset or empty collapses to undefined like the other credentials', () => {
+    const env = deriveMaps({ AMAP_JS_KEY: '', AMAP_SECURITY_CODE: undefined });
+    expect(env.amapJsKey).toBeUndefined();
+    expect(env.amapSecurityCode).toBeUndefined();
+    expect(env.amapWebServiceKey).toBeUndefined();
+    // The pre-existing maps credentials keep their fields — guards the edit
+    // against reshaping the namespace by accident.
+    expect(deriveMaps({ MAPBOX_ACCESS_TOKEN: 'pk.x' }).mapboxToken).toBe('pk.x');
+    expect(deriveMaps({ CARTO_API_KEY: 'c' }).cartoKey).toBe('c');
   });
 });
 

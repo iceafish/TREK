@@ -228,6 +228,58 @@ describe('getUserSettings', () => {
       vi.unstubAllEnvs();
     }
   });
+
+  // amap_js_key (docs/amap/): provisioned through env, browser-public, encrypted
+  // at rest, injected on read. The AMap server secrets are env-only and must
+  // never appear in this merge at all.
+  it('SET-SVC-035 — the env AMap JS key is injected into the merge on presence, no managed gate', () => {
+    const { user } = createUser(testDb);
+    vi.stubEnv('AMAP_JS_KEY', 'amap-js-operator');
+    try {
+      expect(svc.getUserSettings(user.id).amap_js_key).toBe('amap-js-operator');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('SET-SVC-036 — the injected AMap key overrides user and admin values, and leaves map_provider alone', () => {
+    const { user } = createUser(testDb);
+    setAdminDefault('amap_js_key', 'amap-js-admin');
+    svc.upsertSetting(user.id, 'amap_js_key', 'amap-js-user');
+    vi.stubEnv('AMAP_JS_KEY', 'amap-js-operator');
+    try {
+      const s = svc.getUserSettings(user.id);
+      expect(s.amap_js_key).toBe('amap-js-operator');
+      // An AMap key says whose account the map loads against, nothing about
+      // which renderer the user picked — same rule as the CARTO key (034).
+      expect(s.map_provider).toBeUndefined();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('SET-SVC-037 — without env, the stored/admin amap_js_key survives unchanged', () => {
+    const { user } = createUser(testDb);
+    setAdminDefault('amap_js_key', 'amap-js-admin');
+    expect(svc.getUserSettings(user.id).amap_js_key).toBe('amap-js-admin');
+  });
+
+  it('SET-SVC-038 — the AMap server secrets never reach the settings merge', () => {
+    const { user } = createUser(testDb);
+    // Even with every AMap env var set, only the JS key is browser-bound; the
+    // security code and web-service key exist solely in app-config derive.
+    vi.stubEnv('AMAP_JS_KEY', 'amap-js-operator');
+    vi.stubEnv('AMAP_SECURITY_CODE', 'amap-secret-code');
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-web-key');
+    try {
+      const s = svc.getUserSettings(user.id);
+      expect(s.amap_js_key).toBe('amap-js-operator');
+      expect(s).not.toHaveProperty('amap_security_code');
+      expect(s).not.toHaveProperty('amap_web_service_key');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
 });
 
 // ── upsertSetting ─────────────────────────────────────────────────────────────

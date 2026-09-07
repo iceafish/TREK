@@ -75,8 +75,14 @@ export function isManagedBlocked(env: RuntimeEnvService): boolean {
  * and it is the operator's for one more reason: the key is registered to
  * whoever runs the instance, and CARTO's terms hold that account answerable for
  * the tiles it fetches.
+ *
+ * amap_js_key joins mapbox_access_token (docs/amap/): on a managed install the
+ * AMap JS key comes from the operator's env and is injected on read; it is
+ * browser-public by design, and locked so a per-user save cannot re-point the
+ * instance's map at a different billable account.
  */
 export const MANAGED_LOCKED_SETTING_KEYS = [
+  'amap_js_key',
   'carto_api_key',
   'llm_api_key',
   'llm_base_url',

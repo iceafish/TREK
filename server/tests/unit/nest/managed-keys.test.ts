@@ -51,6 +51,7 @@ describe('managed key assignment', () => {
 
   it('MANAGED-KEYS-005: the locked list is pinned verbatim', () => {
     expect([...MANAGED_LOCKED_SETTING_KEYS]).toEqual([
+      'amap_js_key',
       'carto_api_key',
       'llm_api_key',
       'llm_base_url',
@@ -80,6 +81,20 @@ describe('managed key assignment', () => {
     // a per-user save cannot land on top of it and break that user's map.
     expect(isManagedLockedKey('mapbox_access_token')).toBe(true);
     expect(customer.has('mapbox_access_token')).toBe(false);
+  });
+
+  it("MANAGED-KEYS-011: amap_js_key is the operator's, and reaches the browser by design", () => {
+    // Same shape as mapbox_access_token (docs/amap/): browser-public because the
+    // AMap JS API loader needs it, locked so a per-user save cannot re-point the
+    // instance at a different billable account. The AMap server secrets
+    // (security code / web-service key) are NOT settings keys at all — env only —
+    // so their absence from both sets is the correct state, not an assignment gap.
+    expect(isManagedLockedKey('amap_js_key')).toBe(true);
+    expect(customer.has('amap_js_key')).toBe(false);
+    expect(locked.has('amap_security_code')).toBe(false);
+    expect(customer.has('amap_security_code')).toBe(false);
+    expect(locked.has('amap_web_service_key')).toBe(false);
+    expect(customer.has('amap_web_service_key')).toBe(false);
   });
 });
 
