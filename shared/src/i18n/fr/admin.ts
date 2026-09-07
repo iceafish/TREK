@@ -337,7 +337,8 @@ const admin: TranslationStrings = {
     'Colorer les jours du plan de la journée (par exemple, à quelle étape du voyage appartient un jour)',
   'admin.plugins.cap.mcpTools': 'Publie des outils IA',
   'admin.plugins.mcpToolsTitle': 'Outils IA publiés',
-  'admin.plugins.mcpToolsHint': "Un assistant peut les exécuter au nom d'un utilisateur. Chacun agit avec les accès accordés ci-dessus.",
+  'admin.plugins.mcpToolsHint':
+    "Un assistant peut les exécuter au nom d'un utilisateur. Chacun agit avec les accès accordés ci-dessus.",
   'admin.plugins.perm.mcp:tools':
     "Publier des outils qu'un assistant IA peut exécuter en votre nom (il agit avec les accès que vous accordez ici à l'extension, pas avec les siens)",
   'admin.plugins.perm.geolocation:read':
@@ -442,7 +443,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Changer de version…',
   'admin.plugins.noVersions': 'Aucune version publiée trouvée dans le registre.',
   'admin.plugins.downgradeTitle': 'Revenir à une version antérieure de ce plugin ?',
-  'admin.plugins.downgradeBody': 'Passage de v{from} à v{to} : les données écrites par la version plus récente restent en place, et la version plus ancienne pourrait ne pas les comprendre.',
+  'admin.plugins.downgradeBody':
+    'Passage de v{from} à v{to} : les données écrites par la version plus récente restent en place, et la version plus ancienne pourrait ne pas les comprendre.',
   'admin.plugins.downgradeConfirm': 'Rétrograder',
   'admin.plugins.updatesHeld': 'Mises à jour en pause à la v{version}',
   'admin.plugins.resumeUpdates': 'Reprendre les mises à jour',

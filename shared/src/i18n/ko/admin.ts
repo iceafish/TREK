@@ -350,7 +350,8 @@ const admin: TranslationStrings = {
   'admin.plugins.perm.hook:day-tint-provider': '일자 계획에서 날짜를 색으로 구분(예: 해당 날짜가 여행의 어느 구간인지)',
   'admin.plugins.cap.mcpTools': 'AI 도구 게시',
   'admin.plugins.mcpToolsTitle': '게시하는 AI 도구',
-  'admin.plugins.mcpToolsHint': '어시스턴트가 사용자를 대신해 실행할 수 있습니다. 각 도구는 위에서 부여한 권한으로 동작합니다.',
+  'admin.plugins.mcpToolsHint':
+    '어시스턴트가 사용자를 대신해 실행할 수 있습니다. 각 도구는 위에서 부여한 권한으로 동작합니다.',
   'admin.plugins.perm.mcp:tools':
     'AI 어시스턴트가 사용자를 대신해 실행할 수 있는 도구 게시 (여기서 플러그인에 부여한 권한으로 동작하며, 어시스턴트 자신의 권한이 아닙니다)',
   'admin.plugins.perm.geolocation:read':
@@ -449,7 +450,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': '버전 변경…',
   'admin.plugins.noVersions': '레지스트리에서 게시된 버전을 찾을 수 없습니다.',
   'admin.plugins.downgradeTitle': '이 플러그인을 롤백하시겠습니까?',
-  'admin.plugins.downgradeBody': 'v{from}에서 v{to}(으)로 전환: 최신 버전이 기록한 데이터는 그대로 유지되며, 이전 버전이 이를 인식하지 못할 수 있습니다.',
+  'admin.plugins.downgradeBody':
+    'v{from}에서 v{to}(으)로 전환: 최신 버전이 기록한 데이터는 그대로 유지되며, 이전 버전이 이를 인식하지 못할 수 있습니다.',
   'admin.plugins.downgradeConfirm': '롤백',
   'admin.plugins.updatesHeld': 'v{version}에서 업데이트 일시 중지됨',
   'admin.plugins.resumeUpdates': '업데이트 재개',

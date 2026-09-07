@@ -545,13 +545,15 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'Claves API',
-  'settings.apiKeys.description': 'Claves para la API pública, para que otro software pueda leer tus viajes. Solo lectura: una clave no puede cambiar ni borrar nada.',
+  'settings.apiKeys.description':
+    'Claves para la API pública, para que otro software pueda leer tus viajes. Solo lectura: una clave no puede cambiar ni borrar nada.',
   'settings.apiKeys.create': 'Crear clave',
   'settings.apiKeys.empty': 'Todavía no hay claves. Crea una para conectar otro software.',
   'settings.apiKeys.createdAt': 'creada',
   'settings.apiKeys.usedAt': 'último uso',
   'settings.apiKeys.deleteTitle': 'Eliminar clave',
-  'settings.apiKeys.deleteMessage': 'Todo lo que use esta clave dejará de funcionar de inmediato. Esto no se puede deshacer.',
+  'settings.apiKeys.deleteMessage':
+    'Todo lo que use esta clave dejará de funcionar de inmediato. Esto no se puede deshacer.',
   'settings.apiKeys.deleted': 'Clave eliminada',
   'settings.apiKeys.deleteFailed': 'No se pudo eliminar la clave',
   'settings.apiKeys.createFailed': 'No se pudo crear la clave',
@@ -564,7 +566,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.modal.creating': 'Creando...',
   'settings.apiKeys.modal.create': 'Crear',
   'settings.apiKeys.modal.createdTitle': 'Clave API creada',
-  'settings.apiKeys.modal.createdWarning': 'Copia la clave ahora. Se muestra una sola vez y no se puede recuperar después.',
+  'settings.apiKeys.modal.createdWarning':
+    'Copia la clave ahora. Se muestra una sola vez y no se puede recuperar después.',
   'settings.apiKeys.modal.done': 'Listo',
 };
 

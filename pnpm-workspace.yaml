@@ -1,0 +1,15 @@
+packages:
+  - client
+  - server
+  - shared
+
+# pnpm 10 blocks dependency build scripts by default. These need their
+# postinstall to work: better-sqlite3 builds the native binding, esbuild and
+# @swc/core fetch/patch their platform binaries, msw patches the service
+# worker. @scarf/scarf stays blocked on purpose (telemetry, disabled via
+# scarfSettings in the root package.json).
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+  - "@swc/core"
+  - msw

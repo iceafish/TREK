@@ -8,41 +8,51 @@ RUN CGO_ENABLED=0 GOBIN=/out go install github.com/tianon/gosu@latest
 # ── Stage 1: shared ──────────────────────────────────────────────────────────
 FROM node:24-alpine AS shared-builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY shared/package.json ./shared/
-RUN npm ci --workspace=shared
+# --ignore-scripts keeps native builds (better-sqlite3, esbuild) out of the
+# builders — they only compile TS. Note pnpm's --frozen-lockfile installs are
+# headless and ignore --filter, so this materializes the full lockfile tree;
+# the production stage below is where the tree gets pruned (pnpm deploy).
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @trek/shared
 COPY shared/ ./shared/
-RUN npm run build --workspace=shared
+RUN pnpm --filter @trek/shared run build
 
 # ── Stage 2: client ──────────────────────────────────────────────────────────
 FROM node:24-alpine AS client-builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY shared/package.json ./shared/
 COPY client/package.json ./client/
-RUN npm ci --workspace=client
+# Same headless caveat as stage 1: the full tree installs here too. The client
+# build (vite, sharp for generate-icons, tailwind oxide) loads its native bits
+# from prebuilt optional platform packages, so no install scripts are needed.
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @trek/shared --filter @trek/client
 COPY --from=shared-builder /app/shared/dist ./shared/dist
 COPY client/ ./client/
-RUN npm run build --workspace=client
+RUN pnpm --filter @trek/client run build
 
 # ── Stage 3: server ──────────────────────────────────────────────────────────
 # --ignore-scripts skips native builds (better-sqlite3); they happen in the production stage.
 FROM node:24-alpine AS server-builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY shared/package.json ./shared/
 COPY server/package.json ./server/
-RUN npm ci --workspace=server --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @trek/shared --filter @trek/server
 COPY --from=shared-builder /app/shared/dist ./shared/dist
 COPY server/ ./server/
-RUN npm run build --workspace=server
+RUN pnpm --filter @trek/server run build
 
 # ── Stage 4: production runtime ──────────────────────────────────────────────
 FROM node:24-trixie-slim
 WORKDIR /app
 
 # Workspace manifests only — source never enters this stage.
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY shared/package.json ./shared/
 COPY server/package.json ./server/
 
@@ -51,10 +61,21 @@ COPY server/package.json ./server/
 # changeset, so it costs nothing. Everything copied after this point carries
 # --chown=node:node for the same reason — a recursive chown in a later layer
 # would copy up every inode it touches and duplicate the whole tree in the image.
-RUN apt-get update && \
+# pnpm's --frozen-lockfile installs are headless and ignore --filter, so a plain
+# filtered install here would ship every workspace's production dependencies
+# (react, maplibre, the client's whole tree) in the runtime image. `pnpm deploy`
+# is the supported prune: it assembles @trek/server's production closure only.
+# The deployed node_modules is moved into the classic /app/node_modules position
+# the entrypoint expects, and @trek/shared is re-pointed at /app/shared so the
+# shared/dist COPY below lands where the app resolves it.
+RUN corepack enable && \
+    apt-get update && \
     apt-get install -y --no-install-recommends tzdata dumb-init wget ca-certificates python3 build-essential \
     libkitinerary-bin && \
-    npm ci --workspace=server --omit=dev && \
+    pnpm deploy --filter @trek/server --prod --config.inject-workspace-packages=true /trek-deploy && \
+    mv /trek-deploy/node_modules /app/node_modules && \
+    rm -rf /trek-deploy && \
+    ln -sfn /app/shared /app/node_modules/@trek/shared && \
     ln -sf "$(find /usr/lib -name kitinerary-extractor -type f | head -1)" /usr/local/bin/kitinerary-extractor; \
     apt-get purge -y python3 build-essential && \
     apt-get autoremove -y && \

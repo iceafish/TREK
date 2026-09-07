@@ -546,7 +546,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'Ключи API',
-  'settings.apiKeys.description': 'Ключи для публичного API, чтобы другие программы могли читать ваши поездки. Только чтение: ключ ничего не изменит и не удалит.',
+  'settings.apiKeys.description':
+    'Ключи для публичного API, чтобы другие программы могли читать ваши поездки. Только чтение: ключ ничего не изменит и не удалит.',
   'settings.apiKeys.create': 'Создать ключ',
   'settings.apiKeys.empty': 'Ключей пока нет. Создайте один, чтобы подключить другую программу.',
   'settings.apiKeys.createdAt': 'создан',
@@ -565,7 +566,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.modal.creating': 'Создание...',
   'settings.apiKeys.modal.create': 'Создать',
   'settings.apiKeys.modal.createdTitle': 'Ключ API создан',
-  'settings.apiKeys.modal.createdWarning': 'Скопируйте ключ сейчас. Он показывается один раз, позже получить его нельзя.',
+  'settings.apiKeys.modal.createdWarning':
+    'Скопируйте ключ сейчас. Он показывается один раз, позже получить его нельзя.',
   'settings.apiKeys.modal.done': 'Готово',
 };
 

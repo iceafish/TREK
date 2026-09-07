@@ -329,7 +329,8 @@ const admin: TranslationStrings = {
     'Oznaczanie dni w planie dnia kolorami (na przykład do którego etapu podróży należy dany dzień)',
   'admin.plugins.cap.mcpTools': 'Publikuje narzędzia AI',
   'admin.plugins.mcpToolsTitle': 'Publikowane narzędzia AI',
-  'admin.plugins.mcpToolsHint': 'Asystent może je uruchomić w imieniu użytkownika. Każde działa z uprawnieniami nadanymi powyżej.',
+  'admin.plugins.mcpToolsHint':
+    'Asystent może je uruchomić w imieniu użytkownika. Każde działa z uprawnieniami nadanymi powyżej.',
   'admin.plugins.perm.mcp:tools':
     'Publikowanie narzędzi, które asystent AI może uruchomić w Twoim imieniu (działa z uprawnieniami nadanymi tutaj wtyczce, nie z własnymi)',
   'admin.plugins.perm.geolocation:read':
@@ -434,7 +435,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Zmień wersję…',
   'admin.plugins.noVersions': 'Nie znaleziono opublikowanych wersji w rejestrze.',
   'admin.plugins.downgradeTitle': 'Przywrócić starszą wersję tej wtyczki?',
-  'admin.plugins.downgradeBody': 'Przejście z v{from} na v{to}: dane zapisane przez nowszą wersję pozostają, a starsza wersja może ich nie rozumieć.',
+  'admin.plugins.downgradeBody':
+    'Przejście z v{from} na v{to}: dane zapisane przez nowszą wersję pozostają, a starsza wersja może ich nie rozumieć.',
   'admin.plugins.downgradeConfirm': 'Przywróć',
   'admin.plugins.updatesHeld': 'Aktualizacje wstrzymane na v{version}',
   'admin.plugins.resumeUpdates': 'Wznów aktualizacje',

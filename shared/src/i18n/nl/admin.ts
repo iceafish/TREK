@@ -333,7 +333,8 @@ const admin: TranslationStrings = {
     'Dagen in het dagplan een kleur geven (bijvoorbeeld bij welk deel van de reis een dag hoort)',
   'admin.plugins.cap.mcpTools': 'Publiceert AI-tools',
   'admin.plugins.mcpToolsTitle': 'Gepubliceerde AI-tools',
-  'admin.plugins.mcpToolsHint': 'Een assistent kan deze namens een gebruiker uitvoeren. Elke tool handelt met de hierboven verleende rechten.',
+  'admin.plugins.mcpToolsHint':
+    'Een assistent kan deze namens een gebruiker uitvoeren. Elke tool handelt met de hierboven verleende rechten.',
   'admin.plugins.perm.mcp:tools':
     'Tools publiceren die een AI-assistent namens jou kan uitvoeren (die handelt met de rechten die je de plug-in hier geeft, niet met die van de assistent)',
   'admin.plugins.perm.geolocation:read':
@@ -436,7 +437,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Versie wijzigen…',
   'admin.plugins.noVersions': 'Geen gepubliceerde versies gevonden in het register.',
   'admin.plugins.downgradeTitle': 'Deze plugin terugdraaien?',
-  'admin.plugins.downgradeBody': 'Overschakelen van v{from} naar v{to}: gegevens die door de nieuwere versie zijn geschreven blijven staan, en de oudere versie begrijpt ze mogelijk niet.',
+  'admin.plugins.downgradeBody':
+    'Overschakelen van v{from} naar v{to}: gegevens die door de nieuwere versie zijn geschreven blijven staan, en de oudere versie begrijpt ze mogelijk niet.',
   'admin.plugins.downgradeConfirm': 'Terugdraaien',
   'admin.plugins.updatesHeld': 'Updates gepauzeerd op v{version}',
   'admin.plugins.resumeUpdates': 'Updates hervatten',

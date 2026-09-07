@@ -479,7 +479,8 @@ const admin: TranslationStrings = {
     'Acolorir els dies del pla del dia (per exemple, a quin tram del viatge pertany un dia)',
   'admin.plugins.cap.mcpTools': 'Publica eines d’IA',
   'admin.plugins.mcpToolsTitle': 'Eines d’IA que publica',
-  'admin.plugins.mcpToolsHint': 'Un assistent pot executar-les en nom d’un usuari. Cadascuna actua amb els permisos concedits a dalt.',
+  'admin.plugins.mcpToolsHint':
+    'Un assistent pot executar-les en nom d’un usuari. Cadascuna actua amb els permisos concedits a dalt.',
   'admin.plugins.perm.mcp:tools':
     "Publicar eines que un assistent d'IA pot executar en nom teu (actua amb els permisos que concedeixes aquí al connector, no amb els seus)",
   'admin.plugins.perm.geolocation:read':
@@ -562,9 +563,10 @@ const admin: TranslationStrings = {
   'admin.plugins.versionSwitch': 'Canvia a {version}',
   'admin.plugins.versionNeedsTrek': 'necessita TREK {range}',
   'admin.plugins.changeVersion': 'Canvia la versió…',
-  'admin.plugins.noVersions': 'No s\'han trobat versions publicades al registre.',
+  'admin.plugins.noVersions': "No s'han trobat versions publicades al registre.",
   'admin.plugins.downgradeTitle': 'Vols revertir aquest connector?',
-  'admin.plugins.downgradeBody': 'Canvi de v{from} a v{to}: les dades escrites per la versió més nova es mantenen, i la versió antiga pot no entendre-les.',
+  'admin.plugins.downgradeBody':
+    'Canvi de v{from} a v{to}: les dades escrites per la versió més nova es mantenen, i la versió antiga pot no entendre-les.',
   'admin.plugins.downgradeConfirm': 'Reverteix',
   'admin.plugins.updatesHeld': 'Actualitzacions en pausa a la v{version}',
   'admin.plugins.resumeUpdates': 'Reprèn les actualitzacions',

@@ -334,7 +334,8 @@ const admin: TranslationStrings = {
     'Colorare i giorni nel piano della giornata (ad esempio a quale tratta del viaggio appartiene un giorno)',
   'admin.plugins.cap.mcpTools': 'Pubblica strumenti IA',
   'admin.plugins.mcpToolsTitle': 'Strumenti IA pubblicati',
-  'admin.plugins.mcpToolsHint': 'Un assistente può eseguirli per conto di un utente. Ognuno agisce con i permessi concessi sopra.',
+  'admin.plugins.mcpToolsHint':
+    'Un assistente può eseguirli per conto di un utente. Ognuno agisce con i permessi concessi sopra.',
   'admin.plugins.perm.mcp:tools':
     'Pubblicare strumenti che un assistente IA può eseguire per tuo conto (agisce con i permessi che concedi qui al plugin, non con i propri)',
   'admin.plugins.perm.geolocation:read':
@@ -437,7 +438,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Cambia versione…',
   'admin.plugins.noVersions': 'Nessuna versione pubblicata trovata nel registro.',
   'admin.plugins.downgradeTitle': 'Ripristinare questo plugin?',
-  'admin.plugins.downgradeBody': 'Passaggio da v{from} a v{to}: i dati scritti dalla versione più recente restano, e la versione precedente potrebbe non comprenderli.',
+  'admin.plugins.downgradeBody':
+    'Passaggio da v{from} a v{to}: i dati scritti dalla versione più recente restano, e la versione precedente potrebbe non comprenderli.',
   'admin.plugins.downgradeConfirm': 'Ripristina',
   'admin.plugins.updatesHeld': 'Aggiornamenti in pausa alla v{version}',
   'admin.plugins.resumeUpdates': 'Riprendi aggiornamenti',

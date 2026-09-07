@@ -14,20 +14,23 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile --filter @trek/shared
 
       - name: Run lint & format check
         id: checks
         continue-on-error: true
         run: |
           cd shared
-          npm run lint
-          npm run format:check
+          pnpm run lint
+          pnpm run format:check
 
       - name: Comment on PR if checks failed
         if: steps.checks.outcome == 'failure'
@@ -45,8 +48,8 @@ jobs:
                 '',
                 '```bash',
                 'cd shared',
-                'npm run lint',
-                'npm run format',
+                'pnpm run lint',
+                'pnpm run format',
                 '```',
                 '',
                 'Then commit and push the changes.',

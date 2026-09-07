@@ -334,7 +334,8 @@ const admin: TranslationStrings = {
     'Tô màu các ngày trong kế hoạch ngày (ví dụ ngày đó thuộc chặng nào của chuyến đi)',
   'admin.plugins.cap.mcpTools': 'Xuất bản công cụ AI',
   'admin.plugins.mcpToolsTitle': 'Công cụ AI được xuất bản',
-  'admin.plugins.mcpToolsHint': 'Trợ lý có thể chạy chúng thay cho người dùng. Mỗi công cụ hoạt động với quyền được cấp ở trên.',
+  'admin.plugins.mcpToolsHint':
+    'Trợ lý có thể chạy chúng thay cho người dùng. Mỗi công cụ hoạt động với quyền được cấp ở trên.',
   'admin.plugins.perm.mcp:tools':
     'Xuất bản các công cụ mà trợ lý AI có thể chạy thay bạn (nó hoạt động với quyền bạn cấp cho tiện ích tại đây, không phải quyền của trợ lý)',
   'admin.plugins.perm.geolocation:read':
@@ -437,7 +438,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Đổi phiên bản…',
   'admin.plugins.noVersions': 'Không tìm thấy phiên bản đã xuất bản trong sổ đăng ký.',
   'admin.plugins.downgradeTitle': 'Quay lại phiên bản cũ của plugin này?',
-  'admin.plugins.downgradeBody': 'Chuyển từ v{from} sang v{to}: dữ liệu do phiên bản mới hơn ghi vẫn còn nguyên, và phiên bản cũ hơn có thể không hiểu được.',
+  'admin.plugins.downgradeBody':
+    'Chuyển từ v{from} sang v{to}: dữ liệu do phiên bản mới hơn ghi vẫn còn nguyên, và phiên bản cũ hơn có thể không hiểu được.',
   'admin.plugins.downgradeConfirm': 'Quay lại',
   'admin.plugins.updatesHeld': 'Đã tạm dừng cập nhật ở v{version}',
   'admin.plugins.resumeUpdates': 'Tiếp tục cập nhật',

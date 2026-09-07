@@ -134,7 +134,7 @@ permissions still requires explicit re-consent).
 
 > Dev-link is gated behind `TREK_PLUGINS_DEV_LINK` on top of admin + the plugin
 > kill-switch, and is **off by default**. It loads unsigned local code that mutates
-> live between restarts, and under `npm run dev` the OS permission jail is off — so
+> live between restarts, and under `pnpm run dev` the OS permission jail is off — so
 > only ever enable it on a machine you control, pointed at a dev instance.
 
 ## The plugin types

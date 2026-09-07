@@ -545,7 +545,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'Ключі API',
-  'settings.apiKeys.description': 'Ключі для публічного API, щоб інші програми могли читати ваші подорожі. Лише читання: ключ нічого не змінить і не видалить.',
+  'settings.apiKeys.description':
+    'Ключі для публічного API, щоб інші програми могли читати ваші подорожі. Лише читання: ключ нічого не змінить і не видалить.',
   'settings.apiKeys.create': 'Створити ключ',
   'settings.apiKeys.empty': 'Ключів ще немає. Створіть один, щоб підключити іншу програму.',
   'settings.apiKeys.createdAt': 'створено',

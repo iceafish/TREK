@@ -2,12 +2,14 @@
   "name": "@trek/root",
   "private": true,
   "version": "4.2.1",
+  "packageManager": "pnpm@10.34.5",
   "workspaces": [
     "client",
     "server",
     "shared"
   ],
   "scripts": {
+    "preinstall": "node -e \"if (!/^pnpm\\//.test(process.env.npm_config_user_agent || '')) { console.error('This repo uses pnpm (pinned via packageManager). Run: corepack enable && pnpm install'); process.exit(1); }\"",
     "version:major": "npm version major --workspaces --include-workspace-root --no-git-tag-version",
     "version:minor": "npm version minor --workspaces --include-workspace-root --no-git-tag-version",
     "version:patch": "npm version patch --workspaces --include-workspace-root --no-git-tag-version",
@@ -15,14 +17,14 @@
     "version:preminor": "npm version preminor --preid=beta --workspaces --include-workspace-root --no-git-tag-version",
     "version:prepatch": "npm version prepatch --preid=alpha --workspaces --include-workspace-root --no-git-tag-version",
     "version:prerelease": "npm version prerelease --preid=pre --workspaces --include-workspace-root --no-git-tag-version",
-    "dev": "npm run build --workspace=shared && concurrently --names shared,server,client \"npm run build:watch --workspace=shared\" \"npm run dev --workspace=server\" \"npm run dev --workspace=client\"",
-    "build": "npm run build --workspace=shared && npm run build --workspace=server && npm run build --workspace=client",
-    "test": "npm run test --workspace=shared && npm run test --workspace=server && npm run test --workspace=client",
-    "test:cov": "npm run test:coverage --workspace=shared && npm run test:coverage --workspace=server && npm run test:coverage --workspace=client && npm run test:coverage --prefix plugin-sdk",
-    "test:e2e": "npm run test:e2e --workspace=server",
-    "lint": "npm run lint --workspace=shared && npm run lint --workspace=server && npm run lint --workspace=client",
-    "format": "npm run format --workspace=shared && npm run format --workspace=server && npm run format --workspace=client",
-    "format:check": "npm run format:check --workspace=shared && npm run format:check --workspace=server && npm run format:check --workspace=client"
+    "dev": "pnpm --filter @trek/shared run build && concurrently --names shared,server,client \"pnpm --filter @trek/shared run build:watch\" \"pnpm --filter @trek/server run dev\" \"pnpm --filter @trek/client run dev\"",
+    "build": "pnpm --filter @trek/shared run build && pnpm --filter @trek/server run build && pnpm --filter @trek/client run build",
+    "test": "pnpm --filter @trek/shared run test && pnpm --filter @trek/server run test && pnpm --filter @trek/client run test",
+    "test:cov": "pnpm --filter @trek/shared run test:coverage && pnpm --filter @trek/server run test:coverage && pnpm --filter @trek/client run test:coverage && pnpm -C plugin-sdk run test:coverage",
+    "test:e2e": "pnpm --filter @trek/server run test:e2e",
+    "lint": "pnpm --filter @trek/shared run lint && pnpm --filter @trek/server run lint && pnpm --filter @trek/client run lint",
+    "format": "pnpm --filter @trek/shared run format && pnpm --filter @trek/server run format && pnpm --filter @trek/client run format",
+    "format:check": "pnpm --filter @trek/shared run format:check && pnpm --filter @trek/server run format:check && pnpm --filter @trek/client run format:check"
   },
   "devDependencies": {
     "concurrently": "^10.0.4",
@@ -32,13 +34,22 @@
   "scarfSettings": {
     "enabled": false
   },
-  "comment:overrides": "Force a single React 19 across the workspace so the test renderer (@testing-library/react) and the app share one react-dom.",
-  "overrides": {
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "multer": "^2.2.0"
+  "comment:pnpm.overrides": "pnpm equivalent of npm overrides (pnpm ignores npm's `overrides` field). Force a single React 19 across the workspace so the test renderer (@testing-library/react) and the app share one react-dom; the rest pins transitive deps the server relies on (migrated from server's npm overrides).",
+  "pnpm": {
+    "overrides": {
+      "react": "19.2.6",
+      "react-dom": "19.2.6",
+      "multer": "^2.2.0",
+      "hono": "^4.12.16",
+      "@hono/node-server": "^1.19.13",
+      "picomatch": "^4.0.4",
+      "ip-address": "^10.1.1",
+      "ws": "^8.21.0",
+      "qs": "^6.15.2",
+      "file-type": "^21.3.4"
+    }
   },
-  "comment:optionalDependencies": "The lockfile is generated on glibc, so the musl builds the Alpine image needs never land in it on their own. Keep the @img/* pins on the same version as client's sharp — a mismatch nests the binary away from libvips and the image build dies in generate-icons.",
+  "comment:optionalDependencies": "pnpm already records every platform's optional deps in pnpm-lock.yaml (including the musl builds the Alpine image needs), so these pins are belt-and-braces: they keep the exact binary versions of client's sharp / rollup present at the top of the hoisted tree. Keep them in lockstep with those packages or drop them entirely — a mismatch nests the binary away from libvips.",
   "optionalDependencies": {
     "@img/sharp-linuxmusl-arm64": "0.35.0",
     "@img/sharp-linuxmusl-x64": "0.35.0",

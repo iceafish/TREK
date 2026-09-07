@@ -39,6 +39,8 @@ jobs:
           fetch-tags: true
           token: ${{ steps.app-token.outputs.token }}
 
+      - uses: pnpm/action-setup@v4
+
       - name: Determine bump type and update version
         id: bump
         run: |
@@ -99,15 +101,20 @@ jobs:
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "$STABLE → $NEW_VERSION ($BUMP)"
 
-          # Update all workspace + root package.json files and the root lockfile in one shot
+          # Update all workspace + root package.json files in one shot. npm
+          # version is kept for the bump itself (no pnpm equivalent; npm ships
+          # with the runner and only edits package.json files here).
           npm version "$NEW_VERSION" --workspaces --include-workspace-root --no-git-tag-version
+          # Sync pnpm-lock.yaml with the bumped package.json versions so the
+          # Docker build's --frozen-lockfile install stays valid.
+          pnpm install --lockfile-only
           sed -i "s/^version: .*/version: $NEW_VERSION/" charts/trek/Chart.yaml
           sed -i "s/^appVersion: .*/appVersion: \"$NEW_VERSION\"/" charts/trek/Chart.yaml
 
           # Commit and tag
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json server/package.json client/package.json shared/package.json charts/trek/Chart.yaml
+          git add package.json pnpm-lock.yaml server/package.json client/package.json shared/package.json charts/trek/Chart.yaml
           git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
           git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
           git push origin main --follow-tags

@@ -332,7 +332,8 @@ const admin: TranslationStrings = {
     'Tage im Tagesplan farblich markieren (z. B. zu welchem Reiseabschnitt ein Tag gehört)',
   'admin.plugins.cap.mcpTools': 'Veröffentlicht KI-Tools',
   'admin.plugins.mcpToolsTitle': 'Veröffentlichte KI-Tools',
-  'admin.plugins.mcpToolsHint': 'Ein Assistent kann sie im Namen eines Nutzers ausführen. Jedes handelt mit den oben erteilten Rechten.',
+  'admin.plugins.mcpToolsHint':
+    'Ein Assistent kann sie im Namen eines Nutzers ausführen. Jedes handelt mit den oben erteilten Rechten.',
   'admin.plugins.perm.mcp:tools':
     'Tools veröffentlichen, die ein KI-Assistent in deinem Namen ausführen kann (es handelt mit den Rechten, die du dem Plugin hier erteilst, nicht mit denen des Assistenten)',
   'admin.plugins.perm.geolocation:read':
@@ -437,7 +438,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Version wechseln…',
   'admin.plugins.noVersions': 'Keine veröffentlichten Versionen in der Registry gefunden.',
   'admin.plugins.downgradeTitle': 'Dieses Plugin zurücksetzen?',
-  'admin.plugins.downgradeBody': 'Wechsel von v{from} zu v{to}: Von der neueren Version geschriebene Daten bleiben erhalten, und die ältere Version versteht sie möglicherweise nicht.',
+  'admin.plugins.downgradeBody':
+    'Wechsel von v{from} zu v{to}: Von der neueren Version geschriebene Daten bleiben erhalten, und die ältere Version versteht sie möglicherweise nicht.',
   'admin.plugins.downgradeConfirm': 'Zurücksetzen',
   'admin.plugins.updatesHeld': 'Updates pausiert bei v{version}',
   'admin.plugins.resumeUpdates': 'Updates fortsetzen',

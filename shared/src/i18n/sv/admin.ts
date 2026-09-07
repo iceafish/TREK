@@ -391,7 +391,8 @@ const admin: TranslationStrings = {
     'Färgkoda dagar i dagsplanen (till exempel vilken etapp av resan en dag tillhör)',
   'admin.plugins.cap.mcpTools': 'Publicerar AI-verktyg',
   'admin.plugins.mcpToolsTitle': 'Publicerade AI-verktyg',
-  'admin.plugins.mcpToolsHint': 'En assistent kan köra dem åt en användare. Varje verktyg agerar med de rättigheter som getts ovan.',
+  'admin.plugins.mcpToolsHint':
+    'En assistent kan köra dem åt en användare. Varje verktyg agerar med de rättigheter som getts ovan.',
   'admin.plugins.perm.mcp:tools':
     'Publicera verktyg som en AI-assistent kan köra åt dig (det agerar med de rättigheter du ger tillägget här, inte med assistentens egna)',
   'admin.plugins.perm.geolocation:read':
@@ -495,7 +496,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Byt version…',
   'admin.plugins.noVersions': 'Inga publicerade versioner hittades i registret.',
   'admin.plugins.downgradeTitle': 'Rulla tillbaka detta tillägg?',
-  'admin.plugins.downgradeBody': 'Byte från v{from} till v{to}: data som skrivits av den nyare versionen finns kvar, och den äldre versionen kanske inte förstår dem.',
+  'admin.plugins.downgradeBody':
+    'Byte från v{from} till v{to}: data som skrivits av den nyare versionen finns kvar, och den äldre versionen kanske inte förstår dem.',
   'admin.plugins.downgradeConfirm': 'Rulla tillbaka',
   'admin.plugins.updatesHeld': 'Uppdateringar pausade vid v{version}',
   'admin.plugins.resumeUpdates': 'Återuppta uppdateringar',

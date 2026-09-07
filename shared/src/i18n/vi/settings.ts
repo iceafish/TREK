@@ -546,7 +546,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'Khóa API',
-  'settings.apiKeys.description': 'Khóa cho API công khai, để phần mềm khác có thể đọc các chuyến đi của bạn. Chỉ đọc: khóa không thể thay đổi hay xóa bất cứ thứ gì.',
+  'settings.apiKeys.description':
+    'Khóa cho API công khai, để phần mềm khác có thể đọc các chuyến đi của bạn. Chỉ đọc: khóa không thể thay đổi hay xóa bất cứ thứ gì.',
   'settings.apiKeys.create': 'Tạo khóa',
   'settings.apiKeys.empty': 'Chưa có khóa nào. Tạo một khóa để kết nối phần mềm khác.',
   'settings.apiKeys.createdAt': 'đã tạo',
@@ -565,7 +566,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.modal.creating': 'Đang tạo...',
   'settings.apiKeys.modal.create': 'Tạo',
   'settings.apiKeys.modal.createdTitle': 'Đã tạo khóa API',
-  'settings.apiKeys.modal.createdWarning': 'Hãy sao chép khóa ngay. Khóa chỉ hiện một lần và không thể lấy lại sau này.',
+  'settings.apiKeys.modal.createdWarning':
+    'Hãy sao chép khóa ngay. Khóa chỉ hiện một lần và không thể lấy lại sau này.',
   'settings.apiKeys.modal.done': 'Xong',
 };
 

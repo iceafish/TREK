@@ -542,7 +542,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'API Anahtarları',
-  'settings.apiKeys.description': 'Genel API için anahtarlar, böylece başka yazılımlar gezilerini okuyabilir. Yalnızca okuma: bir anahtar hiçbir şeyi değiştiremez veya silemez.',
+  'settings.apiKeys.description':
+    'Genel API için anahtarlar, böylece başka yazılımlar gezilerini okuyabilir. Yalnızca okuma: bir anahtar hiçbir şeyi değiştiremez veya silemez.',
   'settings.apiKeys.create': 'Anahtar oluştur',
   'settings.apiKeys.empty': 'Henüz anahtar yok. Başka bir yazılımı bağlamak için bir tane oluştur.',
   'settings.apiKeys.createdAt': 'oluşturuldu',
@@ -553,7 +554,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.deleteFailed': 'Anahtar silinemedi',
   'settings.apiKeys.createFailed': 'Anahtar oluşturulamadı',
   'settings.apiKeys.copy': 'Kopyala',
-  'settings.apiKeys.docsHint': 'Anahtarı "Authorization: Bearer ..." veya "X-API-Key: ..." olarak /api/v1 adresine gönder.',
+  'settings.apiKeys.docsHint':
+    'Anahtarı "Authorization: Bearer ..." veya "X-API-Key: ..." olarak /api/v1 adresine gönder.',
   'settings.apiKeys.modal.createTitle': 'API anahtarı oluştur',
   'settings.apiKeys.modal.name': 'Ad',
   'settings.apiKeys.modal.namePlaceholder': 'örn. Dawarich',

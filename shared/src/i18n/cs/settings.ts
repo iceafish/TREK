@@ -536,7 +536,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'Klíče API',
-  'settings.apiKeys.description': 'Klíče pro veřejné API, aby jiný software mohl číst tvoje cesty. Jen pro čtení: klíč nemůže nic měnit ani mazat.',
+  'settings.apiKeys.description':
+    'Klíče pro veřejné API, aby jiný software mohl číst tvoje cesty. Jen pro čtení: klíč nemůže nic měnit ani mazat.',
   'settings.apiKeys.create': 'Vytvořit klíč',
   'settings.apiKeys.empty': 'Zatím žádné klíče. Vytvoř jeden a připoj další software.',
   'settings.apiKeys.createdAt': 'vytvořen',
@@ -555,7 +556,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.modal.creating': 'Vytváří se...',
   'settings.apiKeys.modal.create': 'Vytvořit',
   'settings.apiKeys.modal.createdTitle': 'Klíč API vytvořen',
-  'settings.apiKeys.modal.createdWarning': 'Zkopíruj klíč hned teď. Zobrazí se jen jednou a později ho už nelze získat.',
+  'settings.apiKeys.modal.createdWarning':
+    'Zkopíruj klíč hned teď. Zobrazí se jen jednou a později ho už nelze získat.',
   'settings.apiKeys.modal.done': 'Hotovo',
 };
 

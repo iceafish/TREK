@@ -44,11 +44,12 @@ on:
       - 'client/**'
       - 'shared/**'
       - 'plugin-sdk/**'
-      # npm workspaces hoist every dependency into the single root lockfile,
-      # so a dependency bump touches none of the four directories above — and
-      # a native binding like better-sqlite3 is exactly what needs the suite.
+      # pnpm workspaces record every dependency (and every platform's
+      # optional binaries) in the single root lockfile, so a dependency bump
+      # touches none of the four directories above — and a native binding
+      # like better-sqlite3 is exactly what needs the suite.
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
       - 'sonar-project.properties'
       - '.github/workflows/test.yml'
       # Docs inside the workspaces (CLAUDE.md, READMEs, PATTERN.md) affect
@@ -62,11 +63,12 @@ on:
       - 'client/**'
       - 'shared/**'
       - 'plugin-sdk/**'
-      # npm workspaces hoist every dependency into the single root lockfile,
-      # so a dependency bump touches none of the four directories above — and
-      # a native binding like better-sqlite3 is exactly what needs the suite.
+      # pnpm workspaces record every dependency (and every platform's
+      # optional binaries) in the single root lockfile, so a dependency bump
+      # touches none of the four directories above — and a native binding
+      # like better-sqlite3 is exactly what needs the suite.
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
       - 'sonar-project.properties'
       - '.github/workflows/test.yml'
       # Docs inside the workspaces (CLAUDE.md, READMEs, PATTERN.md) affect
@@ -89,16 +91,18 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           # 22 matches the TREK server runtime (same choice as the plugin-sdk
           # jobs and publish-plugin-sdk.yml).
           node-version: 22
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci --workspace server
+        run: pnpm install --frozen-lockfile --filter @trek/server
 
       # The plugin permission facts live once, in
       # server/src/nest/plugins/protocol/envelope.ts. Every other copy — the
@@ -108,7 +112,7 @@ jobs:
       # if a copy drifts, if a new permission has no admin.plugins.perm.*
       # translation, or if the CLI has no hint for it.
       - name: Check the generated plugin facts are in sync
-        run: cd server && npm run check:plugin-facts
+        run: cd server && pnpm run check:plugin-facts
 
   i18n-parity:
     name: i18n Key Parity
@@ -130,26 +134,28 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build shared
-        run: npm run build --workspace=shared
+        run: pnpm --filter @trek/shared run build
 
       - name: Typecheck shared
         # Rides along here rather than in shared-coverage: this job already
         # pays the root install and shared build, and a coverage job may only
         # fail because tests failed (it gates the scan).
-        run: cd shared && npm run typecheck
+        run: cd shared && pnpm run typecheck
 
       - name: Build server (tsc -> dist)
-        run: cd server && npm run build
+        run: cd server && pnpm run build
 
       - name: Smoke production require chain
         # Vitest aliases the MCP SDK deep imports, so only this exercises what
@@ -158,7 +164,7 @@ jobs:
         run: cd server && node --require tsconfig-paths/register -e "require('./dist/nest-mcp')"
 
       - name: Typecheck
-        run: cd server && npm run typecheck
+        run: cd server && pnpm run typecheck
 
       - name: Typecheck tests
         # tests/ is outside the build tsconfig, so a service that grows a
@@ -166,10 +172,10 @@ jobs:
         # compile time: the argument arrives as undefined and throws at
         # runtime, if anything reads it at all. This is the step that
         # catches it.
-        run: cd server && npm run typecheck:tests
+        run: cd server && pnpm run typecheck:tests
 
       - name: Lint
-        run: cd server && npm run lint:check
+        run: cd server && pnpm run lint:check
 
   client-quality:
     name: Client Types & Lint
@@ -178,26 +184,28 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci --workspace shared && npm ci --workspace client
+        run: pnpm install --frozen-lockfile --filter @trek/shared --filter @trek/client
 
       - name: Build shared
-        run: npm run build --workspace=shared
+        run: pnpm --filter @trek/shared run build
 
       - name: Typecheck
-        run: cd client && npm run typecheck
+        run: cd client && pnpm run typecheck
 
       - name: Lint
-        run: cd client && npm run lint:check
+        run: cd client && pnpm run lint:check
 
       - name: Page pattern check
-        run: cd client && npm run lint:pages
+        run: cd client && pnpm run lint:pages
 
   plugin-sdk-quality:
     name: Plugin SDK Types
@@ -209,17 +217,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 22
 
-      # plugin-sdk is standalone (own lockfile, not a root workspace), so it
-      # installs from its own directory.
+      # plugin-sdk is standalone (own lockfile, own workspace root, not a root
+      # workspace member), so it installs from its own directory.
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
 
   s3-contract:
     name: S3 Driver Contract (MinIO)
@@ -234,26 +244,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Ensure @swc/core's Linux binary for unplugin-swc
-        # The lockfile was generated on Windows and omits @swc/core's Linux
-        # optional native binary, so npm ci/install skips it on the runner.
-        # Install the matching version explicitly so the server's SWC transform
-        # (server/vitest.config.ts) can load.
-        run: |
-          SWC_VERSION=$(node -p "require('@swc/core/package.json').version")
-          npm install --no-save --legacy-peer-deps "@swc/core-linux-x64-gnu@$SWC_VERSION"
+        run: pnpm install --frozen-lockfile
 
       - name: Build shared
-        run: npm run build --workspace=shared
+        run: pnpm --filter @trek/shared run build
 
       - name: Write MinIO license
         run: printf '%s' "${{ secrets.MINIO_LICENSE_KEY }}" > minio-licence.key
@@ -291,7 +294,7 @@ jobs:
           TREK_TEST_S3_BUCKET: trek-test
           TREK_TEST_S3_ACCESS_KEY_ID: trekci
           TREK_TEST_S3_SECRET_ACCESS_KEY: trekci-secret
-        run: cd server && npx vitest run tests/unit/nest/storage/s3.driver.contract.test.ts
+        run: cd server && pnpm exec vitest run tests/unit/nest/storage/s3.driver.contract.test.ts
 
   server-coverage:
     name: Server Coverage
@@ -300,29 +303,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Ensure @swc/core's Linux binary for unplugin-swc
-        # The lockfile was generated on Windows and omits @swc/core's Linux
-        # optional native binary, so npm ci/install skips it on the runner.
-        # Install the matching version explicitly so the server's SWC transform
-        # (server/vitest.config.ts) can load.
-        run: |
-          SWC_VERSION=$(node -p "require('@swc/core/package.json').version")
-          npm install --no-save --legacy-peer-deps "@swc/core-linux-x64-gnu@$SWC_VERSION"
+        run: pnpm install --frozen-lockfile
 
       - name: Build shared
-        run: npm run build --workspace=shared
+        run: pnpm --filter @trek/shared run build
 
       - name: Run tests with coverage
-        run: cd server && npm run test:coverage
+        run: cd server && pnpm run test:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
@@ -338,24 +334,26 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
-      # Only the shared and client workspaces — a full root npm ci is not
-      # needed, and the scoped install keeps @testing-library/dom (a peer of
+      # Only the shared and client workspaces — a full root install is not
+      # needed, and the filtered install keeps @testing-library/dom (a peer of
       # @testing-library/react) in the tree without the re-resolution dance
       # the folded coverage job used to need.
       - name: Install dependencies
-        run: npm ci --workspace shared && npm ci --workspace client
+        run: pnpm install --frozen-lockfile --filter @trek/shared --filter @trek/client
 
       - name: Build shared
-        run: npm run build --workspace=shared
+        run: pnpm --filter @trek/shared run build
 
       - name: Run tests with coverage
-        run: cd client && npm run test:coverage
+        run: cd client && pnpm run test:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
@@ -371,17 +369,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci --workspace shared
+        run: pnpm install --frozen-lockfile --filter @trek/shared
 
       - name: Run tests with coverage
-        run: cd shared && npm run test:coverage
+        run: cd shared && pnpm run test:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
@@ -401,19 +401,21 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           # 22 matches the TREK server runtime and has node:sqlite, which the
           # dev-server tests exercise (same choice as publish-plugin-sdk.yml).
           node-version: 22
 
-      # plugin-sdk is standalone (own lockfile, not a root workspace), so it
-      # installs from its own directory.
+      # plugin-sdk is standalone (own lockfile, own workspace root, not a root
+      # workspace member), so it installs from its own directory.
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6

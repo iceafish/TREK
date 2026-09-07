@@ -373,7 +373,8 @@ const admin: TranslationStrings = {
     'Colour-code days in the day plan (e.g. which leg of the trip a day belongs to)',
   'admin.plugins.cap.mcpTools': 'Publishes AI tools',
   'admin.plugins.mcpToolsTitle': 'AI tools it publishes',
-  'admin.plugins.mcpToolsHint': 'An assistant can run these on a user’s behalf. Each one acts with the access granted above.',
+  'admin.plugins.mcpToolsHint':
+    'An assistant can run these on a user’s behalf. Each one acts with the access granted above.',
   'admin.plugins.perm.mcp:tools':
     'Publish tools that an AI assistant can run on your behalf (it acts with the access you grant the plugin here, not with the assistant’s own)',
   'admin.plugins.perm.geolocation:read':
@@ -476,7 +477,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Change version…',
   'admin.plugins.noVersions': 'No published versions found in the registry.',
   'admin.plugins.downgradeTitle': 'Roll back this plugin?',
-  'admin.plugins.downgradeBody': 'Switching from v{from} to v{to}: data written by the newer version stays in place, and the older version may not understand it.',
+  'admin.plugins.downgradeBody':
+    'Switching from v{from} to v{to}: data written by the newer version stays in place, and the older version may not understand it.',
   'admin.plugins.downgradeConfirm': 'Roll back',
   'admin.plugins.updatesHeld': 'Updates paused at v{version}',
   'admin.plugins.resumeUpdates': 'Resume updates',

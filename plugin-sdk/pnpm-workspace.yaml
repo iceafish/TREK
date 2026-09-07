@@ -1,0 +1,3 @@
+# plugin-sdk is a standalone workspace root on purpose: it ships and publishes
+# independently of the TREK monorepo and keeps its own lockfile. The file is
+# empty so pnpm stops walking up to the repo root's workspace.

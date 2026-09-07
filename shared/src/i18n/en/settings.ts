@@ -535,7 +535,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'API Keys',
-  'settings.apiKeys.description': 'Keys for the public API, so other software can read your trips. Read-only: a key cannot change or delete anything.',
+  'settings.apiKeys.description':
+    'Keys for the public API, so other software can read your trips. Read-only: a key cannot change or delete anything.',
   'settings.apiKeys.create': 'Create key',
   'settings.apiKeys.empty': 'No keys yet. Create one to connect other software.',
   'settings.apiKeys.createdAt': 'created',

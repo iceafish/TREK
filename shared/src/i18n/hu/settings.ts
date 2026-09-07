@@ -546,7 +546,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'API-kulcsok',
-  'settings.apiKeys.description': 'Kulcsok a nyilvános API-hoz, hogy más szoftverek olvashassák az utazásaidat. Csak olvasható: a kulcs semmit nem módosít és nem töröl.',
+  'settings.apiKeys.description':
+    'Kulcsok a nyilvános API-hoz, hogy más szoftverek olvashassák az utazásaidat. Csak olvasható: a kulcs semmit nem módosít és nem töröl.',
   'settings.apiKeys.create': 'Kulcs létrehozása',
   'settings.apiKeys.empty': 'Még nincs kulcs. Hozz létre egyet más szoftver csatlakoztatásához.',
   'settings.apiKeys.createdAt': 'létrehozva',
@@ -557,7 +558,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.deleteFailed': 'A kulcsot nem sikerült törölni',
   'settings.apiKeys.createFailed': 'A kulcsot nem sikerült létrehozni',
   'settings.apiKeys.copy': 'Másolás',
-  'settings.apiKeys.docsHint': 'Küldd a kulcsot "Authorization: Bearer ..." vagy "X-API-Key: ..." fejlécként a /api/v1 címre.',
+  'settings.apiKeys.docsHint':
+    'Küldd a kulcsot "Authorization: Bearer ..." vagy "X-API-Key: ..." fejlécként a /api/v1 címre.',
   'settings.apiKeys.modal.createTitle': 'API-kulcs létrehozása',
   'settings.apiKeys.modal.name': 'Név',
   'settings.apiKeys.modal.namePlaceholder': 'pl. Dawarich',

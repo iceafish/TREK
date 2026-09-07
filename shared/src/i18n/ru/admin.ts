@@ -334,7 +334,8 @@ const admin: TranslationStrings = {
     'Отмечать дни в плане цветом (например, к какому этапу поездки относится день)',
   'admin.plugins.cap.mcpTools': 'Публикует ИИ-инструменты',
   'admin.plugins.mcpToolsTitle': 'Публикуемые ИИ-инструменты',
-  'admin.plugins.mcpToolsHint': 'Ассистент может запускать их от имени пользователя. Каждый действует с правами, выданными выше.',
+  'admin.plugins.mcpToolsHint':
+    'Ассистент может запускать их от имени пользователя. Каждый действует с правами, выданными выше.',
   'admin.plugins.perm.mcp:tools':
     'Публиковать инструменты, которые ИИ-ассистент может запускать от вашего имени (он действует с правами, выданными плагину здесь, а не со своими)',
   'admin.plugins.perm.geolocation:read':
@@ -438,7 +439,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Сменить версию…',
   'admin.plugins.noVersions': 'В реестре не найдено опубликованных версий.',
   'admin.plugins.downgradeTitle': 'Откатить этот плагин?',
-  'admin.plugins.downgradeBody': 'Переход с v{from} на v{to}: данные, записанные более новой версией, остаются на месте, и старая версия может их не понять.',
+  'admin.plugins.downgradeBody':
+    'Переход с v{from} на v{to}: данные, записанные более новой версией, остаются на месте, и старая версия может их не понять.',
   'admin.plugins.downgradeConfirm': 'Откатить',
   'admin.plugins.updatesHeld': 'Обновления приостановлены на v{version}',
   'admin.plugins.resumeUpdates': 'Возобновить обновления',

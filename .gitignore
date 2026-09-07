@@ -35,7 +35,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
-.claude/
+# Claude Code: local settings stay untracked, but project skills are shared
+# (an unattended agent in a fresh worktree needs them present).
+.claude/*
+!.claude/skills/
 
 # Logs
 logs

@@ -382,7 +382,8 @@ const admin: TranslationStrings = {
     'Memberi warna pada hari di rencana hari (misalnya bagian perjalanan mana yang memuat suatu hari)',
   'admin.plugins.cap.mcpTools': 'Menerbitkan alat AI',
   'admin.plugins.mcpToolsTitle': 'Alat AI yang diterbitkan',
-  'admin.plugins.mcpToolsHint': 'Asisten dapat menjalankannya atas nama pengguna. Masing-masing bertindak dengan akses yang diberikan di atas.',
+  'admin.plugins.mcpToolsHint':
+    'Asisten dapat menjalankannya atas nama pengguna. Masing-masing bertindak dengan akses yang diberikan di atas.',
   'admin.plugins.perm.mcp:tools':
     'Menerbitkan alat yang dapat dijalankan asisten AI atas nama Anda (bertindak dengan akses yang Anda berikan ke plugin di sini, bukan milik asisten)',
   'admin.plugins.perm.geolocation:read':
@@ -484,7 +485,8 @@ const admin: TranslationStrings = {
   'admin.plugins.changeVersion': 'Ubah versi…',
   'admin.plugins.noVersions': 'Tidak ada versi terpublikasi yang ditemukan di registri.',
   'admin.plugins.downgradeTitle': 'Kembalikan plugin ini?',
-  'admin.plugins.downgradeBody': 'Beralih dari v{from} ke v{to}: data yang ditulis oleh versi yang lebih baru tetap ada, dan versi yang lebih lama mungkin tidak memahaminya.',
+  'admin.plugins.downgradeBody':
+    'Beralih dari v{from} ke v{to}: data yang ditulis oleh versi yang lebih baru tetap ada, dan versi yang lebih lama mungkin tidak memahaminya.',
   'admin.plugins.downgradeConfirm': 'Kembalikan',
   'admin.plugins.updatesHeld': 'Pembaruan dijeda di v{version}',
   'admin.plugins.resumeUpdates': 'Lanjutkan pembaruan',

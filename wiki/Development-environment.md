@@ -5,7 +5,7 @@
 ## Prerequisites
 
 - Node.js 22+
-- npm
+- pnpm 10 (enable with `corepack enable` — the repo pins the exact version via `packageManager`)
 - Git
 - A GitHub account
 
@@ -71,16 +71,16 @@ Branch naming conventions:
 
 ## 5. Install Dependencies
 
-The repo is an npm workspace monorepo with three workspaces — `shared`, `server`, and `client`. One command at the root installs all three:
+The repo is a pnpm workspace monorepo with three workspaces — `shared`, `server`, and `client`. One command at the root installs all three:
 
 ```bash
-npm ci
+pnpm install
 ```
 
-`plugin-sdk/` is **not** a root workspace: it has its own lockfile and is published to npm independently, so a root `npm ci` never touches it. If you are working on the SDK, install and run its commands from that directory:
+`plugin-sdk/` is **not** a root workspace: it is its own standalone workspace root with its own lockfile and is published to npm independently, so a root install never touches it. If you are working on the SDK, install and run its commands from that directory:
 
 ```bash
-cd plugin-sdk && npm ci
+cd plugin-sdk && pnpm install
 ```
 
 ---
@@ -122,75 +122,75 @@ These commands run across all workspaces at once and are the recommended way to 
 
 | Command              | Description                                                         |
 |----------------------|---------------------------------------------------------------------|
-| `npm run dev`        | Build shared, then start shared (watch), server, and client together via `concurrently` |
-| `npm run build`      | Build shared → server → client in order                            |
-| `npm test`           | Run tests in shared, server, and client                            |
-| `npm run test:cov`   | Run coverage for shared, server, client and plugin-sdk             |
-| `npm run test:e2e`   | Run end-to-end tests (server)                                      |
-| `npm run lint`       | Lint shared, server, and client                                    |
-| `npm run format`     | Format shared, server, and client                                  |
-| `npm run format:check` | Check formatting across all workspaces                           |
+| `pnpm run dev`        | Build shared, then start shared (watch), server, and client together via `concurrently` |
+| `pnpm run build`      | Build shared → server → client in order                            |
+| `pnpm test`           | Run tests in shared, server, and client                            |
+| `pnpm run test:cov`   | Run coverage for shared, server, client and plugin-sdk             |
+| `pnpm run test:e2e`   | Run end-to-end tests (server)                                      |
+| `pnpm run lint`       | Lint shared, server, and client                                    |
+| `pnpm run format`     | Format shared, server, and client                                  |
+| `pnpm run format:check` | Check formatting across all workspaces                           |
 
 ### Shared (`/shared`)
 
 The `@trek/shared` package is the single source of truth for code shared between the client and server. It holds the **Zod schemas that define the API contracts** (request/response shapes, common primitives, pagination) and the **i18n translation layer** (per-language keys and types). Both workspaces import from it, so schema and translation changes propagate to both sides from one place.
 
-> **Tip:** run `npm run i18n:parity` (or `i18n:parity:strict`) in this package to verify every locale exposes the same translation keys — the CI parity gate runs the strict variant.
+> **Tip:** run `pnpm run i18n:parity` (or `i18n:parity:strict`) in this package to verify every locale exposes the same translation keys — the CI parity gate runs the strict variant.
 
 | Command                     | Description                          |
 |-----------------------------|--------------------------------------|
-| `npm run build`             | Compile shared package (tsdown)      |
-| `npm run build:watch`       | Compile in watch mode                |
-| `npm test`                  | Run tests                            |
-| `npm run test:watch`        | Run tests in watch mode              |
-| `npm run typecheck`         | Type-check without emitting          |
-| `npm run i18n:parity`       | Check locale key parity              |
-| `npm run i18n:parity:strict`| Strict locale key parity (CI gate)   |
-| `npm run lint`              | Lint source                          |
-| `npm run format`            | Format source                        |
-| `npm run format:check`   | Check formatting                  |
+| `pnpm run build`             | Compile shared package (tsdown)      |
+| `pnpm run build:watch`       | Compile in watch mode                |
+| `pnpm test`                  | Run tests                            |
+| `pnpm run test:watch`        | Run tests in watch mode              |
+| `pnpm run typecheck`         | Type-check without emitting          |
+| `pnpm run i18n:parity`       | Check locale key parity              |
+| `pnpm run i18n:parity:strict`| Strict locale key parity (CI gate)   |
+| `pnpm run lint`              | Lint source                          |
+| `pnpm run format`            | Format source                        |
+| `pnpm run format:check`   | Check formatting                  |
 
 ### Server (`/server`)
 
-> **Tip:** `tests/` sits outside the build `tsconfig.json`, so `npm run typecheck` skips it — `npm run typecheck:tests` is the only step that catches a broken test call site. CI runs both.
+> **Tip:** `tests/` sits outside the build `tsconfig.json`, so `pnpm run typecheck` skips it — `pnpm run typecheck:tests` is the only step that catches a broken test call site. CI runs both.
 
 | Command                      | Description                              |
 |------------------------------|------------------------------------------|
-| `npm start`                  | Start the server (production)            |
-| `npm run dev`                | Start the server in watch mode           |
-| `npm run build`              | Compile server                           |
-| `npm run typecheck`          | Type-check without emitting              |
-| `npm run typecheck:tests`    | Type-check `tests/` too (CI gate)        |
-| `npm test`                   | Run all tests                            |
-| `npm run test:unit`          | Run unit tests only                      |
-| `npm run test:integration`   | Run integration tests                    |
-| `npm run test:ws`            | Run WebSocket tests                      |
-| `npm run test:e2e`           | Run end-to-end tests                     |
-| `npm run test:watch`         | Run tests in watch mode                  |
-| `npm run test:coverage`      | Run tests with coverage report           |
-| `npm run lint`               | Lint source                              |
-| `npm run lint:check`         | Lint everything, no `--fix` (CI gate)    |
-| `npm run check:plugin-facts` | Verify generated plugin facts (CI gate)  |
-| `npm run format`             | Format source                            |
+| `pnpm start`                  | Start the server (production)            |
+| `pnpm run dev`                | Start the server in watch mode           |
+| `pnpm run build`              | Compile server                           |
+| `pnpm run typecheck`          | Type-check without emitting              |
+| `pnpm run typecheck:tests`    | Type-check `tests/` too (CI gate)        |
+| `pnpm test`                   | Run all tests                            |
+| `pnpm run test:unit`          | Run unit tests only                      |
+| `pnpm run test:integration`   | Run integration tests                    |
+| `pnpm run test:ws`            | Run WebSocket tests                      |
+| `pnpm run test:e2e`           | Run end-to-end tests                     |
+| `pnpm run test:watch`         | Run tests in watch mode                  |
+| `pnpm run test:coverage`      | Run tests with coverage report           |
+| `pnpm run lint`               | Lint source                              |
+| `pnpm run lint:check`         | Lint everything, no `--fix` (CI gate)    |
+| `pnpm run check:plugin-facts` | Verify generated plugin facts (CI gate)  |
+| `pnpm run format`             | Format source                            |
 
 ### Client (`/client`)
 
 | Command                    | Description                                          |
 |----------------------------|------------------------------------------------------|
-| `npm run dev`              | Start the Vite dev server                            |
-| `npm run build`            | Build for production (runs icon generation first)    |
-| `npm run preview`          | Preview the production build locally                 |
-| `npm run typecheck`        | Type-check without emitting (CI gate)                |
-| `npm test`                 | Run all tests                                        |
-| `npm run test:unit`        | Run unit tests only                                  |
-| `npm run test:integration` | Run integration tests                                |
-| `npm run test:watch`       | Run tests in watch mode                              |
-| `npm run test:coverage`    | Run tests with coverage report                       |
-| `npm run lint`             | Lint source                                          |
-| `npm run lint:check`       | Same command as `npm run lint` — the name CI uses    |
-| `npm run lint:pages`       | Enforce the Page pattern (CI gate)                   |
-| `npm run theme:lint`       | Flag styling that bypasses the appearance tokens     |
-| `npm run format`           | Format source                                        |
+| `pnpm run dev`              | Start the Vite dev server                            |
+| `pnpm run build`            | Build for production (runs icon generation first)    |
+| `pnpm run preview`          | Preview the production build locally                 |
+| `pnpm run typecheck`        | Type-check without emitting (CI gate)                |
+| `pnpm test`                 | Run all tests                                        |
+| `pnpm run test:unit`        | Run unit tests only                                  |
+| `pnpm run test:integration` | Run integration tests                                |
+| `pnpm run test:watch`       | Run tests in watch mode                              |
+| `pnpm run test:coverage`    | Run tests with coverage report                       |
+| `pnpm run lint`             | Lint source                                          |
+| `pnpm run lint:check`       | Same command as `pnpm run lint` — the name CI uses    |
+| `pnpm run lint:pages`       | Enforce the Page pattern (CI gate)                   |
+| `pnpm run theme:lint`       | Flag styling that bypasses the appearance tokens     |
+| `pnpm run format`           | Format source                                        |
 
 ---
 
@@ -214,5 +214,5 @@ Then open a Pull Request from your fork to `liketrek/TREK` targeting the `dev` b
 ## Tips
 
 - Always branch off from an up-to-date `dev` — run `git fetch upstream && git rebase upstream/dev` before starting new work.
-- Run tests before pushing: `npm test` at the repo root runs all workspaces. That alone is not the full CI gate — also run `npm run typecheck && npm run typecheck:tests && npm run lint:check && npm run check:plugin-facts` in `server/`, `npm run typecheck && npm run lint:check && npm run lint:pages` in `client/`, and `npm run i18n:parity:strict --workspace=shared` at the root if you touched translations.
+- Run tests before pushing: `pnpm test` at the repo root runs all workspaces. That alone is not the full CI gate — also run `pnpm run typecheck && pnpm run typecheck:tests && pnpm run lint:check && pnpm run check:plugin-facts` in `server/`, `pnpm run typecheck && pnpm run lint:check && pnpm run lint:pages` in `client/`, and `pnpm run i18n:parity:strict --filter @trek/shared` at the root if you touched translations.
 - Follow the commit message conventions described in the [[Contributing]] guidelines.

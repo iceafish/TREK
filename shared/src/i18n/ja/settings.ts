@@ -515,7 +515,8 @@ const settings: TranslationStrings = {
 
   // Public API keys (Settings -> Integrations)
   'settings.apiKeys.title': 'API キー',
-  'settings.apiKeys.description': '公開 API 用のキーです。ほかのソフトウェアが旅程を読み取れるようになります。読み取り専用で、変更や削除はできません。',
+  'settings.apiKeys.description':
+    '公開 API 用のキーです。ほかのソフトウェアが旅程を読み取れるようになります。読み取り専用で、変更や削除はできません。',
   'settings.apiKeys.create': 'キーを作成',
   'settings.apiKeys.empty': 'キーはまだありません。ほかのソフトウェアと連携するには作成してください。',
   'settings.apiKeys.createdAt': '作成日',
@@ -526,7 +527,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.deleteFailed': 'キーを削除できませんでした',
   'settings.apiKeys.createFailed': 'キーを作成できませんでした',
   'settings.apiKeys.copy': 'コピー',
-  'settings.apiKeys.docsHint': 'キーは "Authorization: Bearer ..." または "X-API-Key: ..." として /api/v1 に送信してください。',
+  'settings.apiKeys.docsHint':
+    'キーは "Authorization: Bearer ..." または "X-API-Key: ..." として /api/v1 に送信してください。',
   'settings.apiKeys.modal.createTitle': 'API キーを作成',
   'settings.apiKeys.modal.name': '名前',
   'settings.apiKeys.modal.namePlaceholder': '例: Dawarich',
@@ -534,7 +536,8 @@ const settings: TranslationStrings = {
   'settings.apiKeys.modal.creating': '作成中...',
   'settings.apiKeys.modal.create': '作成',
   'settings.apiKeys.modal.createdTitle': 'API キーを作成しました',
-  'settings.apiKeys.modal.createdWarning': '今すぐキーをコピーしてください。表示は一度きりで、あとから取得はできません。',
+  'settings.apiKeys.modal.createdWarning':
+    '今すぐキーをコピーしてください。表示は一度きりで、あとから取得はできません。',
   'settings.apiKeys.modal.done': '完了',
 };
 

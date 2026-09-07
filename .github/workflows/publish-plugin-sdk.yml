@@ -21,13 +21,16 @@ jobs:
         working-directory: plugin-sdk
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           # 22 matches the TREK server runtime and has node:sqlite, which the
           # dev-server tests exercise.
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
+      # npm publish (not pnpm publish) — same auth from the registry-url
+      # setup, and it runs the package's prepublishOnly hook unchanged.
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
