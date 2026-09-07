@@ -3,6 +3,22 @@
 本文件是高德接入所有工作包共用的仓库约束与禁令。各包 brief 只写该包特有的部分，这里的内容
 默认适用。
 
+## 本仓库的定位（先看这条，它会改变你对其它规则的理解）
+
+**本仓库是一个独立维护的目标仓库，不向上游 TREK 提交任何内容。** 它 fork 自
+`github.com/TREK`，但没有配置 upstream 远端，也不打算回流 —— 目标是按自身需求迭代出一个
+中国大陆本地化的版本。
+
+因此，根目录 `CLAUDE.md` 的「Conventions (from CONTRIBUTING.md)」一节
+（Discord 预先讨论、必须关联 issue、PR 模板、目标分支、不得有破坏性变更）描述的是**上游项目
+接收外部投稿的流程，对本仓库不适用**。不要因为读到那一节就去找 issue 编号或改投稿分支。
+
+**仍然适用、且本仓库自己也要守的**，是那一节里关于工程质量的部分：测试必备、
+`src/nest/**` 覆盖率 ≥ 80%、一次提交只做一件事、不做无关的重排和重构。这些不是因为上游要求，
+而是本仓库自己的标准。
+
+集成分支是 `dev`。工作分支从 `dev` 切出，完成后合回 `dev`。
+
 ## 高德实现必须依据官方 skill
 
 本仓库已安装高德官方 skill：`.claude/skills/amap-jsapi-skill/`（随仓库提交，`.gitignore`
@@ -38,9 +54,7 @@ skill 覆盖地图生命周期、安全配置、视图控制、覆盖物、图�
 - **`server/src/nest/**` 覆盖率门槛 ≥ 80%**，由 vitest 强制。新增服务端代码需要配套测试。
 - **i18n 齐全性**：任何新增的界面文案必须加进 `shared/src/i18n/` 下的**每一个**语言目录，
   否则 `i18n:parity:strict` 会让 CI 失败。`en/` 是基准。
-- **PR 目标分支是 `dev`，不是 `main`。**
-- **commit 用 conventional commits**（`feat(maps): ...` / `fix(maps): ...`）。本仓库 CONTRIBUTING
-  明确要求**不添加** `Co-Authored-By` 等工具署名 trailer。
+- **commit 用 conventional commits**（`feat(maps): ...` / `fix(maps): ...`）。
 - 客户端还有三条专项检查，改到相关区域时必须通过：
   `pnpm run lint:pages`（Page 模式）、`pnpm run check:gl-split`（引擎分包）、
   `pnpm run theme:lint`（外观令牌）。

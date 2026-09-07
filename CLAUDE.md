@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What TREK is
 
+**This repository is an independently maintained fork (`iceafish/TREK`), not the upstream
+project** — see [Repository status](#repository-status) before following any contribution
+process you find in this repo.
+
 A self-hosted, real-time collaborative travel planner. pnpm-workspaces monorepo (pinned via `packageManager: pnpm@10.34.5` in the root package.json) with three workspaces:
 
 - **`shared/`** (`@trek/shared`) — Zod schemas that are the **single source of truth** for API contracts, consumed by both server and client. Also owns all i18n locale files. Must be built before server/client typecheck or run.
@@ -99,15 +103,45 @@ These principles come out of a verified 2026 full-repo audit and shape how all n
 - **Use the runtime's native idioms.** Prefer React 19 features (`useOptimistic`, Actions, `use()`/Suspense) and Nest subsystems (DI providers, pipes, guards, `@nestjs/schedule`) over hand-rolled equivalents of the same machinery.
 - **Fail closed, gates stay on.** Security switches default to safe; misconfiguration must refuse, not silently degrade. Never lower a quality gate (strict TS, lint severity, coverage, parity checks) to land a change — no new `any`, no new `eslint-disable`, no downgrading rules to `warn`.
 
-## Conventions (from CONTRIBUTING.md)
+## Repository status
 
-- **Target the `dev` branch** for PRs, not `main` (exception: `wiki/`-only changes).
-- **Discuss first**: outside contributions must be pitched in the `#github-pr` Discord channel before any code is written — undiscussed PRs are closed.
-- **PRs follow `.github/PULL_REQUEST_TEMPLATE.md`** and require a linked issue (`Closes #N`) for bug fixes or an approved feature-request discussion for features — no issue/discussion, no PR.
-- **Conventional commits** (`fix(maps): ...`, `feat(budget): ...`). **Do not add Co-Authored-By or other tool-attribution trailers** to commit messages.
-- One focused change per PR; no breaking changes; no unrelated reformatting/refactors. Tests required — the project holds **80%+ coverage** (the `src/nest/**` vitest coverage gate enforces ≥80%).
-- When migrating/adding a route, **parity is law**: same URL, method, query/body, HTTP status, `Set-Cookie`, and JSON body — including bespoke error strings (e.g. reproduce `{ error: 'Admin only' }` exactly rather than relying on a generic guard message). Note Nest defaults POST to 201; add `@HttpCode(200)` where the legacy contract returned 200. Declare static sub-routes (`/reorder`, `/in-app/all`) **before** `:id` param routes.
+**This is an independently maintained fork, and it does not contribute back.** There is no
+`upstream` remote and no plan to open pull requests against the original project. The goal is to
+iterate on this codebase for its own needs — currently a China-mainland localization
+(`docs/amap/` holds the in-progress AMap integration).
+
+`CONTRIBUTING.md` and `.github/PULL_REQUEST_TEMPLATE.md` are **inherited from upstream and
+describe that project's process for accepting outside contributions**. They do not govern work
+here: no Discord pitch, no linked issue, no PR-template requirement, no upstream branch policy.
+Do not go looking for an issue number to reference. The engineering standards below are this
+repository's own.
+
+## Conventions
+
+- **`dev` is the integration branch.** Feature branches come off `dev` and merge back into
+  `dev`; `main` tracks released state.
+- **Conventional commits** (`fix(maps): ...`, `feat(budget): ...`). Do not add `Co-Authored-By`
+  or other tool-attribution trailers.
+- **One focused change per commit**; no unrelated reformatting or drive-by refactors. **Never
+  `git add -A`** — the working tree may hold unrelated in-progress work, and sweeping it into an
+  unrelated commit makes the history impossible to review or roll back. Stage only the files the
+  change actually needs.
+- **Tests are required.** The `src/nest/**` vitest coverage gate enforces **≥80%**; hold the gate
+  rather than lowering it.
+- **Breaking changes are a product decision, not a prohibition.** As an independent fork this
+  repo may diverge from upstream behaviour on purpose — the AMap work does exactly that. What is
+  forbidden is breaking something *by accident*: state the intent in the commit message and cover
+  it with tests.
+- When refactoring an existing route, **parity is law**: same URL, method, query/body, HTTP
+  status, `Set-Cookie`, and JSON body — including bespoke error strings (e.g. reproduce
+  `{ error: 'Admin only' }` exactly rather than relying on a generic guard message). Note Nest
+  defaults POST to 201; add `@HttpCode(200)` where the legacy contract returned 200. Declare
+  static sub-routes (`/reorder`, `/in-app/all`) **before** `:id` param routes. This governs
+  refactors; a *deliberate* contract change is the bullet above.
 
 ## Reference docs
 
 - `MCP.md` — MCP server/tools/scopes. `README.md` — deployment, env vars, reverse-proxy setup. `server/src/nest/README.md` — per-module blueprint and test layout (unit / parity / e2e).
+- `docs/amap/` — the AMap (高德地图) integration: work packages, shared constraints, and the
+  verified coordinate baseline. Start at `docs/amap/README.md`; every package brief requires
+  `docs/amap/00-constraints.md` first.
