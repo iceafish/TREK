@@ -4,6 +4,36 @@ import gitignore from 'eslint-config-flat-gitignore';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
 
+// --- GCJ-02 boundary gate ------------------------------------------------
+// The WGS84↔GCJ-02 converters exported by @trek/shared (src/geo/gcj02.ts)
+// may only enter the server through the AMap provider boundary
+// (src/nest/maps/providers/amap/**). Controllers, services, DTOs and the
+// WS/REST wire are WGS84; a GCJ-02 value that slips past this rule doesn't
+// throw — it quietly biases weather queries, tz-lookup and Atlas
+// point-in-polygon. See docs/amap/00-constraints.md (坐标铁律).
+const gcj02PathBan = {
+  name: '@trek/shared',
+  importNames: ['wgs2gcj', 'gcj2wgs', 'outOfChina'],
+  message:
+    'GCJ-02 is render-boundary-only: wgs2gcj/gcj2wgs/outOfChina may be imported only from src/nest/maps/providers/amap/**. Everything else is WGS84 — see docs/amap/00-constraints.md.',
+};
+const gcj02DeepBan = {
+  group: ['**/geo/gcj02', '**/geo/gcj02.*'],
+  message:
+    'GCJ-02 is render-boundary-only: shared/src/geo/gcj02 may be imported only from src/nest/maps/providers/amap/**. Everything else is WGS84 — see docs/amap/00-constraints.md.',
+};
+
+// The services-layer ban and the GCJ-02 gate both configure
+// no-restricted-imports, and flat config has no per-rule merge — the last
+// block matching a file wins. The GCJ-02 block therefore re-states this
+// shared object so the services wall keeps covering every file it covers
+// today (the AMap provider dir stays covered by the original block below).
+const servicesLayerBan = {
+  group: ['**/services/*', '**/services/**/*'],
+  message:
+    'src/services/ is deleted. New backend code goes to src/nest/<domain>/ (service + controller + module, registered in app.module.ts). See src/nest/README.md.',
+};
+
 export default tseslint.config(
   gitignore({ strict: false }),
   {
@@ -95,13 +125,26 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          patterns: [
-            {
-              group: ['**/services/*', '**/services/**/*'],
-              message:
-                'src/services/ is deleted. New backend code goes to src/nest/<domain>/ (service + controller + module, registered in app.module.ts). See src/nest/README.md.',
-            },
-          ],
+          patterns: [servicesLayerBan],
+        },
+      ],
+    },
+  },
+  {
+    // GCJ-02 boundary gate (rationale on gcj02PathBan above). Exempts only
+    // the AMap provider directory; re-includes the services-layer ban for
+    // every other file, because the two share no-restricted-imports and flat
+    // config is last-wins per rule. Must stay BEFORE the rpc-kit block so
+    // the rpc-kit extraction deny-list — which already bans '@trek/**'
+    // wholesale — keeps winning inside src/nest/plugins/host/rpc-kit/.
+    files: ['src/**/*.ts', 'tests/**/*.ts'],
+    ignores: ['src/nest/maps/providers/amap/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [gcj02PathBan],
+          patterns: [servicesLayerBan, gcj02DeepBan],
         },
       ],
     },
