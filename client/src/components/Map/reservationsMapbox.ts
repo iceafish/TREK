@@ -21,11 +21,12 @@ export const RESERVATION_LINE_LAYER_ID = 'trek-reservations-lines'
 /** Sits under the coloured transit lines; named here so teardown can find it. */
 export const TRANSIT_CASING_LAYER_ID = `${RESERVATION_LINE_LAYER_ID}-transit-casing`
 
-type TransportType = 'flight' | 'train' | 'cruise' | 'car' | 'bus' | 'taxi' | 'bicycle' | 'ferry' | 'transit' | 'transport_other'
-const TRANSPORT_TYPES: TransportType[] = ['flight', 'train', 'cruise', 'car', 'bus', 'taxi', 'bicycle', 'ferry', 'transit', 'transport_other']
-const TRANSPORT_COLOR = '#3b82f6'
+export type TransportType = 'flight' | 'train' | 'cruise' | 'car' | 'bus' | 'taxi' | 'bicycle' | 'ferry' | 'transit' | 'transport_other'
+export const TRANSPORT_TYPES: TransportType[] = ['flight', 'train', 'cruise', 'car', 'bus', 'taxi', 'bicycle', 'ferry', 'transit', 'transport_other']
+/** Exported for the AMap overlay (engines/amap/reservations.ts) — same palette. */
+export const TRANSPORT_COLOR = '#3b82f6'
 
-const TYPE_META: Record<TransportType, { icon: typeof Plane; geodesic: boolean }> = {
+export const TYPE_META: Record<TransportType, { icon: typeof Plane; geodesic: boolean }> = {
   flight: { icon: Plane, geodesic: true },
   train: { icon: Train, geodesic: false },
   cruise: { icon: Ship, geodesic: true },
@@ -96,7 +97,10 @@ function computeDuration(from: ReservationEndpoint, to: ReservationEndpoint, fal
 }
 
 // ── item building ─────────────────────────────────────────────────────────
-interface TransportItem {
+// buildItems / computeDuration are the ONE implementation of the booking →
+// drawable-item logic; the Leaflet overlay, this GL manager and the AMap
+// overlay (engines/amap/reservations.ts) all consume it.
+export interface TransportItem {
   res: Reservation
   from: ReservationEndpoint
   to: ReservationEndpoint
@@ -110,7 +114,7 @@ interface TransportItem {
   subLabel: string | null
 }
 
-function buildItems(reservations: Reservation[]): TransportItem[] {
+export function buildItems(reservations: Reservation[]): TransportItem[] {
   const out: TransportItem[] = []
   for (const r of reservations) {
     if (!TRANSPORT_TYPES.includes(r.type as TransportType)) continue

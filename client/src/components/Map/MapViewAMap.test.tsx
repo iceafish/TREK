@@ -1,10 +1,12 @@
 import React, { Suspense } from 'react'
+import { http, HttpResponse } from 'msw'
 import type { ComponentProps } from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import { resetAllStores } from '../../../tests/helpers/store'
 import { buildPlace } from '../../../tests/helpers/factories'
 import { useSettingsStore } from '../../store/settingsStore'
+import { server } from '../../../tests/helpers/msw/server'
 
 /**
  * MapViewAMap — the engine is mocked at the loader boundary; everything inside
@@ -41,6 +43,8 @@ const fakeMap = vi.hoisted(() => {
     fitCalls: [] as Array<{ bounds: unknown; avoid: number[]; maxZoom: number }>,
     zoomAndCenterCalls: [] as Array<{ zoom: number; center: unknown; immediately?: boolean }>,
     containerToLngLatCalls: [] as Array<[number, number]>,
+    added: [] as Array<{ kind: string; opts?: Record<string, unknown>; path?: unknown }>,
+    removed: [] as Array<{ kind: string }>,
     destroyed: false,
     zoom: 10,
   }
@@ -78,12 +82,19 @@ const fakeMap = vi.hoisted(() => {
       state.fitCalls.push({ bounds, avoid, maxZoom })
       return [12.4, { lng: 116.397, lat: 39.91 }]
     }),
-    lngLatToContainer: vi.fn(() => ({ getX: () => 300, getY: () => 200 })),
+    // Positional: ~2.2px per 0.001° so the declutter maths sees real distances.
+    lngLatToContainer: vi.fn((lnglat: { lng?: number; lat?: number } | [number, number]) => {
+      const lng = Array.isArray(lnglat) ? lnglat[0] : lnglat.lng
+      const lat = Array.isArray(lnglat) ? lnglat[1] : lnglat.lat
+      return { getX: () => (lng + 180) * 2200, getY: () => (90 - lat) * 2200 }
+    }),
     containerToLngLat: vi.fn((pixel: [number, number]) => {
       state.containerToLngLatCalls.push(pixel)
       return { lng: 116.39, lat: 39.908 }
     }),
     getContainer: vi.fn(() => document.createElement('div')),
+    add: vi.fn((features: unknown) => { state.added.push(...(Array.isArray(features) ? features : [features])) }),
+    remove: vi.fn((features: unknown) => { state.removed.push(...(Array.isArray(features) ? features : [features])) }),
     destroy: vi.fn(() => { state.destroyed = true }),
     reset() {
       state.handlers = {}
@@ -91,6 +102,8 @@ const fakeMap = vi.hoisted(() => {
       state.fitCalls = []
       state.zoomAndCenterCalls = []
       state.containerToLngLatCalls = []
+      state.added = []
+      state.removed = []
       state.destroyed = false
       state.zoom = 10
       for (const fn of [map.on, map.off, map.getBounds, map.getZoom, map.setZoomAndCenter, map.getFitZoomAndCenterByBounds, map.lngLatToContainer, map.containerToLngLat, map.getContainer, map.destroy]) fn.mockClear()
@@ -102,6 +115,16 @@ const fakeMap = vi.hoisted(() => {
 const fakeAMap = vi.hoisted(() => {
   const instances: ClusterInstance[] = []
   const boundsCtors: Array<{ sw: unknown; ne: unknown }> = []
+  const infoWindows: Array<{
+    content: unknown
+    position: unknown
+    opened: number
+    closed: number
+    setContent: ReturnType<typeof vi.fn>
+    open: ReturnType<typeof vi.fn>
+    close: ReturnType<typeof vi.fn>
+  }> = []
+  const domMarkers: Array<{ opts: { content?: HTMLElement; position?: unknown; zIndex?: number }; position: unknown; content: HTMLElement | null }> = []
   const AMap = {
     Map: vi.fn(function () {
       return fakeMap.map
@@ -110,6 +133,43 @@ const fakeAMap = vi.hoisted(() => {
       const b = { sw, ne }
       boundsCtors.push(b)
       return b
+    }),
+    Pixel: vi.fn(function (x: number, y: number) {
+      return { x, y }
+    }),
+    Marker: vi.fn(function (opts: { content?: HTMLElement; position?: unknown; zIndex?: number }) {
+      const marker = {
+        opts,
+        position: opts?.position ?? null,
+        content: opts?.content ?? null,
+      }
+      domMarkers.push(marker)
+      return marker
+    }),
+    InfoWindow: vi.fn(function () {
+      const win = {
+        content: null as unknown,
+        position: null as unknown,
+        opened: 0,
+        closed: 0,
+        setContent: vi.fn((c: unknown) => { win.content = c; return win }),
+        open: vi.fn((_map: unknown, pos: unknown) => { win.position = pos; win.opened += 1; return win }),
+        close: vi.fn(() => { win.closed += 1; return win }),
+      }
+      infoWindows.push(win)
+      return win
+    }),
+    Polyline: vi.fn(function (opts: { path?: unknown; zIndex?: number; strokeColor?: string; strokeOpacity?: number }) {
+      const line = { kind: 'Polyline', opts, path: opts?.path, on: vi.fn() }
+      return line
+    }),
+    Polygon: vi.fn(function (opts: Record<string, unknown>) {
+      const poly = { kind: 'Polygon', opts, on: vi.fn() }
+      return poly
+    }),
+    Circle: vi.fn(function (opts: Record<string, unknown>) {
+      const circle = { kind: 'Circle', opts, on: vi.fn() }
+      return circle
     }),
     // The component reaches MarkerCluster through a structural cast (the
     // shipped typings carry the v1.4 class), so the fake is shaped accordingly.
@@ -128,7 +188,7 @@ const fakeAMap = vi.hoisted(() => {
       return instance
     }),
   }
-  return { AMap, instances, boundsCtors }
+  return { AMap, instances, boundsCtors, infoWindows, domMarkers }
 })
 
 vi.mock('./engines/amap/loader', () => ({
@@ -216,6 +276,8 @@ beforeEach(() => {
   fakeMap.map.reset()
   fakeAMap.instances.length = 0
   fakeAMap.boundsCtors.length = 0
+  fakeAMap.infoWindows.length = 0
+  fakeAMap.domMarkers.length = 0
   vi.mocked(loadAMap).mockClear().mockReturnValue(Promise.resolve(fakeAMap.AMap as unknown as AMapNamespace))
   vi.mocked(fakeAMap.AMap.Map).mockClear()
   vi.mocked(fakeAMap.AMap.Bounds).mockClear()
@@ -536,6 +598,245 @@ describe('MapViewAMap — lifecycle', () => {
       resolve(fakeAMap.AMap as unknown as AMapNamespace)
     })
     await waitFor(() => expect(fakeAMap.instances.length).toBe(1))
+  })
+})
+
+// ── 02b · overlays ───────────────────────────────────────────────────────────
+
+const TIANANMEN_GCJ_LNG = 116.3974413
+const TIANAMEN_GCJ_LAT = 39.9101013
+
+function vectorShapes(): Array<{ kind: string; opts: Record<string, unknown>; path?: unknown; on: ReturnType<typeof vi.fn> }> {
+  return fakeMap.state.added.filter(f => f && typeof f === 'object' && 'kind' in f) as never
+}
+
+describe('MapViewAMap — day route + GPX tracks', () => {
+  it('draws the day route as casing + core, both in GCJ-02', async () => {
+    const route = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
+    await renderAMap({ places: [placeAt({ id: 1 })], route })
+    await settle()
+
+    const lines = vectorShapes().filter(l => l.kind === 'Polyline')
+    expect(lines.length).toBe(2)
+    expect(lines[0].opts.strokeColor).toBe('#0a5cc2')
+    expect(lines[1].opts.strokeColor).toBe('#0a84ff')
+    // Every vertex must be the converted (GCJ-02) coordinate.
+    const path = lines[0].path as Array<[number, number]>
+    expect(path[0][1]).toBeCloseTo(TIANAMEN_GCJ_LAT, 6)
+    expect(path[0][0]).toBeCloseTo(TIANANMEN_GCJ_LNG, 6)
+    // …and must NOT be the stored WGS84 value.
+    expect(path[0][0]).not.toBeCloseTo(116.3912, 4)
+  })
+
+  it('draws a GPX track in its manual colour with casing, and selects the place on track click', async () => {
+    const onMarkerClick = vi.fn()
+    const gpxPlace = placeAt({
+      id: 9,
+      route_geometry: JSON.stringify([[39.91, 116.38], [39.915, 116.39], [39.92, 116.40]]),
+      route_color: '#ff8800',
+    })
+    const { container } = await renderAMap({ places: [gpxPlace], onMarkerClick })
+    await settle()
+
+    const lines = vectorShapes().filter(l => l.kind === 'Polyline')
+    // casing + core + hit line
+    expect(lines.length).toBe(3)
+    expect(lines[0].opts.strokeColor).toBe('#ffffff')
+    expect(lines[0].opts.strokeOpacity).toBe(0.7) // manual colour → casing on
+    expect(lines[1].opts.strokeColor).toBe('#ff8800')
+    expect(lines[2].opts.strokeOpacity).toBe(0.01) // invisible fat hit line
+
+    const hit = lines[2]
+    const clickHandler = (hit.on as ReturnType<typeof vi.fn>).mock.calls.find(c => c[0] === 'click')?.[1] as () => void
+    expect(clickHandler).toBeTypeOf('function')
+    act(() => clickHandler())
+    expect(onMarkerClick).toHaveBeenCalledWith(9)
+    void container
+  })
+
+  it('plugin route vias render as small dots and open the dwell popup on click', async () => {
+    const via = { lat: 39.912, lng: 116.395, label: '充电 25 分钟', tone: 'warn' as const, dwellSeconds: 1500 }
+    await renderAMap({ places: [placeAt({ id: 1 })], routeVias: [via] })
+    await settle()
+
+    expect(fakeAMap.domMarkers.length).toBe(1)
+    expect(fakeAMap.infoWindows.length).toBeGreaterThan(0)
+    const win = fakeAMap.infoWindows[0]
+
+    const dotEl = fakeAMap.domMarkers[0].content as HTMLElement
+    act(() => dotEl.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(win.setContent).toHaveBeenCalledTimes(1)
+    expect((win.content as HTMLElement).textContent).toContain('充电 25 分钟')
+    expect((win.content as HTMLElement).textContent).toContain('25 min')
+    expect(win.open).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('MapViewAMap — reservations overlay', () => {
+  function booking(overrides: Record<string, unknown> = {}) {
+    return {
+      id: 31,
+      type: 'flight',
+      status: 'confirmed',
+      day_id: null,
+      end_day_id: null,
+      reservation_time: null,
+      reservation_end_time: null,
+      endpoints: [
+        { role: 'from', sequence: 0, lat: 39.9087, lng: 116.3912, name: 'Beijing Capital', code: 'PEK' },
+        { role: 'to', sequence: 1, lat: 31.2393, lng: 121.4905, name: 'Shanghai Hongqiao', code: 'SHA' },
+      ],
+      ...overrides,
+    } as never
+  }
+
+  it('draws a sampled great-circle arc (not a straight 2-point line) in GCJ-02', async () => {
+    // Flights draw only when their per-booking connection toggle is on.
+    await renderAMap({ places: [placeAt({ id: 1 })], reservations: [booking()], visibleConnectionIds: [31] })
+    await settle()
+
+    const lines = vectorShapes().filter(l => l.kind === 'Polyline')
+    expect(lines.length).toBeGreaterThan(0)
+    const arc = lines[0].path as Array<[number, number]>
+    // The sampler produces a dense great-circle, not a from/to straight.
+    expect(arc.length).toBeGreaterThan(16)
+    // Endpoint vertices land on the converted GCJ-02 positions.
+    expect(arc[0][0]).toBeCloseTo(TIANANMEN_GCJ_LNG, 6)
+    expect(arc[0][1]).toBeCloseTo(TIANAMEN_GCJ_LAT, 6)
+  })
+
+  it('does not draw a connection whose endpoints sit on top of each other (declutter)', async () => {
+    const sameSpot = booking({
+      id: 32,
+      endpoints: [
+        { role: 'from', sequence: 0, lat: 39.9087, lng: 116.3912, name: 'A' },
+        { role: 'to', sequence: 1, lat: 39.9087, lng: 116.3912, name: 'B' },
+      ],
+    })
+    await renderAMap({ places: [placeAt({ id: 1 })], reservations: [sameSpot], visibleConnectionIds: [32] })
+    await settle()
+
+    const lines = vectorShapes().filter(l => l.kind === 'Polyline')
+    expect(lines.length).toBe(0)
+  })
+
+  it('endpoint pills open… nothing by themselves, and report the reservation id on click', async () => {
+    const onReservationClick = vi.fn()
+    await renderAMap({ places: [placeAt({ id: 1 })], reservations: [booking()], visibleConnectionIds: [31], onReservationClick })
+    await settle()
+
+    // Two endpoint pills (from + to).
+    expect(fakeAMap.domMarkers.length).toBe(2)
+    const pill = fakeAMap.domMarkers[0].content as HTMLElement
+    act(() => pill.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(onReservationClick).toHaveBeenCalledWith(31)
+  })
+
+  it('keeps an antimeridian-crossing arc unbroken: consecutive longitude steps stay < 180°', async () => {
+    // Tokyo → San Francisco crosses the date line. The unwrapped arc must step
+    // smoothly past ±180 (no ±360 jump, which would draw across the whole map);
+    // both endpoints sit outside the China box, so the datum transform is
+    // identity there and the unwrap survives the coordinate boundary.
+    const tokyoToSf = booking({
+      id: 33,
+      endpoints: [
+        { role: 'from', sequence: 0, lat: 35.5494, lng: 139.7798, name: 'HND', code: 'HND' },
+        { role: 'to', sequence: 1, lat: 37.6213, lng: -122.379, name: 'SFO', code: 'SFO' },
+      ],
+    })
+    await renderAMap({ places: [placeAt({ id: 1 })], reservations: [tokyoToSf], visibleConnectionIds: [33] })
+    await settle()
+
+    const lines = vectorShapes().filter(l => l.kind === 'Polyline')
+    expect(lines.length).toBeGreaterThan(0)
+    const arc = lines[0].path as Array<[number, number]>
+    expect(arc.length).toBeGreaterThan(16)
+    let maxStep = 0
+    for (let i = 1; i < arc.length; i++) maxStep = Math.max(maxStep, Math.abs(arc[i][0] - arc[i - 1][0]))
+    expect(maxStep).toBeLessThan(5)
+    // …and the arc actually crosses the date line (unwrapped lngs beyond ±180).
+    // AMap paths are [lng, lat] — longitude is index 0.
+    expect(arc.some(([lng]) => lng > 180 || lng < -180)).toBe(true)
+  })
+})
+
+describe('MapViewAMap — POI explore pins', () => {
+  const poi = {
+    osm_id: '1', name: '面馆 <script>alert(1)</script>', lat: 39.909, lng: 116.392,
+    category: 'restaurant', poi_type: 'restaurant', address: '北京', website: null,
+    phone: null, opening_hours: null, cuisine: null, source: 'openstreetmap' as const,
+  }
+
+  it('renders category-coloured pins; hover opens a popup with the escaped name; click reports the poi', async () => {
+    const onPoiClick = vi.fn()
+    await renderAMap({ places: [placeAt({ id: 1 })], pois: [poi], onPoiClick })
+    await settle()
+
+    expect(fakeAMap.domMarkers.length).toBe(1)
+    expect(fakeAMap.infoWindows.length).toBeGreaterThan(0)
+    const win = fakeAMap.infoWindows[0]
+
+    const pin = fakeAMap.domMarkers[0].content as HTMLElement
+    act(() => pin.dispatchEvent(new MouseEvent('mouseenter', {})))
+    expect(win.setContent).toHaveBeenCalledTimes(1)
+    const html = (win.content as HTMLElement).innerHTML
+    expect(html).toContain('面馆')
+    expect(html).not.toContain('<script>')
+
+    act(() => pin.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(onPoiClick).toHaveBeenCalledWith(expect.objectContaining({ osm_id: '1' }))
+  })
+})
+
+describe('MapViewAMap — plugin map contributions', () => {
+  const pluginLayer = {
+    pluginId: 'p1',
+    id: 'layer-1',
+    features: [
+      { type: 'polyline', points: [[39.91, 116.38], [39.92, 116.39]], tone: 'success', width: 4, dash: 'solid', opacity: 0.8, fill: false, label: '路线走廊' },
+      { type: 'polygon', points: [[39.90, 116.37], [39.91, 116.37], [39.91, 116.38]], tone: 'danger', width: 2, dash: 'dash', opacity: 0.9, fill: true, label: '区域' },
+    ],
+  }
+
+  it('draws plugin shapes BELOW the day route (z 3 vs 11/12) and converts every vertex', async () => {
+    server.use(
+      http.get('/api/map-layers/5', () => HttpResponse.json({ layers: [pluginLayer] })),
+      http.get('/api/map-markers/5', () => HttpResponse.json({ markers: [] })),
+    )
+    const route = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
+    await renderAMap({
+      places: [placeAt({ id: 1 })], route,
+      tripId: 5,
+    })
+    await settle()
+    await waitFor(() => expect(vectorShapes().filter(l => l.opts?.zIndex === 3).length).toBe(2))
+
+    const shapes = vectorShapes()
+    const pluginShapes = shapes.filter(l => l.opts?.zIndex === 3)
+    expect(pluginShapes.length).toBe(2)
+    // One route segment → one casing (z11) + one core (z12).
+    const routeLines = shapes.filter(l => l.opts?.zIndex === 11)
+    expect(routeLines.length).toBe(1)
+    // WGS84 [lat,lng] (39.91, 116.38) → GCJ-02: lng ≈ 116.386, NOT the raw value.
+    const pluginPath = pluginShapes[0].path as Array<[number, number]>
+    expect(pluginPath[0][0]).not.toBeCloseTo(116.38, 4)
+  })
+
+  it('plugin markers render as tone dots with a text-only popup on click', async () => {
+    const mk = { pluginId: 'p1', id: 'm1', lat: 39.91, lng: 116.39, label: '补给点', popupText: '免费开水', tone: 'success' }
+    server.use(
+      http.get('/api/map-markers/5', () => HttpResponse.json({ markers: [mk] })),
+      http.get('/api/map-layers/5', () => HttpResponse.json({ layers: [] })),
+    )
+    await renderAMap({ places: [placeAt({ id: 1 })], tripId: 5 })
+    await settle()
+    await waitFor(() => expect(fakeAMap.domMarkers.length).toBe(1))
+
+    const win = fakeAMap.infoWindows[0]
+    const dotEl = fakeAMap.domMarkers[0].content as HTMLElement
+    act(() => dotEl.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect((win.content as HTMLElement).textContent).toContain('补给点')
+    expect((win.content as HTMLElement).textContent).toContain('免费开水')
   })
 })
 

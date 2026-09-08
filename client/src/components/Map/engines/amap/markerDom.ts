@@ -13,6 +13,7 @@
 import { createElement } from 'react'
 import { renderIconMarkup } from '../../../../utils/iconMarkup'
 import { CATEGORY_ICON_MAP } from '../../../shared/categoryIcons'
+import { POI_CATEGORY_BY_KEY } from '../../poiCategories'
 import { safeHexColor } from '../../../../utils/safeColor'
 import type { Place } from '../../../../types'
 
@@ -99,6 +100,110 @@ export function buildPlaceMarkerElement(
   }
 
   return wrap
+}
+
+/** Tone palette shared with the plugin contract (MapPluginMarkers/MapViewGL). */
+const TONE_COLORS: Record<string, string> = {
+  default: '#4F46E5',
+  success: '#10b981',
+  warn: '#f59e0b',
+  danger: '#ef4444',
+}
+
+/**
+ * Small day-route stop a plugin route attaches (charging stop, rest area).
+ * A white core with a tone ring, deliberately smaller than the planned-place
+ * markers so it never reads as a stop of the day itself.
+ */
+export function buildViaDotElement(tone: string): HTMLDivElement {
+  const color = TONE_COLORS[tone] ?? TONE_COLORS.default
+  const el = document.createElement('div')
+  el.className = 'trek-amap-marker'
+  el.style.cssText = 'width:13px;height:13px;cursor:pointer;'
+  const dot = document.createElement('span')
+  dot.style.cssText = [
+    'display:block;width:13px;height:13px;border-radius:50%',
+    'background:#fff', `border:3.5px solid ${color}`,
+    'box-shadow:0 1px 4px rgba(0,0,0,0.35);box-sizing:border-box',
+  ].join(';')
+  el.appendChild(dot)
+  return el
+}
+
+/**
+ * Explore-POI pin: the pill's category colour + icon at marker size, so the
+ * map and the pill agree visually (poiCategories.color is both).
+ */
+export function buildPoiPinElement(category: string): HTMLDivElement {
+  const cat = POI_CATEGORY_BY_KEY[category]
+  const color = cat?.color || '#6b7280'
+  const svg = cat ? renderIconMarkup(createElement(cat.Icon, { size: 13, color: 'white', strokeWidth: 2.5 })) : ''
+  const el = document.createElement('div')
+  el.className = 'trek-amap-marker'
+  el.style.cssText = 'width:26px;height:26px;cursor:pointer;'
+  const pin = document.createElement('div')
+  pin.style.cssText = [
+    'width:26px;height:26px;border-radius:50%', `background:${color}`,
+    'border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,0.3)',
+    'display:flex;align-items:center;justify-content:center;box-sizing:border-box',
+  ].join(';')
+  pin.innerHTML = svg // TREK's own SVG — never user content
+  el.appendChild(pin)
+  return el
+}
+
+/** Plugin contribution marker: the small tone dot (mapMarkerProvider hook). */
+export function buildPluginDotElement(tone: string): HTMLDivElement {
+  const color = TONE_COLORS[tone] ?? TONE_COLORS.default
+  const el = document.createElement('div')
+  el.className = 'trek-amap-marker'
+  el.style.cssText = 'width:16px;height:16px;cursor:pointer;'
+  const dot = document.createElement('span')
+  dot.style.cssText = [
+    'display:block;width:16px;height:16px;border-radius:50%',
+    `background:${color};border:2px solid #fff`,
+    'box-shadow:0 1px 4px rgba(0,0,0,0.4);box-sizing:border-box',
+  ].join(';')
+  el.appendChild(dot)
+  return el
+}
+
+/** Popup body for a plugin marker — textContent only, host-sanitized values. */
+export function buildPluginPopupElement(
+  mk: { label?: string; popupText?: string; url?: string },
+): HTMLDivElement {
+  const box = document.createElement('div')
+  box.style.cssText = 'min-width:120px;font-size:13px;'
+  if (mk.label) {
+    const t = document.createElement('div')
+    t.style.cssText = `font-weight:600;${mk.popupText ? 'margin-bottom:4px;' : ''}`
+    t.textContent = mk.label
+    box.appendChild(t)
+  }
+  if (mk.popupText) {
+    const p = document.createElement('div')
+    p.style.color = '#4b5563'
+    p.textContent = mk.popupText
+    box.appendChild(p)
+  }
+  if (mk.url) {
+    const a = document.createElement('a')
+    a.href = mk.url // http/https/mailto only — enforced server-side
+    a.target = '_blank'
+    a.rel = 'noreferrer noopener'
+    a.style.cssText = `display:inline-block;margin-top:6px;color:${TONE_COLORS.default};`
+    a.textContent = mk.url
+    box.appendChild(a)
+  }
+  return box
+}
+
+/** One-line text card for a via dot's label/dwell popup. */
+export function buildTextPopupElement(text: string): HTMLDivElement {
+  const box = document.createElement('div')
+  box.style.cssText = 'font-family:var(--font-system);font-size:12px;font-weight:600;color:#111827;white-space:nowrap;'
+  box.textContent = text
+  return box
 }
 
 /** GL-styled cluster bubble: dark disc, white ring, white count. */
