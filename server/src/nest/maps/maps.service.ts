@@ -8,6 +8,8 @@ import type {
   MapsResolveUrlResult,
 } from '@trek/shared';
 import { readEnv, getAppUrl } from '../../app-config';
+import { amapProvider } from './providers/amap/amap.provider';
+import { resolveAmapSecret } from '../settings/instance-api-keys';
 import { safeFetchFollow, SsrfBlockedError } from '../../utils/ssrfGuard';
 import { discardBody, exceedsDeclaredLength, readCappedText } from '../../utils/cappedFetch';
 import { resolveApiKey, type ApiKeySource } from '../settings/instance-api-keys';
@@ -424,7 +426,8 @@ interface OverpassPoiElement {
 
 interface PoiSearchResult {
   pois: OverpassPoi[];
-  source: 'openstreetmap';
+  // 'amap' when the AMap provider is configured (docs/amap/03).
+  source: 'openstreetmap' | 'amap';
   truncated: boolean;
   // True when the requested viewport was too large and got shrunk to a centred
   // window before querying — the results then cover the middle of the view only.
@@ -526,6 +529,8 @@ type LocationBias = { low: { lat: number; lng: number }; high: { lat: number; ln
  */
 @Injectable()
 export class MapsService {
+  private readonly amap = amapProvider;
+
   constructor(
     private readonly database: DatabaseService,
     private readonly photoCache: PlacePhotoCacheService,
@@ -611,6 +616,16 @@ export class MapsService {
 
   getMapsKey(userId: number): string | null {
     return this.resolveMapsKey(userId).key;
+  }
+
+  /**
+   * The AMap Web Service key, or null when the provider is not configured.
+   * Same chain as resolveMapsKey minus the user tier — the AMap keys have no
+   * per-user column (see resolveAmapSecret). When non-null, the provider
+   * branches below route to AMap instead of Google/OSM.
+   */
+  private resolveAmapKey(): string | null {
+    return resolveAmapSecret(this.database, 'amap_web_service_key', readEnv().maps.amapWebServiceKey).key;
   }
 
   // ── Nominatim search ───────────────────────────────────────────────────────
@@ -829,6 +844,13 @@ export class MapsService {
     lang?: string,
     limit = 60,
   ): Promise<PoiSearchResult> {
+    // AMap provider branch (docs/amap/03): configured → POI 探索 goes to 高德
+    // (place/around, centre + radius instead of a bbox — a user-visible density
+    // difference, documented in docs/amap/poi-category-comparison.md).
+    const amapKey = this.resolveAmapKey();
+    if (amapKey) {
+      return this.amap.pois({ key: amapKey, category, bbox }, limit);
+    }
     const filters = CATEGORY_OSM_FILTERS[category];
     if (!filters) throw Object.assign(new Error('Unknown POI category'), { status: 400 });
 
@@ -1461,6 +1483,13 @@ export class MapsService {
     lang?: string,
     locationBias?: { lat: number; lng: number; radius?: number },
   ): Promise<{ places: Record<string, unknown>[]; source: string }> {
+    // AMap provider branch (docs/amap/03): configured → 检索 goes to 高德.
+    const amapKey = this.resolveAmapKey();
+    if (amapKey) {
+      const { places } = await this.amap.search({ key: amapKey, query, locationBias });
+      return { places, source: 'amap' };
+    }
+
     const { key: apiKey, source: keySource } = this.resolveMapsKey(userId);
 
     if (!apiKey) {
@@ -1532,6 +1561,13 @@ export class MapsService {
     locationBias?: { low: { lat: number; lng: number }; high: { lat: number; lng: number } },
     sessionToken?: string,
   ): Promise<{ suggestions: { placeId: string; mainText: string; secondaryText: string }[]; source: string }> {
+    // AMap provider branch (docs/amap/03).
+    const amapKey = this.resolveAmapKey();
+    if (amapKey) {
+      const { suggestions } = await this.amap.autocomplete({ key: amapKey, input, locationBias });
+      return { suggestions, source: 'amap' };
+    }
+
     const { key: apiKey, source: keySource } = this.resolveMapsKey(userId);
 
     if (!apiKey) {
@@ -1620,6 +1656,32 @@ export class MapsService {
     lang?: string,
     sessionToken?: string,
   ): Promise<{ place: Record<string, unknown> | null }> {
+    // AMap details: the `amap:` prefix routes BEFORE the OSM check — an amap id
+    // contains a colon too, but it has a provider of its own (docs/amap/03).
+    if (placeId.startsWith('amap:')) {
+      const amapKey = this.resolveAmapKey();
+      if (!amapKey) return { place: null };
+      // Same lean-cache contract as the Google branch (7-day TTL, expanded=0).
+      const langKey = toApiLang(lang);
+      const DETAILS_TTL = 7 * 24 * 60 * 60 * 1000;
+      const cached = this.database.get<{ payload_json: string; fetched_at: number }>(
+        'SELECT payload_json, fetched_at FROM place_details_cache WHERE place_id = ? AND lang = ? AND expanded = 0',
+        placeId,
+        langKey,
+      );
+      if (cached && Date.now() - cached.fetched_at < DETAILS_TTL) return { place: JSON.parse(cached.payload_json) };
+      const place = await this.amap.details({ key: amapKey, placeId });
+      if (place) {
+        this.database.run(
+          'INSERT INTO place_details_cache (place_id, lang, expanded, payload_json, fetched_at) VALUES (?, ?, 0, ?, ?)\n         ON CONFLICT(place_id, lang, expanded) DO UPDATE SET payload_json = excluded.payload_json, fetched_at = excluded.fetched_at',
+          placeId,
+          langKey,
+          JSON.stringify({ place }),
+          Date.now(),
+        );
+      }
+      return { place };
+    }
     // OSM details: placeId is "node:123456" or "way:123456" etc.
     if (placeId.includes(':')) {
       const [osmType, osmId] = placeId.split(':');
@@ -1753,6 +1815,12 @@ export class MapsService {
     // keep the details they do have (Overpass, via the plain lookup); coordinate
     // pseudo-ids and legacy image URLs have no details source at all. Neither may be
     // forwarded to Google, which bills the 400 INVALID_ARGUMENT it answers with.
+    // AMap ids route to the lean AMap lookup — there is no expanded split on the
+    // AMap side, and the enrichment pipeline (photos/description/facts) is
+    // coordinate-based and stays untouched (docs/amap/03).
+    if (placeId.startsWith('amap:')) {
+      return this.getPlaceDetails(userId, placeId, lang);
+    }
     if (!isGooglePlaceId(placeId)) {
       return OSM_PLACE_ID.test(placeId) ? this.getPlaceDetails(userId, placeId, lang) : { place: null };
     }
@@ -2007,6 +2075,15 @@ export class MapsService {
     lang?: string,
     opts?: { lane?: GeoLane; timeoutMs?: number },
   ): Promise<{ name: string | null; address: string | null }> {
+    // AMap provider branch (docs/amap/03): configured → 逆地理 goes to 高德.
+    const amapKey = this.resolveAmapKey();
+    if (amapKey) {
+      const latNum = Number.parseFloat(lat);
+      const lngNum = Number.parseFloat(lng);
+      if (Number.isFinite(latNum) && Number.isFinite(lngNum)) {
+        return this.amap.reverse({ key: amapKey, lat: latNum, lng: lngNum });
+      }
+    }
     const params = new URLSearchParams({
       lat,
       lon: lng,

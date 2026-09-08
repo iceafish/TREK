@@ -290,6 +290,10 @@ async function main() {
       'admin_ntfy_token',
       'maps_api_key',
       'unsplash_api_key',
+      // AMap instance secrets (docs/amap/03-server-provider.md) — mirror of
+      // AMAP_INSTANCE_SECRET_NAMES in src/nest/settings/instance-api-keys.ts.
+      'amap_web_service_key',
+      'amap_security_code',
     ]) {
       const row = db.prepare('SELECT value FROM app_settings WHERE key = ?').get(key) as { value: string } | undefined;
       if (!row?.value) continue;

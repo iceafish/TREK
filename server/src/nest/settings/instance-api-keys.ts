@@ -87,3 +87,55 @@ export function resolveApiKey(
   const own = decrypt_api_key(row?.[name]) || null;
   return own ? { key: own, source: 'user-row' } : { key: null, source: null };
 }
+
+// ── AMap instance secrets (docs/amap/03-server-provider.md) ──────────────────
+//
+// `amap_web_service_key` (server-side REST calls) and `amap_security_code`
+// (appended to /_AMapService proxy requests). Both are SERVER SECRETS: they
+// live in encrypted app_settings rows like the instance keys above, but they
+// deliberately do NOT join InstanceApiKeyName — that type doubles as the list
+// of users-table columns with a per-user tier, and the AMap keys have no
+// per-user billing model (no users column, no migration). The resolver below
+// therefore runs the first two steps of the resolveApiKey chain only:
+// operator env → instance-wide.
+//
+// Never add these names to DEFAULTABLE_USER_SETTING_KEYS or any merge that
+// reaches a browser (00-constraints.md, 02a scope note).
+
+export type AmapInstanceSecretName = 'amap_web_service_key' | 'amap_security_code';
+
+export const AMAP_INSTANCE_SECRET_NAMES: readonly AmapInstanceSecretName[] = [
+  'amap_web_service_key',
+  'amap_security_code',
+];
+
+/** The instance-wide AMap secret in cleartext, or null when unset/cleared. */
+export function readAmapSecret(db: DatabaseService, name: AmapInstanceSecretName): string | null {
+  const row = db.get<{ value: string | null }>('SELECT value FROM app_settings WHERE key = ?', name);
+  if (!row?.value) return null;
+  return decrypt_api_key(row.value) || null;
+}
+
+/** Store the instance-wide AMap secret, encrypted. Blank stores '' (= unset). */
+export function writeAmapSecret(db: DatabaseService, name: AmapInstanceSecretName, value: unknown): void {
+  db.run(
+    `INSERT INTO app_settings (key, value) VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    name, maybe_encrypt_api_key(value) ?? ''
+  );
+}
+
+/**
+ * Resolve an AMap secret: operator env → instance-wide. `source` mirrors
+ * ApiKeySource minus the user tier (logged beside provider errors; the value
+ * itself never is).
+ */
+export function resolveAmapSecret(
+  db: DatabaseService,
+  name: AmapInstanceSecretName,
+  operatorKey: string | undefined,
+): { key: string | null; source: 'operator-env' | 'instance' | null } {
+  if (operatorKey) return { key: operatorKey, source: 'operator-env' };
+  const instance = readAmapSecret(db, name);
+  return instance ? { key: instance, source: 'instance' } : { key: null, source: null };
+}

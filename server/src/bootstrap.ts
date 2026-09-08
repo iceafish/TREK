@@ -17,6 +17,10 @@ import { validateRouteGuards } from './nest/common/validate-route-guards';
 import { validateManagedRoutes } from './nest/common/validate-managed-routes';
 import { TrekWsAdapter } from './nest/realtime/trek-ws.adapter';
 import { StorageService } from './nest/storage/storage.service';
+import { DatabaseService } from './nest/database/database.service';
+import { readEnv } from './app-config';
+import { resolveAmapSecret } from './nest/settings/instance-api-keys';
+import { createAmapProxyMiddleware } from './nest/maps/amap-proxy.middleware';
 
 /**
  * Builds the unified TREK NestJS application that serves the ENTIRE surface — the
@@ -145,6 +149,25 @@ export async function buildApp(): Promise<INestApplication> {
   instance.use(function urlencodedParser(req: Request, res: Response, next: NextFunction) {
     return isMcp(req) ? next() : urlencoded(req, res, next);
   });
+
+  // AMap security-code proxy (docs/amap/03-server-provider.md): the JSAPI's
+  // serviceHost points here; this re-addresses the REST calls to
+  // restapi.amap.com with the jscode appended SERVER-SIDE (the code never
+  // reaches a browser). Bare Express BEFORE app.init() — Nest 404s the prefix
+  // and never falls through, so a Nest controller at this path would be dead
+  // code. Anonymous BY DESIGN (the public share page renders a map without a
+  // session); prefix allow-list + per-IP/global rate limits inside the
+  // middleware keep it a map proxy rather than an open one. Bare Express is
+  // invisible to validateRouteGuards (it inventories Nest routes only) — that
+  // gate's guarantee is unchanged, and the anonymous surface widened here is
+  // documented in this block and in amap-proxy.middleware.ts.
+  instance.use(
+    '/_AMapService',
+    createAmapProxyMiddleware({
+      resolveSecurityCode: () =>
+        resolveAmapSecret(app.get(DatabaseService), 'amap_security_code', readEnv().maps.amapSecurityCode).key,
+    }),
+  );
   if (apiDocsEnabled()) setupApiDocs(app);
   await app.init();
   // Fail closed on unvalidated mutation bodies: every POST/PUT/PATCH @Body()

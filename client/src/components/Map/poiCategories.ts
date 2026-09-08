@@ -39,5 +39,7 @@ export interface Poi {
   phone: string | null
   opening_hours: string | null
   cuisine: string | null
-  source: 'openstreetmap'
+  // 'amap' when the instance's POI provider is 高德 (docs/amap/03) — the shape
+  // is identical, only the id scheme differs (amap:<poiid> vs node:123).
+  source: 'openstreetmap' | 'amap'
 }

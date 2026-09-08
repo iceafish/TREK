@@ -80,7 +80,15 @@ vi.mock('../../../src/db/database', () => ({
     prepare: (sql: string) => {
       preparedSql.push(sql);
       return {
-        get: (...args: unknown[]) => (sql.includes('app_settings') ? mockInstanceGet(...args) : mockDbGet(...args)),
+        // AMap instance secrets (amap_web_service_key / amap_security_code) share
+        // the app_settings table but must stay inert here — returning the Google
+        // instance key for them would route searchPlaces into the AMap branch
+        // (docs/amap/03) and starve the Google-path assertions below. args here
+        // are the statement params, so the key name is args[0].
+        get: (...args: unknown[]) =>
+          sql.includes('app_settings')
+            ? (typeof args[0] === 'string' && args[0].startsWith('amap_') ? undefined : mockInstanceGet(...args))
+            : mockDbGet(...args),
         all: vi.fn(() => []),
         run: mockDbRun,
       };
@@ -1271,7 +1279,9 @@ describe('searchPlaces (fetch stubbed)', () => {
       }),
     );
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    await expect(svc.searchPlaces(7, 'anything')).rejects.toMatchObject({ status: 403 });
+    let rejection: unknown = null;
+    await svc.searchPlaces(7, 'anything').catch((e: unknown) => { rejection = e; });
+    expect(rejection).toMatchObject({ status: 403 });
     const logged = errorSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(logged).toContain('keySource=instance');
     expect(logged).toContain('userId=7');

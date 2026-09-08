@@ -612,7 +612,7 @@ function vectorShapes(): Array<{ kind: string; opts: Record<string, unknown>; pa
 
 describe('MapViewAMap — day route + GPX tracks', () => {
   it('draws the day route as casing + core, both in GCJ-02', async () => {
-    const route = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
+    const route: [number, number][][] = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
     await renderAMap({ places: [placeAt({ id: 1 })], route })
     await settle()
 
@@ -803,7 +803,7 @@ describe('MapViewAMap — plugin map contributions', () => {
       http.get('/api/map-layers/5', () => HttpResponse.json({ layers: [pluginLayer] })),
       http.get('/api/map-markers/5', () => HttpResponse.json({ markers: [] })),
     )
-    const route = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
+    const route: [number, number][][] = [[[39.9087, 116.3912], [39.9163, 116.3972]]]
     await renderAMap({
       places: [placeAt({ id: 1 })], route,
       tripId: 5,

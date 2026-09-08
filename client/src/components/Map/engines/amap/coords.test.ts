@@ -48,8 +48,11 @@ describe('engines/amap/coords — the WGS84 ↔ GCJ-02 boundary', () => {
 describe('transformGeoJson — recursive WGS84 → GCJ-02', () => {
   // Tiananmen WGS84 (116.3912, 39.9087) → GCJ-02 (116.3974413, 39.9101013).
   it('converts Point, LineString, Polygon and MultiPolygon coordinates', () => {
-    const point = transformGeoJson({ type: 'Point', coordinates: [116.3912, 39.9087] })
-    expect((point as { coordinates: [number, number] }).coordinates[0]).toBeCloseTo(116.3974413, 6)
+    const point = transformGeoJson({
+      type: 'Point',
+      coordinates: [116.3912, 39.9087],
+    }) as { coordinates: [number, number] }
+    expect(point.coordinates[0]).toBeCloseTo(116.3974413, 6)
 
     const line = transformGeoJson({
       type: 'LineString',

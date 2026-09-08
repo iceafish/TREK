@@ -172,7 +172,10 @@ export interface OverpassPoi {
   phone: string | null;
   opening_hours: string | null;
   cuisine: string | null;
-  source: 'openstreetmap';
+  // 'amap' when the configured POI provider is 高德 (docs/amap/03) — the field
+  // name stays `osm_id`/`source` for contract parity; an amap row's osm_id is
+  // `amap:<poiid>`.
+  source: 'openstreetmap' | 'amap';
 }
 
 // Each pill category → the OSM tag selectors it searches. Keys here are the
