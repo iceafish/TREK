@@ -230,6 +230,12 @@ skipped, never fatal):
 | `tableContributor` | ≤20 columns / ≤10 actions per entity |
 | `tripCardProvider` | ≤4 badges per trip, ≤240 total per provider |
 
+**All map coordinates are WGS84.** `mapMarkerProvider` / `mapLayerProvider`
+values are interpreted as WGS84 by the host, which performs any datum
+conversion itself before drawing (the Chinese basemap renders in GCJ-02).
+Send raw coordinates — pre-converting them double-shifts every point by a
+few hundred metres.
+
 ## OAuth broker
 
 `ctx.oauth.getAccessToken()` is host-brokered outbound OAuth: the plugin never becomes a

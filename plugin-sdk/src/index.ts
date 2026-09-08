@@ -523,8 +523,8 @@ export interface TableContributor {
  * the host draws a Leaflet marker + popup; plugin JS never runs on the map canvas. */
 export interface MapMarkerContribution {
   id: string;            // stable per-marker id (React key / dedupe)
-  lat: number;           // -90..90
-  lng: number;           // -180..180
+  lat: number;           // -90..90 — WGS84; the host performs any datum conversion
+  lng: number;           // -180..180 — WGS84; never send pre-converted coordinates
   label?: string;        // short label shown in the popup title
   popupText?: string;    // one line of body text (host-sanitized, plain text)
   url?: string;          // http/https/mailto only — the host rejects any other scheme
@@ -542,8 +542,11 @@ export interface MapMarkerProvider {
  * tone palette plus clamped numerics (width 1–8, opacity 0.05–1) and a dash enum. */
 export interface MapLayerFeature {
   type: 'polyline' | 'polygon' | 'circle';
-  points?: Array<[number, number]>; // [lat,lng] pairs — polyline (≥2) / polygon (≥3)
-  center?: [number, number];        // circle center [lat,lng]
+  // All coordinates are WGS84 — the host converts the datum before drawing
+  // (several basemaps, e.g. the Chinese one, render in GCJ-02). Sending
+  // pre-converted coordinates double-shifts every vertex.
+  points?: Array<[number, number]>; // [lat,lng] pairs, WGS84 — polyline (≥2) / polygon (≥3)
+  center?: [number, number];        // circle center [lat,lng], WGS84
   radiusM?: number;                 // circle radius in metres (1..2,000,000)
   tone?: ContributionTone;
   width?: number;                   // stroke width, clamped 1..8 (default 3)
