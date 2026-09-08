@@ -193,6 +193,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Tiêu chuẩn (miễn phí)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Trung Quốc)',
   'admin.defaultSettings.mapboxToken': 'Mã thông báo Mapbox được chia sẻ',
   'admin.defaultSettings.mapboxTokenHint':
     'Được sử dụng cho mọi người dùng chưa nhập mã thông báo của riêng họ — vì vậy toàn bộ phiên bản sẽ nhận được Mapbox mà không chia sẻ khóa riêng lẻ. Được lưu trữ được mã hóa.',

@@ -31,6 +31,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klassisch 2D, beliebige Raster-Kacheln',
   'settings.mapMapboxSubtitle': 'Vektor-Kacheln, 3D-Gebäude & Terrain',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap Vektor-Kacheln, kein Token',
+  'settings.mapAmapSubtitle': 'AMap — Basemap für Festlandchina',
   'settings.mapExperimental': 'Experimentell',
   'settings.mapMapboxToken': 'Mapbox Access Token',
   'settings.mapMapboxTokenHint': 'Öffentliches Token (pk.*) von',

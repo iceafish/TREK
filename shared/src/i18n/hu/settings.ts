@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klasszikus 2D, bármilyen raszter csempe',
   'settings.mapMapboxSubtitle': 'Vektoros csempék, 3D épületek és terep',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap vektoros csempék, token nélkül',
+  'settings.mapAmapSubtitle': 'AMap — Kína szárazföldi alaptérkép',
   'settings.mapExperimental': 'Kísérleti',
   'settings.mapMapboxToken': 'Mapbox hozzáférési token',
   'settings.mapMapboxTokenHint': 'Publikus token (pk.*) innen:',

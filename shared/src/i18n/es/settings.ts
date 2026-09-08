@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Clásico 2D, cualquier mosaico raster',
   'settings.mapMapboxSubtitle': 'Mosaicos vectoriales, edificios 3D y terreno',
   'settings.mapMapLibreSubtitle': 'Mosaicos vectoriales de OpenFreeMap, sin token',
+  'settings.mapAmapSubtitle': 'AMap — mapa base de China continental',
   'settings.mapExperimental': 'Experimental',
   'settings.mapMapboxToken': 'Token de acceso de Mapbox',
   'settings.mapMapboxTokenHint': 'Token público (pk.*) de',

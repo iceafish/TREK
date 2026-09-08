@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klasik 2D, herhangi bir raster kutucuk',
   'settings.mapMapboxSubtitle': 'Vektör kutucuklar, 3D binalar ve arazi',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap vektör kutucuklar, anahtar gerekmez',
+  'settings.mapAmapSubtitle': 'AMap — Çin anakarası temel haritası',
   'settings.mapExperimental': 'Deneysel',
   'settings.mapMapboxToken': 'Mapbox Erişim Anahtarı',
   'settings.mapMapboxTokenHint': 'Genel anahtar (pk.*) kaynağı:',

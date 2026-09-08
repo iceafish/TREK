@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': '经典 2D，任何栅格瓦片',
   'settings.mapMapboxSubtitle': '矢量瓦片、3D 建筑和地形',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap 矢量瓦片，无需令牌',
+  'settings.mapAmapSubtitle': '高德地图 · 中国大陆底图',
   'settings.mapExperimental': '实验性',
   'settings.mapMapboxToken': 'Mapbox 访问令牌',
   'settings.mapMapboxTokenHint': '公共令牌 (pk.*) 来自',

@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': '클래식 2D, 모든 래스터 타일',
   'settings.mapMapboxSubtitle': '벡터 타일, 3D 건물 및 지형',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap 벡터 타일, 토큰 불필요',
+  'settings.mapAmapSubtitle': 'AMap — 중국 대륙 베이스맵',
   'settings.mapExperimental': '실험적',
   'settings.mapMapboxToken': 'Mapbox 액세스 토큰',
   'settings.mapMapboxTokenHint': '공개 토큰 (pk.*) 출처',

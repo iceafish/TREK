@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState, Suspense } from 'react'
-import { Box, Check, ChevronDown, Globe2, Layers, Map, Save } from 'lucide-react'
+import { Box, Check, ChevronDown, Globe2, Layers, Map, MapPin, Save } from 'lucide-react'
 import { useTranslation } from '../../../i18n'
 import { useSettingsStore } from '../../../store/settingsStore'
 import { useAuthStore } from '../../../store/authStore'
 import { useToast } from '../../../components/shared/Toast'
 import { MapView } from '../../../components/Map/MapView'
+import { MapViewAMap } from '../../../components/Map/MapViewAMap'
 // Same as the desktop map settings tab: on demand, and paired with one engine.
 import ErrorBoundary from '../../../components/shared/ErrorBoundary'
 import { GlMapPreviewMapbox, GlMapPreviewMaplibre } from '../../../components/Map/glLazy'
@@ -41,13 +42,15 @@ const MAP_PRESETS: MapPreset[] = [
   { name: 'Stadia Smooth', url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png' },
 ]
 
-type Provider = 'leaflet' | GlMapProvider
+type Provider = 'leaflet' | GlMapProvider | 'amap'
 
 function normalizeProvider(value: unknown): Provider {
-  return value === 'mapbox-gl' || value === 'maplibre-gl' ? value : 'leaflet'
+  return value === 'mapbox-gl' || value === 'maplibre-gl' || value === 'amap' ? value : 'leaflet'
 }
 
 function styleForProvider(provider: Provider, style?: string | null): string {
+  // AMap keeps no GL style slot — it draws its own basemap server-side.
+  if (provider === 'amap') return style || ''
   if (provider === 'leaflet') return style || MAPBOX_DEFAULT_STYLE
   if (provider === 'mapbox-gl' && isOpenFreeMapStyle(style)) return MAPBOX_DEFAULT_STYLE
   return normalizeStyleForProvider(provider, style)
@@ -122,7 +125,7 @@ export default function MSettingsMap() {
   const save = async (): Promise<void> => {
     setSaving(true)
     try {
-      const glStyle = provider === 'leaflet' ? mapboxStyle : normalizeStyleForProvider(provider, mapboxStyle)
+      const glStyle = provider === 'leaflet' || provider === 'amap' ? mapboxStyle : normalizeStyleForProvider(provider, mapboxStyle)
       setMapboxStyle(glStyle)
       const stylePatch = provider === 'maplibre-gl' ? { maplibre_style: glStyle } : { mapbox_style: glStyle }
       await updateSettings({
@@ -144,7 +147,7 @@ export default function MSettingsMap() {
 
   const changeProvider = (nextProvider: Provider) => {
     setProvider(nextProvider)
-    if (nextProvider !== 'leaflet') setMapboxStyle(styleForProvider(nextProvider, mapboxStyle))
+    if (nextProvider !== 'leaflet' && nextProvider !== 'amap') setMapboxStyle(styleForProvider(nextProvider, mapboxStyle))
   }
   // Only CARTO burns a watermark into keyless tiles, so the nudge is scoped to its hosts.
   const cartoNeedsKey = mapTileUrl.includes('basemaps.cartocdn.com') && !cartoKey.trim()
@@ -153,9 +156,10 @@ export default function MSettingsMap() {
     { id: 'leaflet', name: 'Leaflet', sub: t('settings.mapLeafletSubtitle'), icon: Layers },
     { id: 'mapbox-gl', name: 'Mapbox GL', sub: t('settings.mapMapboxSubtitle'), icon: Box },
     { id: 'maplibre-gl', name: 'MapLibre GL', sub: t('settings.mapMapLibreSubtitle'), icon: Globe2 },
+    { id: 'amap', name: 'AMap 高德', sub: t('settings.mapAmapSubtitle'), icon: MapPin },
   ]
 
-  const presets = provider === 'leaflet' ? [] : getStylePresets(provider)
+  const presets = provider === 'leaflet' || provider === 'amap' ? [] : getStylePresets(provider)
   const selectedPreset = presets.find((p) => p.url === mapboxStyle)
   const chevron = <ChevronDown size={13} strokeWidth={2} className="flex-none text-m-faint" />
 
@@ -235,7 +239,7 @@ export default function MSettingsMap() {
         </>
       )}
 
-      {provider !== 'leaflet' && (
+      {(provider === 'mapbox-gl' || provider === 'maplibre-gl') && (
         <>
           {provider === 'mapbox-gl' && !managed && (
             <>
@@ -292,7 +296,14 @@ export default function MSettingsMap() {
       )}
 
       <div className="relative mt-3 h-[200px] w-full overflow-hidden rounded-xl">
-        {provider !== 'leaflet' ? (
+        {provider === 'amap' ? (
+          /* Same net as the GL preview; AMap needs no fields of its own here. */
+          <ErrorBoundary boundaryId="settings:map-preview" resetKeys={[provider]} fallback={<div className="h-full w-full bg-m-card" />}>
+          <Suspense fallback={<div className="h-full w-full bg-m-card animate-pulse" />}>
+            <MapViewAMap places={previewPlaces} center={PREVIEW_CENTER} zoom={PREVIEW_ZOOM} fitKey={null} />
+          </Suspense>
+          </ErrorBoundary>
+        ) : provider !== 'leaflet' ? (
           /* See MapSettingsTab: the preview gets its own net. */
           <ErrorBoundary boundaryId="settings:map-preview" resetKeys={[provider]} fallback={<div className="h-full w-full bg-m-card" />}>
           <Suspense fallback={<div className="h-full w-full bg-m-card animate-pulse" />}>

@@ -190,6 +190,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Standard (free)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (China)',
   'admin.defaultSettings.mapboxToken': 'Shared Mapbox token',
   'admin.defaultSettings.mapboxTokenHint':
     'Used for every user who has not entered their own token — so the whole instance gets Mapbox without sharing the key individually. Stored encrypted.',

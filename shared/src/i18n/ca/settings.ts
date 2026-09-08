@@ -313,6 +313,8 @@ const settings: TranslationStrings = {
     "Mostra una píndola de categories al mapa del viatge per trobar restaurants, allotjaments i més a prop, des d'OpenStreetMap.",
 
   'settings.mapMapLibreSubtitle': "Tessel·les vectorials d'OpenFreeMap, sense token",
+
+  'settings.mapAmapSubtitle': 'AMap — mapa base de la Xina continental',
   'settings.mapOpenFreeMapStylePlaceholder': "Selecciona un estil d'OpenFreeMap",
   'settings.mapOpenFreeMapStyleHint':
     "URL d'estil o predefinit d'OpenFreeMap. Els estils d'OpenFreeMap funcionen sense token.",

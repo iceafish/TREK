@@ -32,6 +32,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Κλασικό 2D, οποιαδήποτε raster πλακίδια',
   'settings.mapMapboxSubtitle': 'Διανυσματικά πλακίδια, 3D κτίρια & ανάγλυφο',
   'settings.mapMapLibreSubtitle': 'Διανυσματικά πλακίδια OpenFreeMap, χωρίς token',
+  'settings.mapAmapSubtitle': 'AMap — βασικός χάρτης της ηπειρωτικής Κίνας',
   'settings.mapExperimental': 'Πειραματικό',
   'settings.mapMapboxToken': 'Mapbox Access Token',
   'settings.mapMapboxTokenHint': 'Δημόσιο token (pk.*) από',

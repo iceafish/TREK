@@ -31,6 +31,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Clássico 2D, quaisquer blocos raster',
   'settings.mapMapboxSubtitle': 'Blocos vetoriais, prédios 3D & terreno',
   'settings.mapMapLibreSubtitle': 'Blocos vetoriais OpenFreeMap, sem token',
+  'settings.mapAmapSubtitle': 'AMap — mapa base da China continental',
   'settings.mapExperimental': 'Experimental',
   'settings.mapMapboxToken': 'Token de acesso Mapbox',
   'settings.mapMapboxTokenHint': 'Token público (pk.*) de',

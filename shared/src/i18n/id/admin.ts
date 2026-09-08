@@ -722,6 +722,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Standar (gratis)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Tiongkok)',
   'admin.defaultSettings.mapboxToken': 'Token Mapbox bersama',
   'admin.defaultSettings.mapboxTokenHint':
     'Digunakan untuk setiap pengguna yang belum memasukkan token mereka sendiri — sehingga seluruh instance mendapatkan Mapbox tanpa perlu membagikan kunci satu per satu. Disimpan dalam bentuk terenkripsi.',

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react'
-import { Map, Save, Layers, Box, ChevronDown, Check, Globe2 } from 'lucide-react'
+import { Map, Save, Layers, Box, ChevronDown, Check, Globe2, MapPin } from 'lucide-react'
 import { useTranslation } from '../../i18n'
 import { useSettingsStore } from '../../store/settingsStore'
 import { useToast } from '../shared/Toast'
 import CustomSelect from '../shared/CustomSelect'
 import { MapView } from '../Map/MapView'
+import { MapViewAMap } from '../Map/MapViewAMap'
 // The preview loads on demand, and paired with a single engine — a Leaflet-only
 // install pays for neither, and a GL install pays for one instead of both.
 import ErrorBoundary from '../shared/ErrorBoundary'
@@ -135,14 +136,16 @@ function StyleDropdown({ value, provider, onChange }: { value: string; provider:
   )
 }
 
-type Provider = 'leaflet' | GlMapProvider
+type Provider = 'leaflet' | GlMapProvider | 'amap'
 
 function normalizeProvider(value: unknown): Provider {
-  return value === 'mapbox-gl' || value === 'maplibre-gl' ? value : 'leaflet'
+  return value === 'mapbox-gl' || value === 'maplibre-gl' || value === 'amap' ? value : 'leaflet'
 }
 
 function styleForProvider(provider: Provider, style?: string | null): string {
   if (provider === 'leaflet') return style || MAPBOX_DEFAULT_STYLE
+  // AMap keeps no GL style slot — it draws its own basemap server-side.
+  if (provider === 'amap') return style || ''
   if (provider === 'mapbox-gl' && isOpenFreeMapStyle(style)) return MAPBOX_DEFAULT_STYLE
   return normalizeStyleForProvider(provider, style)
 }
@@ -211,7 +214,7 @@ export default function MapSettingsTab(): React.ReactElement {
   const saveMapSettings = async (): Promise<void> => {
     setSaving(true)
     try {
-      const glStyle = provider === 'leaflet' ? mapboxStyle : normalizeStyleForProvider(provider, mapboxStyle)
+      const glStyle = provider === 'leaflet' || provider === 'amap' ? mapboxStyle : normalizeStyleForProvider(provider, mapboxStyle)
       // Save into the active provider's own slot so the other provider's style survives.
       const stylePatch = provider === 'maplibre-gl' ? { maplibre_style: glStyle } : { mapbox_style: glStyle }
       await updateSettings({
@@ -248,7 +251,7 @@ export default function MapSettingsTab(): React.ReactElement {
       {/* Provider picker — big cards so the choice is obvious */}
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-2">{t('settings.mapProvider')}</label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           <button
             type="button"
             onClick={() => changeProvider('leaflet')}
@@ -302,6 +305,21 @@ export default function MapSettingsTab(): React.ReactElement {
                 <span className="hidden sm:inline">MapLibre GL</span>
               </div>
               <div className="hidden sm:block text-xs text-slate-500 mt-0.5">{t('settings.mapMapLibreSubtitle')}</div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => changeProvider('amap')}
+            className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-colors ${
+              provider === 'amap'
+                ? 'border-slate-900 bg-slate-50 dark:bg-slate-800 dark:border-slate-200'
+                : 'border-slate-200 hover:border-slate-400 dark:border-slate-700'
+            }`}
+          >
+            <MapPin size={18} className="mt-0.5 flex-shrink-0 text-slate-700 dark:text-slate-300" />
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-slate-900 dark:text-white">AMap 高德</div>
+              <div className="hidden sm:block text-xs text-slate-500 mt-0.5">{t('settings.mapAmapSubtitle')}</div>
             </div>
           </button>
         </div>
@@ -358,7 +376,7 @@ export default function MapSettingsTab(): React.ReactElement {
       )}
 
       {/* GL settings */}
-      {provider !== 'leaflet' && (
+      {(provider === 'mapbox-gl' || provider === 'maplibre-gl') && (
         <div className="space-y-3">
           {/* The token comes with the instance on a managed install, injected when the
               settings are read. A field here would only let somebody save a worse one. */}
@@ -443,7 +461,16 @@ export default function MapSettingsTab(): React.ReactElement {
 
       <div>
         <div style={{ position: 'relative', inset: 0, height: '200px', width: '100%' }}>
-          {provider !== 'leaflet' ? (
+          {provider === 'amap' ? (
+            /* Same net as the GL preview. AMap needs no fields here — the JS key
+               comes from the operator's env or the admin defaults — so the
+               preview itself is the whole section. */
+            <ErrorBoundary boundaryId="settings:map-preview" resetKeys={[provider]} fallback={<div className="h-full w-full bg-surface-secondary" />}>
+            <Suspense fallback={<div className="h-full w-full bg-surface-secondary animate-pulse" />}>
+              <MapViewAMap places={previewPlaces} center={PREVIEW_CENTER} zoom={PREVIEW_ZOOM} fitKey={null} />
+            </Suspense>
+            </ErrorBoundary>
+          ) : provider !== 'leaflet' ? (
             /* A net of its own: the preview is the one place a user flips providers
                live, so it is the likeliest chunk to fail — and a broken preview must
                not take the rest of the settings tab with it. */

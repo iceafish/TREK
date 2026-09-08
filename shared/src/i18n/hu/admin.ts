@@ -726,6 +726,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Alapértelmezett (ingyenes)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Kína)',
   'admin.defaultSettings.mapboxToken': 'Megosztott Mapbox-token',
   'admin.defaultSettings.mapboxTokenHint':
     'Minden olyan felhasználóhoz használatos, aki nem adta meg a saját tokenjét — így az egész példány eléri a Mapboxot anélkül, hogy egyenként kellene megosztani a kulcsot. Titkosítva tárolódik.',

@@ -735,6 +735,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Τυπικός (δωρεάν)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Κίνα)',
   'admin.defaultSettings.mapboxToken': 'Κοινόχρηστο διακριτικό Mapbox',
   'admin.defaultSettings.mapboxTokenHint':
     'Χρησιμοποιείται για κάθε χρήστη που δεν έχει εισαγάγει το δικό του διακριτικό — έτσι ολόκληρη η εγκατάσταση αποκτά Mapbox χωρίς να μοιράζεται το κλειδί ξεχωριστά. Αποθηκεύεται κρυπτογραφημένο.',

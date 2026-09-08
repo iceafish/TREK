@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Classique 2D, toutes tuiles raster',
   'settings.mapMapboxSubtitle': 'Tuiles vectorielles, bâtiments 3D & terrain',
   'settings.mapMapLibreSubtitle': 'Tuiles vectorielles OpenFreeMap, sans jeton',
+  'settings.mapAmapSubtitle': 'AMap — fond de carte de Chine continentale',
   'settings.mapExperimental': 'Expérimental',
   'settings.mapMapboxToken': "Jeton d'accès Mapbox",
   'settings.mapMapboxTokenHint': 'Jeton public (pk.*) depuis',

@@ -720,6 +720,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Стандартная (бесплатно)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Китай)',
   'admin.defaultSettings.mapboxToken': 'Общий токен Mapbox',
   'admin.defaultSettings.mapboxTokenHint':
     'Используется для каждого пользователя, который не ввёл собственный токен — так весь сервер получает Mapbox без необходимости делиться ключом по отдельности. Хранится в зашифрованном виде.',

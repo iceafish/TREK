@@ -722,6 +722,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Standart (ücretsiz)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Çin)',
   'admin.defaultSettings.mapboxToken': 'Paylaşılan Mapbox jetonu',
   'admin.defaultSettings.mapboxTokenHint':
     "Kendi jetonunu girmemiş her kullanıcı için kullanılır — böylece anahtarı tek tek paylaşmadan tüm örnek Mapbox'ı kullanır. Şifrelenmiş olarak saklanır.",

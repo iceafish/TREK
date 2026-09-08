@@ -373,6 +373,7 @@ const admin: TranslationStrings = {
   'admin.defaultSettings.providerLeaflet': 'Estàndard (gratuït)',
   'admin.defaultSettings.providerMapbox': 'Mapbox (3D)',
   'admin.defaultSettings.providerMapLibre': 'MapLibre (OpenFreeMap)',
+  'admin.defaultSettings.providerAmap': 'AMap (Xina)',
   'admin.defaultSettings.mapboxToken': 'Token de Mapbox compartit',
   'admin.defaultSettings.mapboxTokenHint':
     "S'utilitza per a cada usuari que no hagi introduït el seu propi token, de manera que tota la instància obtingui Mapbox sense compartir la clau individualment. S'emmagatzema xifrat.",
