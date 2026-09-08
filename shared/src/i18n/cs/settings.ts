@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klasické 2D, libovolné rastrové dlaždice',
   'settings.mapMapboxSubtitle': 'Vektorové dlaždice, 3D budovy a terén',
   'settings.mapMapLibreSubtitle': 'Vektorové dlaždice OpenFreeMap, bez tokenu',
+  'settings.mapAmapOfflineHint': 'Základní mapa AMap nepodporuje offline stahování map.',
   'settings.mapAmapSubtitle': 'AMap — základní mapa pevninské Číny',
   'settings.mapExperimental': 'Experimentální',
   'settings.mapMapboxToken': 'Mapbox přístupový token',

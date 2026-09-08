@@ -15,6 +15,7 @@ import { RefreshCw, Trash2, Database, CloudOff, Download, Check, GitMerge, Map a
 import Section from './Section'
 import ToggleSwitch from './ToggleSwitch'
 import { useOfflineSettings, offlineNoticeKey, isOfflineNoticeWarning } from './useOfflineSettings'
+import { useSettingsStore } from '../../store/settingsStore'
 import { useTranslation } from '../../i18n'
 import type { ConflictStrategy } from '../../sync/offlinePrefs'
 import type { QueuedMutation } from '../../db/offlineDb'
@@ -37,6 +38,7 @@ export default function OfflineTab(): React.ReactElement {
     handleToggleTiles, tripStorageState, handleToggleTrip, resolveConflict,
     handleConflictStrategy,
   } = useOfflineSettings()
+  const provider = useSettingsStore(st => st.settings.map_provider)
 
   const formatDate = (d: string | null | undefined) =>
     d ? new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'
@@ -163,6 +165,9 @@ export default function OfflineTab(): React.ReactElement {
             hint={t('settings.offline.storage.tilesHint')}
             control={<ToggleSwitch on={prefs.cacheTiles} onToggle={handleToggleTiles} label={t('settings.offline.storage.tiles')} />}
           />
+          {provider === 'amap' && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 -mt-8 mb-4">{t('settings.mapAmapOfflineHint')}</p>
+          )}
           {allTrips.length > 0 && (
             <div style={{ borderTop: '1px solid var(--border-secondary, #e5e7eb)', paddingTop: 16 }}>
               <div style={{ fontWeight: 600, fontSize: 'calc(13px * var(--fs-scale-body, 1))', marginBottom: 8 }} className="text-content">

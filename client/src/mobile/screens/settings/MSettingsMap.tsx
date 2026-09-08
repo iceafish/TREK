@@ -194,6 +194,7 @@ export default function MSettingsMap() {
         })}
       </div>
       <MSetHint>{t('settings.mapProviderHint')}</MSetHint>
+      {provider === 'amap' && <MSetHint>{t('settings.mapAmapOfflineHint')}</MSetHint>}
 
       {provider === 'leaflet' && (
         <>

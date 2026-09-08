@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': '經典 2D,任何柵格瓦片',
   'settings.mapMapboxSubtitle': '向量瓦片、3D 建築和地形',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap 向量瓦片，無需權杖',
+  'settings.mapAmapOfflineHint': '高德地圖不支援離線地圖下載。',
   'settings.mapAmapSubtitle': '高德地圖 · 中國大陸底圖',
   'settings.mapExperimental': '實驗性',
   'settings.mapMapboxToken': 'Mapbox 存取權杖',

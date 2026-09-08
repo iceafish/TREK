@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klassisk 2D, valfria rasterplattor',
   'settings.mapMapboxSubtitle': 'Vektorplattor, 3D-byggnader och terräng',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap-vektorplattor, ingen token',
+  'settings.mapAmapOfflineHint': 'AMap-baskartan stöder inte offline Nedladdning av kartor.',
   'settings.mapAmapSubtitle': 'AMap — baskarta över fastlands-Kina',
   'settings.mapOpenFreeMapStylePlaceholder': 'Välj en OpenFreeMap-stil',
   'settings.mapOpenFreeMapStyleHint':

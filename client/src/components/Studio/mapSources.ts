@@ -1,4 +1,5 @@
 import type { BookFrame } from '@trek/shared'
+import { useSettingsStore } from '../../store/settingsStore'
 import { attributionFor } from './mapTiles'
 
 /**
@@ -131,25 +132,35 @@ export function useMapSources(
   /** What the element being inspected already uses, so it stays reachable. */
   current?: { source: string; tileUrl: string },
 ): MapSourceOption[] {
+  // AMap mode (docs/amap/05): the book falls back to the vector-outline map.
+  // The relief and satellite sources are third-party (NASA/EOX) rather than
+  // AMap, but in this mode the book's map element as a whole falls back to the
+  // outline — a product call recorded in docs/amap/05-degraded-surfaces.md.
+  const amapMode = useSettingsStore(s => s.settings.map_provider) === 'amap'
+
   // Through the same normaliser the planner's map uses: a template saved
   // before OSM dropped its shards still names a host that no longer exists.
   const out: MapSourceOption[] = [
     { id: 'vector', source: 'vector', labelKey: 'journey.studio.mapSourceVector', url: '', attribution: '' },
-    {
-      id: 'relief',
-      source: 'tiles',
-      labelKey: 'journey.studio.mapSourceRelief',
-      url: RELIEF_TILES,
-      attribution: attributionFor(RELIEF_TILES),
-    },
-    {
-      id: 'satellite',
-      source: 'tiles',
-      labelKey: 'journey.studio.mapSourceSatellite',
-      url: SATELLITE_TILES,
-      attribution: attributionFor(SATELLITE_TILES),
-    },
   ]
+  if (!amapMode) {
+    out.push(
+      {
+        id: 'relief',
+        source: 'tiles',
+        labelKey: 'journey.studio.mapSourceRelief',
+        url: RELIEF_TILES,
+        attribution: attributionFor(RELIEF_TILES),
+      },
+      {
+        id: 'satellite',
+        source: 'tiles',
+        labelKey: 'journey.studio.mapSourceSatellite',
+        url: SATELLITE_TILES,
+        attribution: attributionFor(SATELLITE_TILES),
+      },
+    )
+  }
 
   /*
    * The one the element is already on, when it is not one of the three above.

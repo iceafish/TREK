@@ -29,6 +29,7 @@ import { isAuthed } from './authGate'
 import { isStoragePersisted } from './persistentStorage'
 import { isVectorStyle, normalizeTileUrl, resolveTileUrl, withTileApiKey } from '../utils/tileUrl'
 import { OFM_POSITRON } from '../constants/mapDefaults'
+import { useSettingsStore } from '../store/settingsStore'
 import { clearVectorCache, prefetchVectorForPlaces } from './glPrefetcher'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -400,6 +401,17 @@ export async function prefetchTilesForTrip(
   force = false,
   cartoKey?: string,
 ): Promise<void> {
+  // AMap mode: hard off (docs/amap/00-constraints.md — AMap's terms forbid
+  // storing its service data; this is a prohibition, not a degradation). The
+  // tripSyncManager entry gate already skips this call for amap; this is the
+  // defensive second line, and it drops any recorded bbox so the offline UI
+  // stops claiming tiles exist for the trip.
+  if (useSettingsStore.getState().settings.map_provider === 'amap') {
+    const meta = await offlineDb.syncMeta.get(tripId)
+    if (meta?.tilesBbox) await upsertSyncMeta({ ...meta, tilesBbox: null })
+    return
+  }
+
   // Resolved rather than taken raw, so a keyless CARTO template pre-downloads the
   // basemap the map will actually draw instead of a few thousand watermarks.
   const template = resolveTileUrl(tileUrlTemplate, DEFAULT_TILE_URL, cartoKey)

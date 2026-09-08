@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Classica 2D, qualsiasi tile raster',
   'settings.mapMapboxSubtitle': 'Tile vettoriali, edifici 3D e terreno',
   'settings.mapMapLibreSubtitle': 'Tile vettoriali OpenFreeMap, senza token',
+  'settings.mapAmapOfflineHint': 'La mappa di base AMap non supporta il download di mappe offline.',
   'settings.mapAmapSubtitle': 'AMap — mappa di base della Cina continentale',
   'settings.mapExperimental': 'Sperimentale',
   'settings.mapMapboxToken': 'Token di accesso Mapbox',

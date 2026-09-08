@@ -39,6 +39,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Classic 2D, any raster tiles',
   'settings.mapMapboxSubtitle': 'Vector tiles, 3D buildings & terrain',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap vector tiles, no token',
+  'settings.mapAmapOfflineHint': 'The AMap basemap does not support offline map downloads.',
   'settings.mapAmapSubtitle': 'AMap — mainland China basemap',
   'settings.mapExperimental': 'Experimental',
   'settings.mapMapboxToken': 'Mapbox Access Token',

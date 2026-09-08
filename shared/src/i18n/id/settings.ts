@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klasik 2D, tile raster apa pun',
   'settings.mapMapboxSubtitle': 'Tile vektor, bangunan 3D & medan',
   'settings.mapMapLibreSubtitle': 'Tile vektor OpenFreeMap, tanpa token',
+  'settings.mapAmapOfflineHint': 'Peta dasar AMap tidak mendukung unduhan peta offline.',
   'settings.mapAmapSubtitle': 'AMap — peta dasar daratan Tiongkok',
   'settings.mapExperimental': 'Eksperimental',
   'settings.mapMapboxToken': 'Token akses Mapbox',

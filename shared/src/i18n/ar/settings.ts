@@ -29,6 +29,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': '2D كلاسيكي، أي بلاطات نقطية',
   'settings.mapMapboxSubtitle': 'بلاطات متجهية ومبانٍ ثلاثية الأبعاد وتضاريس',
   'settings.mapMapLibreSubtitle': 'بلاطات متجهية من OpenFreeMap، بدون رمز',
+  'settings.mapAmapOfflineHint': 'الخريطة الأساسية من AMap لا تدعم تنزيل الخرائط دون اتصال.',
   'settings.mapAmapSubtitle': 'AMap — خريطة أساسية لبر الصين الرئيسي',
   'settings.mapExperimental': 'تجريبي',
   'settings.mapMapboxToken': 'رمز وصول Mapbox',

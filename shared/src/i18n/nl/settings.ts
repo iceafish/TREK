@@ -31,6 +31,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klassiek 2D, elke raster-tile',
   'settings.mapMapboxSubtitle': 'Vector tiles, 3D-gebouwen & terrein',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap vector tiles, geen token',
+  'settings.mapAmapOfflineHint': 'De AMap-basiskaart ondersteunt geen offline kaartdownloads.',
   'settings.mapAmapSubtitle': 'AMap — basiskaart van vasteland China',
   'settings.mapExperimental': 'Experimenteel',
   'settings.mapMapboxToken': 'Mapbox Access Token',

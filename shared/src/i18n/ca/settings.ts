@@ -314,6 +314,8 @@ const settings: TranslationStrings = {
 
   'settings.mapMapLibreSubtitle': "Tessel·les vectorials d'OpenFreeMap, sense token",
 
+  'settings.mapAmapOfflineHint': 'El mapa base AMap no admet la baixada de mapes sense connexió.',
+
   'settings.mapAmapSubtitle': 'AMap — mapa base de la Xina continental',
   'settings.mapOpenFreeMapStylePlaceholder': "Selecciona un estil d'OpenFreeMap",
   'settings.mapOpenFreeMapStyleHint':

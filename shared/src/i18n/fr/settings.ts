@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Classique 2D, toutes tuiles raster',
   'settings.mapMapboxSubtitle': 'Tuiles vectorielles, bâtiments 3D & terrain',
   'settings.mapMapLibreSubtitle': 'Tuiles vectorielles OpenFreeMap, sans jeton',
+  'settings.mapAmapOfflineHint': 'Le fond de carte AMap ne prend pas en charge le téléchargement hors ligne des cartes.',
   'settings.mapAmapSubtitle': 'AMap — fond de carte de Chine continentale',
   'settings.mapExperimental': 'Expérimental',
   'settings.mapMapboxToken': "Jeton d'accès Mapbox",

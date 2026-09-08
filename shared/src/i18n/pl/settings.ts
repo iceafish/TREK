@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Klasyczne 2D, dowolne kafelki rastrowe',
   'settings.mapMapboxSubtitle': 'Kafelki wektorowe, budynki 3D i teren',
   'settings.mapMapLibreSubtitle': 'Kafelki wektorowe OpenFreeMap, bez tokena',
+  'settings.mapAmapOfflineHint': 'Mapa bazowa AMap nie obsługuje pobierania map offline.',
   'settings.mapAmapSubtitle': 'AMap — mapa bazowa Chin kontynentalnych',
   'settings.mapExperimental': 'Eksperymentalne',
   'settings.mapMapboxToken': 'Token dostępu Mapbox',

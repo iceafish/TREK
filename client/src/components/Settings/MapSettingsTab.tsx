@@ -326,6 +326,11 @@ export default function MapSettingsTab(): React.ReactElement {
         <p className="text-xs text-slate-400 mt-2">
           {t('settings.mapProviderHint')}
         </p>
+        {provider === 'amap' && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+            {t('settings.mapAmapOfflineHint')}
+          </p>
+        )}
       </div>
 
       {/* Leaflet settings */}

@@ -30,6 +30,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'クラシックな2D、任意のラスタータイル',
   'settings.mapMapboxSubtitle': 'ベクタータイル、3D建物・地形',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap ベクタータイル、トークン不要',
+  'settings.mapAmapOfflineHint': 'AMap のベースマップはオフラインでの地図ダウンロードに対応していません。',
   'settings.mapAmapSubtitle': 'AMap（高德）中国大陸のベースマップ',
   'settings.mapExperimental': '実験的',
   'settings.mapMapboxToken': 'Mapbox アクセストークン',

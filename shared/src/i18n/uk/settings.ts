@@ -31,6 +31,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': 'Класичні 2D, будь-які растрові тайли',
   'settings.mapMapboxSubtitle': 'Векторні тайли, 3D-будинки та рельєф',
   'settings.mapMapLibreSubtitle': 'Векторні тайли OpenFreeMap, без токена',
+  'settings.mapAmapOfflineHint': 'Базова карта AMap не підтримує офлайн-завантаження карт.',
   'settings.mapAmapSubtitle': 'AMap — базова карта материкового Китаю',
   'settings.mapExperimental': 'Експериментально',
   'settings.mapMapboxToken': 'Токен доступу Mapbox',

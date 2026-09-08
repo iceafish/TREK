@@ -12,6 +12,16 @@
  * tiles are fetched when the page renders, and they are raster, cut for one
  * zoom level. Printed much larger than they were fetched, they go soft.
  *
+ * ── The AMap mode (docs/amap/05-degraded-surfaces.md) ────────────────────
+ *
+ * When the instance's basemap provider is AMap (高德), the tiled mode falls
+ * back entirely: AMap's terms forbid storing its service data, which is what
+ * rendering a map element into a PDF does. A placed element keeps its stored
+ * tileUrl (removal must not remove a page), but NEW placements in this mode
+ * come from useMapSources offering the vector outline only — nothing is
+ * fetched, and nothing to take down later. If AMap's static image API is ever
+ * cleared for print use, that is a separate package; this file stays as-is.
+ *
  * ── Attribution ──────────────────────────────────────────────────────────
  *
  * Not optional and not a setting. OpenStreetMap's licence requires credit, and

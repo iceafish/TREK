@@ -31,6 +31,7 @@ const settings: TranslationStrings = {
   'settings.mapLeafletSubtitle': '2D cổ điển, bất kỳ ô raster nào',
   'settings.mapMapboxSubtitle': 'Gạch vector, tòa nhà 3D và địa hình',
   'settings.mapMapLibreSubtitle': 'OpenFreeMap gạch vector, không có mã thông báo',
+  'settings.mapAmapOfflineHint': 'Bản đồ nền AMap không hỗ trợ tải xuống bản đồ ngoại tuyến.',
   'settings.mapAmapSubtitle': 'AMap — bản đồ nền Trung Quốc đại lục',
   'settings.mapExperimental': 'thực nghiệm',
   'settings.mapMapboxToken': 'Mapbox Mã thông báo truy cập',
