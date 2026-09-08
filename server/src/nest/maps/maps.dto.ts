@@ -3,6 +3,7 @@ import {
   mapsSearchRequestSchema,
   mapsAutocompleteRequestSchema,
   mapsResolveUrlRequestSchema,
+  mapsRouteRequestSchema,
 } from '@trek/shared';
 
 /**
@@ -14,3 +15,4 @@ import {
 export class MapsSearchDto extends createZodDto(mapsSearchRequestSchema) {}
 export class MapsAutocompleteDto extends createZodDto(mapsAutocompleteRequestSchema) {}
 export class MapsResolveUrlDto extends createZodDto(mapsResolveUrlRequestSchema) {}
+export class MapsRouteDto extends createZodDto(mapsRouteRequestSchema) {}

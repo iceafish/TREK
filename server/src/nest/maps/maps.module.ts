@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MapsController } from './maps.controller';
 import { MapsService } from './maps.service';
 import { MapsMcp } from './maps.mcp';
+import { RoutingService } from './routing.service';
 import { PlacePhotosModule } from '../place-photos/place-photos.module';
 import { StorageModule } from '../storage/storage.module';
 
@@ -14,7 +15,7 @@ import { StorageModule } from '../storage/storage.module';
 @Module({
   imports: [PlacePhotosModule, StorageModule],
   controllers: [MapsController],
-  providers: [MapsService, MapsMcp],
+  providers: [MapsService, MapsMcp, RoutingService],
   exports: [MapsService],
 })
 export class MapsModule {}

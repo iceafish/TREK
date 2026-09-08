@@ -58,6 +58,39 @@ export const mapsResolveUrlRequestSchema = z.object({
 });
 export type MapsResolveUrlRequest = z.infer<typeof mapsResolveUrlRequestSchema>;
 
+/**
+ * Server-side routing (docs/amap/04): the built-in driving/walking/cycling
+ * profiles route through the server (AMap Web Service) instead of the browser
+ * hitting public OSRM instances. Waypoints are WGS84 — the server converts to
+ * GCJ-02 for AMap and back for the response. Plugin profiles
+ * (`plugin:<id>/<profile>`) do NOT come through here; they keep their own
+ * dispatch and their WGS84 interpretation is documented on the plugin side.
+ */
+export const mapsRouteRequestSchema = z.object({
+  waypoints: z.array(latLng).min(2).max(30),
+  profile: z.enum(['driving', 'walking', 'cycling']),
+});
+export type MapsRouteRequest = z.infer<typeof mapsRouteRequestSchema>;
+
+/** One per-waypoint-pair leg, in visit order (length = waypoints - 1). */
+export const mapsRouteLegSchema = z.object({
+  distance: z.number(),
+  duration: z.number(),
+});
+export type MapsRouteLeg = z.infer<typeof mapsRouteLegSchema>;
+
+/** Raw-numbers mirror of the client's RouteWithLegs — formatting stays client-side. */
+export const mapsRouteResultSchema = z.object({
+  route: z.object({
+    /** [lat, lng] pairs in WGS84, visit order, joints deduplicated. */
+    coordinates: z.array(z.tuple([z.number(), z.number()])),
+    distance: z.number(),
+    duration: z.number(),
+    legs: z.array(mapsRouteLegSchema),
+  }),
+});
+export type MapsRouteResult = z.infer<typeof mapsRouteResultSchema>;
+
 /** Provider-shaped place blob (Google/OSM fields differ); kept open by design. */
 const placeRecord = z.record(z.string(), z.unknown());
 

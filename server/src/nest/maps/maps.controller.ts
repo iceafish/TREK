@@ -19,6 +19,7 @@ import type {
   MapsPlacePhotoResult,
   MapsResolveUrlResult,
   MapsReverseResult,
+  MapsRouteResult,
   MapsSearchResult,
 } from '@trek/shared';
 import type { User } from '../../types';
@@ -27,7 +28,8 @@ import { StorageService } from '../storage/storage.service';
 import { isClientAbortError } from '../storage/storage.types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { MapsSearchDto, MapsAutocompleteDto, MapsResolveUrlDto } from './maps.dto';
+import { MapsSearchDto, MapsAutocompleteDto, MapsResolveUrlDto, MapsRouteDto } from './maps.dto';
+import { RoutingService } from './routing.service';
 
 /** Google's session-token shape: URL-safe ASCII, at most 36 characters. The
  *  autocomplete body is validated by the Zod pipe; the details query is not,
@@ -66,6 +68,7 @@ export class MapsController {
   constructor(
     private readonly maps: MapsService,
     private readonly storage: StorageService,
+    private readonly routing: RoutingService,
   ) {}
 
   @Post('search')
@@ -237,6 +240,22 @@ export class MapsController {
     } catch {
       // The legacy route swallows reverse-geocode failures into an empty result.
       return { name: null, address: null };
+    }
+  }
+
+  // Server-side routing for the built-in profiles (docs/amap/04): the browser
+  // no longer talks to public OSRM instances. Returns raw numbers in the
+  // plugin-route normalization's shape — the client formats units/text.
+  @Post('route')
+  @HttpCode(200)
+  async route(@Body() body: MapsRouteDto): Promise<MapsRouteResult> {
+    try {
+      const route = await this.routing.route(body.waypoints, body.profile);
+      return { route };
+    } catch (err: unknown) {
+      const status = (err as { status?: number }).status || 502;
+      const message = err instanceof Error ? err.message : 'Routing error';
+      throw toHttpException(err, message, status);
     }
   }
 

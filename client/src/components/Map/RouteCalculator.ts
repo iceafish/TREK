@@ -1,18 +1,7 @@
+import { apiClient, pluginsApi } from '../../api/client'
 import { useSettingsStore } from '../../store/settingsStore'
-import { pluginsApi } from '../../api/client'
 import type { DistanceUnit, RouteResult, RouteSegment, RouteWithLegs, Waypoint, RouteAnchors } from '../../types'
 import { formatDistance } from '../../utils/units'
-
-const OSRM_BASE = 'https://router.project-osrm.org/route/v1'
-
-// FOSSGIS hosts OSRM with real per-profile routing (car/foot/bike) — the
-// project-osrm.org demo is car-only (it ignores the profile in the URL). Use
-// the matching profile so walking routes follow footpaths, not the road network.
-const OSRM_PROFILE_BASE: Record<'driving' | 'walking' | 'cycling', string> = {
-  driving: 'https://routing.openstreetmap.de/routed-car/route/v1/driving',
-  walking: 'https://routing.openstreetmap.de/routed-foot/route/v1/foot',
-  cycling: 'https://routing.openstreetmap.de/routed-bike/route/v1/bike',
-}
 
 // Cache route responses keyed by the exact waypoint list. Routes are stable, so
 // this avoids re-hitting the public OSRM demo server on every day switch / reorder.
@@ -34,7 +23,7 @@ export function parsePluginProfile(profile: string): { pluginId: string; profile
   return { pluginId: rest.slice(0, slash), profileId: rest.slice(slash + 1) }
 }
 
-/** Fetches a full route via OSRM and returns coordinates, distance, and duration estimates for driving/walking. */
+/** Fetches a full route via the server's AMap routing and returns coordinates, distance, and duration for driving/walking. */
 export async function calculateRoute(
   waypoints: Waypoint[],
   profile: 'driving' | 'walking' | 'cycling' = 'driving',
@@ -44,38 +33,17 @@ export async function calculateRoute(
     throw new Error('At least 2 waypoints required')
   }
 
-  const coords = waypoints.map((p) => `${p.lng},${p.lat}`).join(';')
-  const url = `${OSRM_BASE}/${profile}/${coords}?overview=full&geometries=geojson&steps=false`
-
-  const response = await fetch(url, { signal })
-  if (!response.ok) {
-    throw new Error('Route could not be calculated')
-  }
-
-  const data = await response.json()
-
-  if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
-    throw new Error('No route found')
-  }
-
-  const route = data.routes[0]
-  const coordinates: [number, number][] = route.geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng])
+  const { route } = await fetchServerRoute(waypoints, profile, signal)
 
   const distance: number = route.distance
-  let duration: number
-  if (profile === 'walking') {
-    duration = distance / (5000 / 3600)
-  } else if (profile === 'cycling') {
-    duration = distance / (15000 / 3600)
-  } else {
-    duration = route.duration
-  }
+  // AMap's durations are real per-profile estimates — no synthetic speed math.
+  const duration: number = route.duration
 
   const walkingDuration = distance / (5000 / 3600)
   const drivingDuration: number = route.duration
 
   return {
-    coordinates,
+    coordinates: route.coordinates,
     distance,
     duration,
     distanceText: formatRouteDistance(distance),
@@ -244,24 +212,15 @@ export function optimizeRoute<T extends Waypoint>(places: T[], anchors: RouteAnc
   return order
 }
 
-/** Fetches per-leg distance/duration from OSRM and returns segment metadata (midpoints, walking/driving times). */
+/** Fetches per-leg distance/duration from the server's AMap routing and returns segment metadata (midpoints, walking/driving times). */
 export async function calculateSegments(
   waypoints: Waypoint[],
   { signal }: { signal?: AbortSignal } = {}
 ): Promise<RouteSegment[]> {
   if (!waypoints || waypoints.length < 2) return []
 
-  const coords = waypoints.map((p) => `${p.lng},${p.lat}`).join(';')
-  const url = `${OSRM_BASE}/driving/${coords}?overview=false&geometries=geojson&steps=false&annotations=distance,duration`
-
-  const response = await fetch(url, { signal })
-  if (!response.ok) throw new Error('Route could not be calculated')
-
-  const data = await response.json()
-  if (data.code !== 'Ok' || !data.routes?.[0]) throw new Error('No route found')
-
-  const legs = data.routes[0].legs
-  return legs.map((leg: { distance: number; duration: number }, i: number): RouteSegment => {
+  const { route } = await fetchServerRoute(waypoints, 'driving', signal)
+  return route.legs.map((leg, i: number): RouteSegment => {
     const from: [number, number] = [waypoints[i].lat, waypoints[i].lng]
     const to: [number, number] = [waypoints[i + 1].lat, waypoints[i + 1].lng]
     const mid: [number, number] = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2]
@@ -344,20 +303,14 @@ export async function calculateRouteWithLegs(
     return result
   }
 
-  const osrmProfile = (profile === 'walking' || profile === 'cycling') ? profile : 'driving'
-  const url = `${OSRM_PROFILE_BASE[osrmProfile]}/${coords}?overview=full&geometries=geojson&annotations=distance,duration`
-  const response = await fetch(url, { signal })
-  if (!response.ok) throw new Error('Route could not be calculated')
-
-  const data = await response.json()
-  if (data.code !== 'Ok' || !data.routes?.[0]) throw new Error('No route found')
-
-  const route = data.routes[0]
-  const coordinates: [number, number][] = route.geometry.coordinates.map(
-    ([lng, lat]: [number, number]) => [lat, lng]
-  )
-  const legs: RouteSegment[] = (route.legs || []).map(
-    (leg: { distance: number; duration: number }, i: number): RouteSegment => {
+  // Built-in profiles route through the server's AMap integration (docs/amap/04)
+  // — the browser never talks to a public router, and AMap's durations are real
+  // per-profile estimates.
+  // A plugin key never reaches here (dispatched above), and anything unknown drives.
+  const osrmProfile = profile === 'walking' ? 'walking' as const : profile === 'cycling' ? 'cycling' as const : 'driving' as const
+  const { route: serverRoute } = await fetchServerRoute(waypoints, osrmProfile, signal)
+  const legs: RouteSegment[] = serverRoute.legs.map(
+    (leg, i: number): RouteSegment => {
       const from: [number, number] = [waypoints[i].lat, waypoints[i].lng]
       const to: [number, number] = [waypoints[i + 1].lat, waypoints[i + 1].lng]
       const mid: [number, number] = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2]
@@ -374,13 +327,36 @@ export async function calculateRouteWithLegs(
     }
   )
 
-  const result: RouteWithLegs = { coordinates, distance: route.distance, duration: route.duration, legs }
+  const result: RouteWithLegs = {
+    coordinates: serverRoute.coordinates,
+    distance: serverRoute.distance,
+    duration: serverRoute.duration,
+    legs,
+  }
   routeCache.set(cacheKey, result)
   if (routeCache.size > ROUTE_CACHE_MAX) {
     const oldest = routeCache.keys().next().value
     if (oldest !== undefined) routeCache.delete(oldest)
   }
   return result
+}
+
+/**
+ * The server-side AMap routing call behind every built-in profile (docs/amap/04).
+ * Waypoints go out WGS84; the response comes back WGS84 too — the GCJ-02
+ * conversion happened server-side and never reaches the client.
+ */
+async function fetchServerRoute(
+  waypoints: Waypoint[],
+  profile: 'driving' | 'walking' | 'cycling',
+  signal?: AbortSignal,
+): Promise<{ route: { coordinates: [number, number][]; distance: number; duration: number; legs: Array<{ distance: number; duration: number }> } }> {
+  const response = await apiClient.post(
+    '/maps/route',
+    { waypoints: waypoints.map((p) => ({ lat: p.lat, lng: p.lng })), profile },
+    { timeout: 25000, signal },
+  )
+  return response.data as { route: { coordinates: [number, number][]; distance: number; duration: number; legs: Array<{ distance: number; duration: number }> } }
 }
 
 function getDistanceUnit(): DistanceUnit {
