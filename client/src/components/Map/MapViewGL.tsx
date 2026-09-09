@@ -7,6 +7,8 @@ import { useAuthStore } from '../../store/authStore'
 import { getCached, isLoading, fetchPhoto, onThumbReady, getAllThumbs } from '../../services/photoService'
 import { isCustomPlaceImage, photoCacheKey } from './placePhoto'
 import { CATEGORY_ICON_MAP } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
+import { useTranslation } from '../../i18n'
 import { isStandardFamily, supportsCustom3d, wantsTerrain, addCustom3dBuildings, addTerrainAndSky } from './mapboxSetup'
 import { attachLocationMarker, type LocationMarkerHandle } from './locationMarkerMapbox'
 import { ReservationMapboxOverlay } from './reservationsMapbox'
@@ -439,6 +441,7 @@ export function MapViewGL({
   gl,
   onMapReady,
 }: Props) {
+  const { t } = useTranslation()
   const rawMapboxStyle = useSettingsStore(s => s.settings.mapbox_style || MAPBOX_DEFAULT_STYLE)
   const rawMaplibreStyle = useSettingsStore(s => s.settings.maplibre_style || '')
   const mapboxToken = useSettingsStore(s => s.settings.mapbox_access_token || '')
@@ -1576,7 +1579,7 @@ export function MapViewGL({
           {hoverPlace.category_name && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
               <HoverIcon size={10} style={{ color: hoverPlace.category_color || '#6b7280', flexShrink: 0 }} />
-              <span style={{ fontSize: 11, color: '#6b7280' }}>{hoverPlace.category_name}</span>
+              <span style={{ fontSize: 11, color: '#6b7280' }}>{categoryLabel(hoverPlace.category_name, t)}</span>
             </div>
           )}
           {hoverPlace.address && (

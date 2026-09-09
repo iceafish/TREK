@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': '儲存失敗',
   'categories.toast.deleted': '分類已刪除',
   'categories.toast.deleteError': '刪除失敗',
+  'categories.builtin.hotel': '酒店',
+  'categories.builtin.restaurant': '餐廳',
+  'categories.builtin.attraction': '景點',
+  'categories.builtin.shopping': '購物',
+  'categories.builtin.transport': '交通',
+  'categories.builtin.activity': '活動',
+  'categories.builtin.barcafe': '咖啡/酒吧',
+  'categories.builtin.beach': '海灘',
+  'categories.builtin.nature': '自然',
+  'categories.builtin.other': '其他',
 };
 export default categories;

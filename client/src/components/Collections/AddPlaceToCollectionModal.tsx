@@ -9,6 +9,7 @@ import MarkdownToolbar from '../Journey/MarkdownToolbar'
 import { mapsApi } from '../../api/client'
 import { collectionsApi } from '../../api/collections'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { useTranslation } from '../../i18n'
 import { useToast } from '../shared/Toast'
 import { getApiErrorMessage } from '../../types'
@@ -257,7 +258,7 @@ export default function AddPlaceToCollectionModal({ isOpen, collectionId, collec
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border transition-colors bg-surface-card border-edge hover:bg-surface-hover"
                     style={on ? { color: col, background: `color-mix(in oklch, ${col} 15%, transparent)`, borderColor: `color-mix(in oklch, ${col} 40%, transparent)` } : undefined}
                   >
-                    <Icon size={13} /> {cat.name}
+                    <Icon size={13} /> {categoryLabel(cat.name, t)}
                   </button>
                 )
               })}

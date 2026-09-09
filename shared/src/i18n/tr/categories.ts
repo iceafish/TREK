@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Kaydedilemedi',
   'categories.toast.deleted': 'Kategori silindi',
   'categories.toast.deleteError': 'Silinemedi',
+  'categories.builtin.hotel': 'Otel',
+  'categories.builtin.restaurant': 'Restoran',
+  'categories.builtin.attraction': 'Gezilecek Yer',
+  'categories.builtin.shopping': 'Alışveriş',
+  'categories.builtin.transport': 'Ulaşım',
+  'categories.builtin.activity': 'Etkinlik',
+  'categories.builtin.barcafe': 'Bar/Kafe',
+  'categories.builtin.beach': 'Plaj',
+  'categories.builtin.nature': 'Doğa',
+  'categories.builtin.other': 'Diğer',
 };
 export default categories;

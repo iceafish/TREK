@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom'
 import { X, MapPin } from 'lucide-react'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { useTranslation } from '../../i18n'
 import type { Category } from '../../types'
 
@@ -50,7 +51,7 @@ export function PlacesBulkCategoryModal({ count, categories, onPick, onClose }: 
             return (
               <button type="button" key={c.id} onClick={() => onPick(c.id)} className="text-content bg-transparent" style={rowStyle} onMouseEnter={hoverOn} onMouseLeave={hoverOff}>
                 <CatIcon size={14} strokeWidth={2} color={c.color || 'var(--text-muted)'} />
-                <span style={{ flex: 1 }}>{c.name}</span>
+                <span style={{ flex: 1 }}>{categoryLabel(c.name, t)}</span>
               </button>
             )
           })}

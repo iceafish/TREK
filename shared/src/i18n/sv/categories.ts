@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Det gick inte att spara',
   'categories.toast.deleted': 'Kategorin har tagits bort',
   'categories.toast.deleteError': 'Det gick inte att ta bort',
+  'categories.builtin.hotel': 'Hotell',
+  'categories.builtin.restaurant': 'Restaurang',
+  'categories.builtin.attraction': 'Sevärdhet',
+  'categories.builtin.shopping': 'Shopping',
+  'categories.builtin.transport': 'Transport',
+  'categories.builtin.activity': 'Aktivitet',
+  'categories.builtin.barcafe': 'Bar/Café',
+  'categories.builtin.beach': 'Strand',
+  'categories.builtin.nature': 'Natur',
+  'categories.builtin.other': 'Övrigt',
 };
 export default categories;

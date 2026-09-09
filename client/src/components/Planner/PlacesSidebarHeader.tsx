@@ -1,5 +1,6 @@
 import { Search, Plus, X, Upload, FileDown, ChevronDown, Check, MapPin, Star } from 'lucide-react'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import Tooltip from '../shared/Tooltip'
 import type { SidebarState } from './usePlacesSidebar'
 
@@ -288,7 +289,7 @@ export function PlacesHeader(S: SidebarState) {
                         {active && <Check size={10} strokeWidth={3} color="white" />}
                       </div>
                       <CatIcon size={12} strokeWidth={2} color={c.color || 'var(--text-muted)'} />
-                      <span style={{ flex: 1 }}>{c.name}</span>
+                      <span style={{ flex: 1 }}>{categoryLabel(c.name, t)}</span>
                     </button>
                   )
                 })}

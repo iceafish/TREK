@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Falha ao salvar',
   'categories.toast.deleted': 'Categoria excluída',
   'categories.toast.deleteError': 'Falha ao excluir',
+  'categories.builtin.hotel': 'Hotel',
+  'categories.builtin.restaurant': 'Restaurante',
+  'categories.builtin.attraction': 'Atração',
+  'categories.builtin.shopping': 'Compras',
+  'categories.builtin.transport': 'Transporte',
+  'categories.builtin.activity': 'Atividade',
+  'categories.builtin.barcafe': 'Bar/Café',
+  'categories.builtin.beach': 'Praia',
+  'categories.builtin.nature': 'Natureza',
+  'categories.builtin.other': 'Outro',
 };
 export default categories;

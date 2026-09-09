@@ -5,6 +5,7 @@ import type { TranslationFn } from '../../types'
 import PlaceAvatar from '../shared/PlaceAvatar'
 import { getCategoryIcon } from '../shared/categoryIcons'
 import StatusBadge from './StatusBadge'
+import { categoryLabel } from '../shared/categoryNames'
 
 interface CollectionListProps {
   places: CollectionPlace[]
@@ -79,7 +80,7 @@ export default function CollectionList({
                 return (
                   <>
                     <span className="col-lrow-cat" style={{ ['--cat' as string]: place.category.color || '#6366f1' }}>
-                      <CatIcon size={11} /> {place.category.name}
+                      <CatIcon size={11} /> {categoryLabel(place.category.name, t)}
                     </span>
                     <span className="col-lrow-div" aria-hidden />
                   </>

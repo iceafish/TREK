@@ -11,6 +11,7 @@ import { NumericInput } from '../shared/NumericInput'
 import { mapsApi } from '../../api/client'
 import { entityGradient } from '../../utils/gradients'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { NavigationMenu } from '../shared/NavigationMenu'
 import { getNavigationTargets, openNavigationTarget } from '../Planner/placeNavigation'
 import { STATUS_META, STATUS_ORDER, normalizeLinkUrl } from '../../pages/collections/collectionsModel'
@@ -182,7 +183,7 @@ export default function CollectionPlaceDetail({
         <div className="col-detail-cover-scrim" />
         {place.category?.name && (
           <span className="col-detail-cover-cat" style={{ ['--cat' as string]: place.category.color || '#6366f1' }}>
-            <CatIcon size={12} /> {place.category.name}
+            <CatIcon size={12} /> {categoryLabel(place.category.name, t)}
           </span>
         )}
         <button type="button" className="col-detail-close" onClick={onClose} aria-label={t('common.close')}><X size={16} /></button>
@@ -276,7 +277,7 @@ export default function CollectionPlaceDetail({
                   const on = categoryId === cat.id
                   return (
                     <button key={cat.id} type="button" onClick={() => setCategoryId(cat.id)} className={`col-detail-cat${on ? ' on' : ''}`} style={{ ['--cat' as string]: cat.color || '#6366f1' }}>
-                      <Icon size={12} /> {cat.name}
+                      <Icon size={12} /> {categoryLabel(cat.name, t)}
                     </button>
                   )
                 })}

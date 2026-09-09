@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Gagal menyimpan',
   'categories.toast.deleted': 'Kategori dihapus',
   'categories.toast.deleteError': 'Gagal menghapus',
+  'categories.builtin.hotel': 'Hotel',
+  'categories.builtin.restaurant': 'Restoran',
+  'categories.builtin.attraction': 'Atraksi',
+  'categories.builtin.shopping': 'Belanja',
+  'categories.builtin.transport': 'Transportasi',
+  'categories.builtin.activity': 'Aktivitas',
+  'categories.builtin.barcafe': 'Bar/Kafe',
+  'categories.builtin.beach': 'Pantai',
+  'categories.builtin.nature': 'Alam',
+  'categories.builtin.other': 'Lainnya',
 };
 export default categories;

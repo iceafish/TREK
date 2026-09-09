@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useMemo, useCallback, use } from 'react'
 import { makeMarkerDraggable } from './markerDrag'
 import { CATEGORY_ICON_MAP } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
+import { useTranslation } from '../../i18n'
 import { visibleRouteReservations } from '../../utils/reservationRoutes'
 import { useTransportRoutes } from '../../hooks/useTransportRoutes'
 import { resolveTrackColor, hasManualTrackColor } from './trackColors'
@@ -178,6 +180,7 @@ export function MapViewAMap({
   onMapReady,
 }: Props) {
   const amapKey = useSettingsStore(s => s.settings.amap_js_key || '')
+  const { t } = useTranslation()
   const placesPhotosEnabled = useAuthStore(s => s.placesPhotosEnabled)
   const showEndpointLabels = useSettingsStore(s => s.settings.map_booking_labels) === true
   // Suspends inside MapViewAuto's Suspense — the Leaflet fallback shows while
@@ -930,7 +933,7 @@ export function MapViewAMap({
           {hoverPlace.category_name && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
               <HoverIcon size={10} style={{ color: hoverPlace.category_color || '#6b7280', flexShrink: 0 }} />
-              <span style={{ fontSize: 11, color: '#6b7280' }}>{hoverPlace.category_name}</span>
+              <span style={{ fontSize: 11, color: '#6b7280' }}>{categoryLabel(hoverPlace.category_name, t)}</span>
             </div>
           )}
           {hoverPlace.address && (

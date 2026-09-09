@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Nem sikerült menteni',
   'categories.toast.deleted': 'Kategória törölve',
   'categories.toast.deleteError': 'Nem sikerült törölni',
+  'categories.builtin.hotel': 'Szállás',
+  'categories.builtin.restaurant': 'Étterem',
+  'categories.builtin.attraction': 'Látnivaló',
+  'categories.builtin.shopping': 'Vásárlás',
+  'categories.builtin.transport': 'Közlekedés',
+  'categories.builtin.activity': 'Tevékenység',
+  'categories.builtin.barcafe': 'Bár/Kávézó',
+  'categories.builtin.beach': 'Strand',
+  'categories.builtin.nature': 'Természet',
+  'categories.builtin.other': 'Egyéb',
 };
 export default categories;

@@ -9,6 +9,8 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { mapsApi } from '../../api/client'
 import { getCategoryIcon, CATEGORY_ICON_MAP } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
+import { useTranslation } from '../../i18n'
 import ReservationOverlay from './ReservationOverlay'
 import { PluginMapMarkers } from './MapPluginMarkers'
 import { PluginMapLayers } from './MapPluginLayers'
@@ -539,6 +541,7 @@ export const MapView = memo(function MapView({
   tripId,
   routeVias = [],
 }: any) {
+  const { t } = useTranslation()
   // The caller hands over whatever the user configured; what kind of basemap
   // that is decides which layer draws it. A saved raster template still wins,
   // the default is a vector style.
@@ -974,7 +977,7 @@ export const MapView = memo(function MapView({
         {hoveredPlace.category_name && CatIcon && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
             <CatIcon size={10} style={{ color: hoveredPlace.category_color || '#6b7280', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: '#6b7280' }}>{hoveredPlace.category_name}</span>
+            <span style={{ fontSize: 11, color: '#6b7280' }}>{categoryLabel(hoveredPlace.category_name, t)}</span>
           </div>
         )}
         {hoveredPlace.address && (

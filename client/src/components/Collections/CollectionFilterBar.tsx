@@ -3,6 +3,7 @@ import { ChevronDown, Check, Layers, Tag, CheckSquare, Star, Plus, ArrowDownUp, 
 import type { StatusFilter, CollectionSortMode } from '../../store/collectionStore'
 import type { TranslationFn } from '../../types'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { STATUS_META, STATUS_ORDER } from '../../pages/collections/collectionsModel'
 import type { CategoryOption, LabelOption } from '../../pages/collections/collectionsModel'
 import CollectionLabelFilter from './CollectionLabelFilter'
@@ -119,7 +120,7 @@ export default function CollectionFilterBar({
     { key: 'all', label: t('common.all'), count: catTotal },
     ...categoryOptions.map(c => {
       const Icon = getCategoryIcon(c.icon ?? undefined)
-      return { key: c.id, label: c.name, icon: <Icon size={13} style={{ color: c.color ?? undefined }} />, count: c.count }
+      return { key: c.id, label: categoryLabel(c.name, t), icon: <Icon size={13} style={{ color: c.color ?? undefined }} />, count: c.count }
     }),
   ]
 

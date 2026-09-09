@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': '保存に失敗しました',
   'categories.toast.deleted': 'カテゴリを削除しました',
   'categories.toast.deleteError': '削除に失敗しました',
+  'categories.builtin.hotel': 'ホテル',
+  'categories.builtin.restaurant': 'レストラン',
+  'categories.builtin.attraction': '観光スポット',
+  'categories.builtin.shopping': 'ショッピング',
+  'categories.builtin.transport': '交通機関',
+  'categories.builtin.activity': 'アクティビティ',
+  'categories.builtin.barcafe': 'カフェ/バー',
+  'categories.builtin.beach': 'ビーチ',
+  'categories.builtin.nature': '自然',
+  'categories.builtin.other': 'その他',
 };
 export default categories;

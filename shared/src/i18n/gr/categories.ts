@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Αποτυχία αποθήκευσης',
   'categories.toast.deleted': 'Η κατηγορία διαγράφηκε',
   'categories.toast.deleteError': 'Αποτυχία διαγραφής',
+  'categories.builtin.hotel': 'Ξενοδοχείο',
+  'categories.builtin.restaurant': 'Εστιατόριο',
+  'categories.builtin.attraction': 'Αξιοθέατο',
+  'categories.builtin.shopping': 'Αγορές',
+  'categories.builtin.transport': 'Μεταφορά',
+  'categories.builtin.activity': 'Δραστηριότητα',
+  'categories.builtin.barcafe': 'Μπαρ/Καφέ',
+  'categories.builtin.beach': 'Παραλία',
+  'categories.builtin.nature': 'Φύση',
+  'categories.builtin.other': 'Άλλο',
 };
 export default categories;

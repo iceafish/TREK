@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Uložení se nezdařilo',
   'categories.toast.deleted': 'Kategorie smazána',
   'categories.toast.deleteError': 'Smazání se nezdařilo',
+  'categories.builtin.hotel': 'Hotel',
+  'categories.builtin.restaurant': 'Restaurace',
+  'categories.builtin.attraction': 'Atrakce',
+  'categories.builtin.shopping': 'Nakupování',
+  'categories.builtin.transport': 'Doprava',
+  'categories.builtin.activity': 'Aktivita',
+  'categories.builtin.barcafe': 'Bar/Kavárna',
+  'categories.builtin.beach': 'Pláž',
+  'categories.builtin.nature': 'Příroda',
+  'categories.builtin.other': 'Jiné',
 };
 export default categories;

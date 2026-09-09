@@ -15,6 +15,7 @@ import CustomTimePicker from '../shared/CustomTimePicker'
 import { useSettingsStore } from '../../store/settingsStore'
 import { useToast } from '../shared/Toast'
 import { getLocaleForLanguage, useTranslation } from '../../i18n'
+import { categoryLabel } from '../shared/categoryNames'
 import type { Day, Place, Category, Reservation, AssignmentsMap } from '../../types'
 import { isDayInAccommodationRange } from '../../utils/dayOrder'
 import { formatClockTime, splitReservationDateTime } from '../../utils/formatters'
@@ -650,7 +651,7 @@ function HotelPickerModal({ showHotelPicker, setShowHotelPicker, font, t, hotelD
                           padding: '3px 10px', borderRadius: 6, border: 'none', fontSize: 'calc(10px * var(--fs-scale-caption, 1))', fontWeight: 600, cursor: 'pointer',
                           background: hotelCategoryFilter === c.id ? c.color || 'var(--text-primary)' : 'var(--bg-secondary)',
                           color: hotelCategoryFilter === c.id ? '#fff' : 'var(--text-muted)',
-                        }}>{c.name}</button>
+                        }}>{categoryLabel(c.name, t)}</button>
                       ))}
                     </div>
                   )}

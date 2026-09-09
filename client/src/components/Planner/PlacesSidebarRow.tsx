@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import { Plus, Check, Star } from 'lucide-react'
 import PlaceAvatar from '../shared/PlaceAvatar'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { resolveTrackColor } from '../Map/trackColors'
 import type { Place, Category } from '../../types'
 
@@ -103,7 +104,7 @@ export const MemoPlaceRow = React.memo(function MemoPlaceRow({
           )}
           {cat && (() => {
             const CatIcon = getCategoryIcon(cat.icon)
-            return <span title={cat.name} style={{ display: 'inline-flex', flexShrink: 0 }}><CatIcon size={11} strokeWidth={2} color={cat.color || '#6366f1'} /></span>
+            return <span title={categoryLabel(cat.name, t)} style={{ display: 'inline-flex', flexShrink: 0 }}><CatIcon size={11} strokeWidth={2} color={cat.color || '#6366f1'} /></span>
           })()}
           <span className="text-content" style={{ fontSize: 'calc(13px * var(--fs-scale-body, 1))', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
             {place.name}

@@ -21,6 +21,7 @@ import { useSettingsStore } from '../../store/settingsStore'
 import { useAddonStore } from '../../store/addonStore'
 import { useSaveToCollectionStore } from '../../store/saveToCollectionStore'
 import { getCategoryIcon } from '../shared/categoryIcons'
+import { categoryLabel } from '../shared/categoryNames'
 import { useToast } from '../shared/Toast'
 import { useTranslation, translateApiError } from '../../i18n'
 import { usePluginStore } from '../../store/pluginStore'
@@ -800,7 +801,7 @@ function PlaceInspectorHeader({ openNow, place, category, t, editingName, nameIn
                     padding: '2px 8px', borderRadius: 99,
                   }}>
                     <CatIcon size={10} />
-                    <span className="hidden sm:inline">{category.name}</span>
+                    <span className="hidden sm:inline">{categoryLabel(category.name, t)}</span>
                   </span>
                 )
               })()}

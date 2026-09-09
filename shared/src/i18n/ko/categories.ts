@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': '저장 실패',
   'categories.toast.deleted': '카테고리가 삭제되었습니다',
   'categories.toast.deleteError': '삭제 실패',
+  'categories.builtin.hotel': '호텔',
+  'categories.builtin.restaurant': '식당',
+  'categories.builtin.attraction': '관광 명소',
+  'categories.builtin.shopping': '쇼핑',
+  'categories.builtin.transport': '교통',
+  'categories.builtin.activity': '액티비티',
+  'categories.builtin.barcafe': '카페/바',
+  'categories.builtin.beach': '해변',
+  'categories.builtin.nature': '자연',
+  'categories.builtin.other': '기타',
 };
 export default categories;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Modal from '../shared/Modal'
+import { categoryLabel } from '../shared/categoryNames'
 import CustomSelect from '../shared/CustomSelect'
 import NoteFormatToolbar from '../shared/NoteFormatToolbar'
 import { mapsApi } from '../../api/client'
@@ -886,7 +887,7 @@ export default function PlaceFormModal(props: PlaceFormModalProps) {
                     // strict equality, so the option value must be a string too —
                     // otherwise the chosen category never renders in the trigger.
                     value: String(c.id),
-                    label: c.name,
+                    label: categoryLabel(c.name, t),
                   })),
                 ]}
                 style={{ flex: 1 }}

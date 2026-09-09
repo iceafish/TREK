@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'فشل الحفظ',
   'categories.toast.deleted': 'تم حذف الفئة',
   'categories.toast.deleteError': 'فشل الحذف',
+  'categories.builtin.hotel': 'فندق',
+  'categories.builtin.restaurant': 'مطعم',
+  'categories.builtin.attraction': 'معلم سياحي',
+  'categories.builtin.shopping': 'تسوق',
+  'categories.builtin.transport': 'مواصلات',
+  'categories.builtin.activity': 'نشاط',
+  'categories.builtin.barcafe': 'مقهى/بار',
+  'categories.builtin.beach': 'شاطئ',
+  'categories.builtin.nature': 'طبيعة',
+  'categories.builtin.other': 'أخرى',
 };
 export default categories;

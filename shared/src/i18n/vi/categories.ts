@@ -21,5 +21,15 @@ const categories: TranslationStrings = {
   'categories.toast.saveError': 'Không lưu được',
   'categories.toast.deleted': 'Đã xóa danh mục',
   'categories.toast.deleteError': 'Không thể xóa',
+  'categories.builtin.hotel': 'Khách sạn',
+  'categories.builtin.restaurant': 'Nhà hàng',
+  'categories.builtin.attraction': 'Điểm tham quan',
+  'categories.builtin.shopping': 'Mua sắm',
+  'categories.builtin.transport': 'Giao thông',
+  'categories.builtin.activity': 'Hoạt động',
+  'categories.builtin.barcafe': 'Quán cà phê/Bar',
+  'categories.builtin.beach': 'Bãi biển',
+  'categories.builtin.nature': 'Thiên nhiên',
+  'categories.builtin.other': 'Khác',
 };
 export default categories;
