@@ -590,8 +590,11 @@ export default function LoginPage(): React.ReactElement {
                     >
                       <div style={{ fontWeight: 700, marginBottom: 4 }}>{t('login.insecureCookie.title')}</div>
                       <div style={{ lineHeight: 1.55 }}>{t('login.insecureCookie.body')}</div>
+                      {/* External on purpose: /help sits behind login, and this
+                          warning shows on the login page. Points at this fork's
+                          own troubleshooting doc, not upstream's. */}
                       <a
-                        href="https://github.com/liketrek/TREK/wiki/Troubleshooting"
+                        href="https://github.com/iceafish/TREK/blob/main/wiki/Troubleshooting.md"
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{

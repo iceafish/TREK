@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowUpCircle,
+  BookOpen,
   CheckCircle,
   ExternalLink,
   Eye,
@@ -9,9 +10,11 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import React from 'react';
+import { Link } from 'react-router';
 import { adminApi } from '../../api/client';
 import CustomSelect from '../../components/shared/CustomSelect';
 import Modal from '../../components/shared/Modal';
+import { HELP_UPDATING_PATH } from '../../utils/repoLinks';
 import type { TranslationFn } from '../../types';
 import type { useAdmin } from './useAdmin';
 
@@ -19,6 +22,12 @@ interface AdminUserModalsProps {
   admin: ReturnType<typeof useAdmin>;
   t: TranslationFn;
 }
+
+// This fork publishes no Docker image, so the update path is compose: pull
+// whatever image the operator's compose file names (they may publish their own
+// build), or rebuild locally when it uses `build:`.
+const DOCKER_UPDATE_COMMANDS = `docker compose pull
+docker compose up -d`;
 
 // The admin page's modal layer: create-user, edit-user, the "how to update"
 // popup and the rotate-JWT confirmation. Pure layout around the useAdmin hook.
@@ -304,10 +313,10 @@ export default function AdminUserModals({ admin, t }: AdminUserModalsProps): Rea
               </p>
 
               {updateInfo?.is_docker === false ? (
-                <a
-                  href="https://github.com/liketrek/TREK/wiki/Updating"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                /* In-app Updating guide: wiki/ ships with the app, so the steps
+                   match the running version — the GitHub wiki is not kept in sync. */
+                <Link
+                  to={HELP_UPDATING_PATH}
                   style={{
                     marginTop: 14,
                     padding: '12px 14px',
@@ -321,9 +330,9 @@ export default function AdminUserModals({ admin, t }: AdminUserModalsProps): Rea
                   }}
                   className="border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                  <BookOpen className="h-4 w-4 flex-shrink-0" />
                   <span className="font-semibold underline">{t('admin.update.wikiLink')}</span>
-                </a>
+                </Link>
               ) : (
                 <div
                   style={{
@@ -338,14 +347,7 @@ export default function AdminUserModals({ admin, t }: AdminUserModalsProps): Rea
                   }}
                   className="border border-gray-700 bg-gray-900 text-gray-100 dark:bg-gray-950"
                 >
-                  {`docker pull mauriceboe/trek:latest
-docker stop trek && docker rm trek
-docker run -d --name trek \\
-  -p 3000:3000 \\
-  -v /opt/trek/data:/app/data \\
-  -v /opt/trek/uploads:/app/uploads \\
-  --restart unless-stopped \\
-  mauriceboe/trek:latest`}
+                  {DOCKER_UPDATE_COMMANDS}
                 </div>
               )}
 

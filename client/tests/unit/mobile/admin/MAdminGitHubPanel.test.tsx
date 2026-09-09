@@ -55,22 +55,21 @@ async function renderPanel(props: { isPrerelease?: boolean } = {}) {
 }
 
 describe('MAdminGitHubPanel', () => {
-  it('FE-MOB-AGH-001: renders the six support cards with their external hrefs', async () => {
+  it('FE-MOB-AGH-001: renders the link cards against this fork, no funding rows', async () => {
     await renderPanel();
 
-    expect(screen.getByText('Ko-fi').closest('a')).toHaveAttribute('href', 'https://ko-fi.com/mauriceboe');
-    expect(screen.getByText('Buy Me a Coffee').closest('a')).toHaveAttribute(
+    expect(screen.queryByText('Ko-fi')).not.toBeInTheDocument();
+    expect(screen.queryByText('Buy Me a Coffee')).not.toBeInTheDocument();
+    expect(screen.queryByText('Discord')).not.toBeInTheDocument();
+    expect(screen.getByText('Report a Bug').closest('a')).toHaveAttribute(
       'href',
-      'https://buymeacoffee.com/mauriceboe',
+      'https://github.com/iceafish/TREK/issues/new?template=bug_report.yml',
     );
-    const discord = screen.getByText('Discord').closest('a')!;
-    expect(discord).toHaveAttribute('href', 'https://discord.gg/NhZBDSd4qW');
-    expect(discord).toHaveAttribute('target', '_blank');
-    expect(discord).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(screen.getByText('Report a Bug')).toBeInTheDocument();
-    expect(screen.getByText('Feature Request')).toBeInTheDocument();
-    expect(screen.getByText('Wiki').closest('a')).toHaveAttribute('href', 'https://github.com/mauriceboe/TREK/wiki');
-    expect(screen.getAllByText('Helps me keep building TREK')).toHaveLength(2);
+    expect(screen.getByText('Feature Request').closest('a')).toHaveAttribute(
+      'href',
+      'https://github.com/iceafish/TREK/issues/new?template=feature_request.yml',
+    );
+    expect(screen.getByText('Wiki').closest('a')).toHaveAttribute('href', '/help');
   });
 
   it('FE-MOB-AGH-002: shows a spinner while the releases request is in flight', () => {
@@ -102,10 +101,10 @@ describe('MAdminGitHubPanel', () => {
     await renderPanel();
 
     expect(screen.getByText('Release History')).toBeInTheDocument();
-    expect(screen.getByText('Latest updates from mauriceboe/TREK')).toBeInTheDocument();
+    expect(screen.getByText('Latest updates from iceafish/TREK')).toBeInTheDocument();
     expect(screen.getByText('GitHub').closest('a')).toHaveAttribute(
       'href',
-      'https://github.com/mauriceboe/TREK/releases',
+      'https://github.com/iceafish/TREK/releases',
     );
   });
 

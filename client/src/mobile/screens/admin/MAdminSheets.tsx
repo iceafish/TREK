@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { AlertTriangle, CheckCircle, ExternalLink, Fingerprint, Trash2 } from 'lucide-react'
+import { Link } from 'react-router'
+import { AlertTriangle, BookOpen, CheckCircle, ExternalLink, Fingerprint, Trash2 } from 'lucide-react'
 import { adminApi } from '../../../api/client'
 import type { TranslationFn } from '../../../types'
 import type { useAdmin } from '../../../pages/admin/useAdmin'
+import { HELP_UPDATING_PATH } from '../../../utils/repoLinks'
 import MSheet from '../../components/MSheet'
 import MSegmented from '../../components/MSegmented'
 import { MAdminButton, MAdminField, MAdminInput, MAdminSecretInput, MAdminSheetFrame } from './MAdminUi'
@@ -12,14 +14,11 @@ interface MAdminSheetsProps {
   t: TranslationFn
 }
 
-const DOCKER_UPDATE_COMMANDS = `docker pull mauriceboe/trek:latest
-docker stop trek && docker rm trek
-docker run -d --name trek \\
-  -p 3000:3000 \\
-  -v /opt/trek/data:/app/data \\
-  -v /opt/trek/uploads:/app/uploads \\
-  --restart unless-stopped \\
-  mauriceboe/trek:latest`
+// This fork publishes no Docker image, so the update path is compose: pull
+// whatever image the operator's compose file names (they may publish their own
+// build), or rebuild locally when it uses `build:`.
+const DOCKER_UPDATE_COMMANDS = `docker compose pull
+docker compose up -d`
 
 // The admin screen's sheet layer: create user, edit user (incl. passkey reset
 // and delete), the "how to update" instructions and the rotate-JWT confirm.
@@ -209,15 +208,15 @@ export default function MAdminSheets({ admin, t }: MAdminSheetsProps) {
               )}
             </p>
             {updateInfo?.is_docker === false ? (
-              <a
-                href="https://github.com/liketrek/TREK/wiki/Updating"
-                target="_blank"
-                rel="noopener noreferrer"
+              /* In-app Updating guide: wiki/ ships with the app, so the steps
+                 match the running version — the GitHub wiki is not kept in sync. */
+              <Link
+                to={HELP_UPDATING_PATH}
                 className="flex items-center gap-2 rounded-xl bg-[color:var(--m-ic)] px-3 py-3 text-[0.8125rem] font-bold text-m-ink underline"
               >
-                <ExternalLink size={14} className="flex-none" />
+                <BookOpen size={14} className="flex-none" />
                 {t('admin.update.wikiLink')}
-              </a>
+              </Link>
             ) : (
               <pre className="whitespace-pre-wrap break-all rounded-xl bg-m-act p-3 font-mono text-[0.6875rem] leading-relaxed text-m-actfg">
                 {DOCKER_UPDATE_COMMANDS}

@@ -426,7 +426,7 @@ export class AdminService {
     const per = Math.min(Math.max(Number.parseInt(perPage, 10) || 10, 1), 100);
     const pg = Math.max(Number.parseInt(page, 10) || 1, 1);
     const qs = new URLSearchParams({ per_page: String(per), page: String(pg) });
-    const data = await this.fetchGithub(`https://api.github.com/repos/liketrek/TREK/releases?${qs}`);
+    const data = await this.fetchGithub(`https://api.github.com/repos/${readEnv().app.repo}/releases?${qs}`);
     return Array.isArray(data) ? data : [];
   }
 
@@ -469,7 +469,9 @@ export class AdminService {
     let result: VersionInfo;
     if (isPrerelease) {
       // Fetch release list and find the newest prerelease
-      const data = await this.fetchGithub('https://api.github.com/repos/liketrek/TREK/releases?per_page=100') as
+      const data = await this.fetchGithub(
+        `https://api.github.com/repos/${readEnv().app.repo}/releases?per_page=100`,
+      ) as
         | Array<{ tag_name?: string; html_url?: string; prerelease?: boolean }>
         | null;
       if (!data) return fail();
@@ -489,7 +491,9 @@ export class AdminService {
         is_prerelease: true,
       };
     } else {
-      const data = await this.fetchGithub('https://api.github.com/repos/liketrek/TREK/releases/latest') as
+      const data = await this.fetchGithub(
+        `https://api.github.com/repos/${readEnv().app.repo}/releases/latest`,
+      ) as
         | { tag_name?: string; html_url?: string }
         | null;
       if (!data) return fail();

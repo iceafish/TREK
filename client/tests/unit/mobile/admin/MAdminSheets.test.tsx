@@ -259,7 +259,7 @@ describe('MAdminSheets', () => {
 
     expect(screen.getByRole('dialog', { name: 'How to Update' })).toBeInTheDocument();
     expect(screen.getByText('v3.4.0 → v3.5.0')).toBeInTheDocument();
-    expect(screen.getByText(/docker pull mauriceboe\/trek:latest/)).toBeInTheDocument();
+    expect(screen.getByText(/docker compose pull/)).toBeInTheDocument();
     expect(
       screen.getByText(
         'Your TREK instance runs in Docker. To update to v3.5.0, run the following commands on your server:',
@@ -282,9 +282,9 @@ describe('MAdminSheets', () => {
 
     expect(screen.getByRole('link', { name: 'Open the update guide' })).toHaveAttribute(
       'href',
-      'https://github.com/liketrek/TREK/wiki/Updating',
+      '/help/Updating',
     );
-    expect(screen.queryByText(/docker pull/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/docker compose pull/)).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute(
       'href',
       'https://github.com/liketrek/TREK/releases/v3.5.0',

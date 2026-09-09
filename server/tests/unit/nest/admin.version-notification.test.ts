@@ -90,8 +90,8 @@ function mockGitHubLatest(tagName: string, ok = true): void {
     vi.fn().mockResolvedValue({
       ok,
       // fetchGithub reads text() and parses it itself (size cap), so stub both.
-      text: async () => JSON.stringify({ tag_name: tagName, html_url: `https://github.com/liketrek/TREK/releases/tag/${tagName}` }),
-      json: async () => ({ tag_name: tagName, html_url: `https://github.com/liketrek/TREK/releases/tag/${tagName}` }),
+      text: async () => JSON.stringify({ tag_name: tagName, html_url: `https://github.com/iceafish/TREK/releases/tag/${tagName}` }),
+      json: async () => ({ tag_name: tagName, html_url: `https://github.com/iceafish/TREK/releases/tag/${tagName}` }),
     }),
   );
 }

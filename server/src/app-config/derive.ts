@@ -46,6 +46,12 @@ export function deriveApp(raw: RawEnv) {
     appVersion: raw.APP_VERSION,
     /** Raw APP_URL — trailing-slash stripping differs per site (feeds strips one, notifications strips all). */
     appUrl: raw.APP_URL,
+    /**
+     * owner/name of the GitHub repository this deployment tracks: the admin
+     * release check and the in-app help's remote wiki fallback both read it.
+     * This fork tracks itself, not upstream (liketrek/TREK).
+     */
+    repo: raw.TREK_REPO || 'iceafish/TREK',
     tz: raw.TZ,
     logLevel: raw.LOG_LEVEL,
     /** Resolved: lowercased, validated against the supported set, falls back to 'en' (src/config.ts semantics). */

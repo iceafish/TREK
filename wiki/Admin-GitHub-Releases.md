@@ -1,25 +1,27 @@
 # Admin — GitHub Releases
 
-The **GitHub** tab shows the TREK release history fetched from GitHub and provides links to community resources and support options.
+The **GitHub** tab shows the release history of the repository this deployment
+tracks and provides links to report issues and read the docs.
 
 ![GitHub tab](assets/GithubReleases.png)
 
-## Support and resources
+## Links and resources
 
-Six cards at the top of the tab link to external resources:
+Cards at the top of the tab:
 
 | Card | Link |
 |------|------|
-| **Ko-fi** | Support the project financially |
-| **Buy Me a Coffee** | Alternative support link |
-| **Discord** | Join the TREK community |
 | **Report a Bug** | Open a GitHub issue with the bug report template |
-| **Feature Request** | Open a GitHub Discussion in the feature requests category |
-| **Wiki** | Open the GitHub Wiki |
+| **Feature Request** | Open a GitHub issue with the feature request template |
+| **Wiki** | Open the in-app help (`/help`), which serves the bundled wiki |
+
+The release history comes from the GitHub API for the repository named by the
+`TREK_REPO` server setting (default `iceafish/TREK` — this fork tracks itself,
+never upstream).
 
 ## Release timeline
 
-Below the support cards, a chronological timeline lists GitHub releases for the `liketrek/TREK` repository. Each entry shows:
+Below the link cards, a chronological timeline lists GitHub releases. Each entry shows:
 
 - **Version tag** (e.g., `v2.9.14`)
 - A **Latest** badge on the first (most recent) entry in the displayed list
@@ -30,11 +32,11 @@ Pre-release entries are hidden unless the server has both found a newer version 
 
 Releases load 10 at a time. Click **Load more** at the bottom of the timeline to fetch additional pages.
 
-If the admin API request fails, the timeline section shows an error message. If the server cannot reach the GitHub API, the timeline displays no releases (the server returns an empty list rather than an error).
+If the admin API request fails, the timeline section shows an error message. If the server cannot reach the GitHub API, the timeline displays no releases (the server returns an empty list rather than an error). This fork publishes no releases yet, so an empty timeline is normal.
 
 ## Version check
 
-The server checks for available updates daily at 9 AM (server timezone, defaults to UTC) and sends an admin notification when a newer version is published. When an update is available, a banner also appears at the top of the Admin page on next load.
+The server checks for available updates daily at 9 AM (server timezone, defaults to UTC) and sends an admin notification when a newer version is published in the tracked repository. When an update is available, a banner also appears at the top of the Admin page on next load.
 
 Results are cached for 5 minutes to avoid repeated API calls.
 

@@ -402,12 +402,12 @@ describe('getGithubReleases', () => {
 
     await getGithubReleases('9999', '0');
     expect(fetchMock.mock.calls[0][0]).toBe(
-      'https://api.github.com/repos/liketrek/TREK/releases?per_page=100&page=1',
+      'https://api.github.com/repos/iceafish/TREK/releases?per_page=100&page=1',
     );
 
     await getGithubReleases('10&per_page=999', 'abc');
     expect(fetchMock.mock.calls[1][0]).toBe(
-      'https://api.github.com/repos/liketrek/TREK/releases?per_page=10&page=1',
+      'https://api.github.com/repos/iceafish/TREK/releases?per_page=10&page=1',
     );
   });
 
@@ -417,8 +417,22 @@ describe('getGithubReleases', () => {
 
     await getGithubReleases('20', '2');
     expect(fetchMock.mock.calls[0][0]).toBe(
-      'https://api.github.com/repos/liketrek/TREK/releases?per_page=20&page=2',
+      'https://api.github.com/repos/iceafish/TREK/releases?per_page=20&page=2',
     );
+  });
+
+  it('ADMIN-SVC-053c — tracks the repository TREK_REPO names, defaulting to this fork', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, text: async () => '[]' });
+    vi.stubGlobal('fetch', fetchMock);
+    process.env.TREK_REPO = 'some-owner/some-fork';
+    try {
+      await getGithubReleases('5', '1');
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        'https://api.github.com/repos/some-owner/some-fork/releases?per_page=5&page=1',
+      );
+    } finally {
+      delete process.env.TREK_REPO;
+    }
   });
 });
 

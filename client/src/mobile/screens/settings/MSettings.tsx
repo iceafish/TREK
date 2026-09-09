@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { REPO_URL } from '../../../utils/repoLinks'
 import {
   Bell,
   ChevronDown,
@@ -128,7 +129,7 @@ export default function MSettings() {
       {managed && appVersion && (
         <p className="mt-8 text-center text-caption text-m-muted">
           <a
-            href="https://github.com/liketrek/TREK"
+            href={REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="no-underline"

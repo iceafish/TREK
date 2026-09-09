@@ -15,7 +15,10 @@ import { exceedsDeclaredLength, readCapped, readCappedText } from '../../utils/c
  * GitHub directly either way; images are proxied through /api/help/asset.
  */
 
-const REPO = 'liketrek/TREK';
+// The remote fallback tracks the repository this deployment belongs to (TREK_REPO,
+// default this fork) — never a hard-coded upstream, whose docs would not match
+// this codebase. Only consulted when the bundled wiki/ directory is missing.
+const REPO = readEnv().app.repo;
 const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/main/wiki`;
 const TTL_MS = 60 * 60 * 1000; // remote fallback only: refresh from GitHub at most hourly
 // Remote fallback only: raw.githubusercontent.com is a third party on the

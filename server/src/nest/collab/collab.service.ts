@@ -584,7 +584,7 @@ export class CollabService {
         redirect: 'error',
         signal: AbortSignal.timeout(5000),
         dispatcher,
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NOMAD/1.0; +https://github.com/mauriceboe/NOMAD)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TREK/1.0; +https://github.com/iceafish/TREK)' },
       } as any);
       if (!r.ok) { discardBody(r); return this.cachePreview(url, fallback); }
       // Only markup is worth scraping. A declared type that is not HTML means the

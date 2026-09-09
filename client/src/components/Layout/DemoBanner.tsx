@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from '../../i18n';
+import { REPO_URL } from '../../utils/repoLinks';
 
 interface DemoTexts {
   titleBefore: string;
@@ -550,7 +551,7 @@ export default function DemoBanner(): React.ReactElement | null {
             <Github size={13} />
             <span>{t.selfHost}</span>
             <a
-              href="https://github.com/liketrek/TREK"
+              href={REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#111827', fontWeight: 600, textDecoration: 'none' }}

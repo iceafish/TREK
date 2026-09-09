@@ -2383,7 +2383,7 @@ describe('googleFtidFromMapsUrl', () => {
 // ── buildUserAgent (instance-specific UA, #1309) ──────────────────────────────
 
 describe('buildUserAgent', () => {
-  const base = 'TREK Travel Planner (https://github.com/liketrek/TREK)';
+  const base = 'TREK Travel Planner (https://github.com/iceafish/TREK)';
 
   it('MAPS-094: returns the bare base UA when no instance URL is configured', () => {
     expect(buildUserAgent(undefined)).toBe(base);

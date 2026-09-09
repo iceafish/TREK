@@ -191,7 +191,7 @@ describe('HelpPage', () => {
           '',
           '[planner](/trips/1)',
           '',
-          '[github](https://github.com/liketrek/TREK)',
+          '[example](https://example.com)',
         ].join('\n'),
       ),
     })
@@ -204,7 +204,7 @@ describe('HelpPage', () => {
     // An internal link becomes a router <Link> — still an <a href>, but without target.
     expect(screen.getByRole('link', { name: 'planner' })).toHaveAttribute('href', '/trips/1')
 
-    const external = screen.getByRole('link', { name: 'github' })
+    const external = screen.getByRole('link', { name: 'example' })
     expect(external).toHaveAttribute('target', '_blank')
     expect(external).toHaveAttribute('rel', 'noopener noreferrer')
   })

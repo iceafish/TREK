@@ -72,8 +72,7 @@ export type AtlasLocateResponse = z.infer<typeof atlasLocateResponseSchema>;
 /**
  * How a country/region ended up on the atlas map. Before this, every trip counted as a
  * visit, so a booked-but-not-taken trip painted the map as if you had already been there.
- * Requested in discussion #1048 — note that's a discussion, not an issue:
- * https://github.com/liketrek/TREK/discussions/1048
+ * (Inherited from upstream: originally requested in liketrek/TREK discussion #1048.)
  *
  *  - visited: at least one source is a trip that has already started, or a manual mark
  *  - planned: every source is a trip starting in the future

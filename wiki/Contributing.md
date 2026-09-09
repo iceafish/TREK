@@ -1,54 +1,42 @@
 # Contributing
 
-Thanks for your interest in contributing to TREK! Here are the guidelines for submitting pull requests.
+This repository ([iceafish/TREK](https://github.com/iceafish/TREK)) is an
+independently maintained fork — development happens directly here, for this
+fork's own goals (currently a China-mainland localization). See
+[CONTRIBUTING.md](https://github.com/iceafish/TREK/blob/dev/CONTRIBUTING.md)
+for the full process; the short version:
 
-## Before You Start
+## How this repository is run
 
-- **Ask in Discord first** — Before writing any code, pitch your idea in the `#github-pr` channel on our [Discord server](https://discord.gg/NhZBDSd4qW). We'll let you know if the PR is wanted and give direction. PRs without prior approval will be closed
-- **Check existing issues** — Look for open issues or discussions before starting work
-- **Target the `dev` branch** — All PRs must be opened against `dev`, not `main`. Exception: PRs that only modify files under `wiki/` may target any branch
-- **One thing per PR** — Keep PRs focused on a single change. Don't bundle unrelated fixes
+- **`dev` is the integration branch.** Feature branches come off `dev` and merge
+  back into `dev`; `main` tracks released state.
+- **Conventional commits** (`fix(maps): ...`, `feat(budget): ...`), one focused
+  change per commit.
+- **Breaking changes are allowed on purpose** — this fork may diverge from
+  upstream behaviour deliberately. State the intent in the commit message and
+  cover it with tests.
+- **Tests are required.** The server coverage gate is ≥ 80% and is never lowered.
 
-## Pull Request Guidelines
-
-### Code Quality
+## Code Quality
 
 - Write clean, readable code that matches the existing style
 - No unnecessary abstractions or over-engineering
-- Don't add features beyond what was discussed in the issue
 - Don't add comments unless the logic isn't self-evident
 - Don't add error handling for scenarios that can't happen
 
-### What We Look For
+## Contracts & i18n
 
-- **Does it solve the stated problem?** — The PR should match the issue it addresses
-- **Is it minimal?** — No extra refactoring, no "while I'm here" changes
-- **Does it break anything?** — Breaking changes are not acceptable
-- **Is the code clean?** — Consistent style, no debug logs, no dead code
-
-### Commit Messages
-
-Use conventional commits:
-```
-fix(component): short description of what was fixed
-feat(component): short description of new feature
-```
-
-### PR Description
-
-Follow the template provided by default (.github/PULL_REQUEST_TEMPLATE.md).
-
-### What Will Get Your PR Closed
-
-- PRs that weren't discussed and approved in `#github-pr` on Discord first
-- PRs that add unnecessary complexity (e.g. a redo button when undo already exists)
-- PRs with breaking changes
-- PRs that change code style or formatting across unrelated files
-- PRs that add dependencies without justification
+- API contracts live as Zod schemas in `shared/src/<domain>/`; both server and
+  client import the inferred types. A route is done only once its contract is there.
+- Every translation key must exist in all 23 locales — the `i18n Key Parity` CI
+  job fails on drift, so run `pnpm --filter @trek/shared run i18n:parity:strict`
+  before pushing. Two directory names differ from the language they hold:
+  Brazilian Portuguese is `br`, Greek is `gr`.
 
 ## Development Setup
 
-See the [[Development Environment|Development-environment]] page for the full setup guide, including forking, remote configuration, branch conventions, and available scripts.
+See the [[Development Environment|Development-environment]] page for the full
+setup guide and available scripts.
 
 ## Tech Stack
 
@@ -59,7 +47,5 @@ See the [[Development Environment|Development-environment]] page for the full se
 | Real-time | WebSocket (ws)                                                                            |
 | Database | SQLite with WAL mode                                                                      |
 | Auth | JWT (HS256), bcrypt, TOTP MFA, OIDC                                                       |
-| Maps | Leaflet + react-leaflet (default, OpenFreeMap vector basemap via maplibre-gl-leaflet), MapLibre GL, Mapbox GL, OSRM, Nominatim |
+| Maps | AMap (高德) for China-mainland usage, plus Leaflet + react-leaflet (OpenFreeMap vector basemap via maplibre-gl-leaflet), MapLibre GL, Mapbox GL |
 | i18n | 23 languages, EN canonical (locale directories live in shared/src/i18n/)                  |
-
-Every translation key must exist in all 23 locales — the `i18n Key Parity` CI job fails on drift, so run `npm run i18n:parity:strict --workspace=shared` before pushing. Two directory names differ from the language they hold: Brazilian Portuguese is `br`, Greek is `gr`.

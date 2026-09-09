@@ -135,6 +135,9 @@ export const envSchema = z.object({
   TREK_DB_SYNCHRONOUS: anyString,
   TREK_WIKI_DIR: anyString,
   TREK_PLACE_PHOTO_DIR: anyString,
+  // owner/name of the GitHub repository this deployment tracks: the admin
+  // release check and the in-app help's remote wiki fallback both read it.
+  TREK_REPO: anyString,
   BACKUP_UPLOAD_LIMIT_MB: positiveNumber,
   BACKUP_MAX_DECOMPRESSED_MB: positiveNumber,
 

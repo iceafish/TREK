@@ -13,6 +13,7 @@ import AboutTab from '../components/Settings/AboutTab'
 import OfflineTab from '../components/Settings/OfflineTab'
 import PluginSettingsTab from '../components/Settings/PluginSettingsTab'
 import { usePluginStore } from '../store/pluginStore'
+import { REPO_URL } from '../utils/repoLinks'
 import { useSettings } from './settings/useSettings'
 
 export default function SettingsPage(): React.ReactElement {
@@ -75,7 +76,7 @@ function SettingsPageDesktop(): React.ReactElement {
                   // No About tab here, so this is the prominent source offer
                   // AGPL §13 asks for when people use it over a network.
                   ? <a
-                      href="https://github.com/liketrek/TREK"
+                      href={REPO_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="no-underline text-content-faint hover:text-content-secondary"
