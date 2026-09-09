@@ -583,6 +583,22 @@ describe('MapViewAMap — camera effects', () => {
     expect(vi.mocked(fakeAMap.AMap.Map)).toHaveBeenCalledTimes(1)
     expect(fakeMap.state.destroyed).toBe(false)
   })
+
+  it('frames the empty state on mainland China, not the provider-neutral world view', async () => {
+    // No places → no mount fit → the constructor options ARE the opening view.
+    // The engine default is engine-local: China centre at z4 in GCJ-02 (a few
+    // millidegrees off the raw WGS84 constant), never (0,0)/z2.
+    await renderAMap({ places: [] })
+    await settle()
+    expect(vi.mocked(fakeAMap.AMap.Map)).toHaveBeenCalledTimes(1)
+    const [, opts] = vi.mocked(fakeAMap.AMap.Map).mock.calls[0] as unknown as [unknown, { center: number[]; zoom: number }]
+    expect(opts.zoom).toBe(4)
+    const [lng, lat] = opts.center
+    expect(lng).toBeGreaterThan(102)
+    expect(lng).toBeLessThan(104)
+    expect(lat).toBeGreaterThan(34)
+    expect(lat).toBeLessThan(36)
+  })
 })
 
 describe('MapViewAMap — lifecycle', () => {

@@ -14,7 +14,6 @@ import { isCustomPlaceImage, photoCacheKey } from './placePhoto'
 import { useSettingsStore } from '../../store/settingsStore'
 import { useAuthStore } from '../../store/authStore'
 import type { Place } from '../../types'
-import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '../../constants/mapDefaults'
 import { loadAMap } from './engines/amap/loader'
 import type { AMapNamespace } from './engines/amap/loader'
 import { toAMap, fromAMap, transformLatLngPath } from './engines/amap/coords'
@@ -55,6 +54,13 @@ const NO_DAY_ORDER: Record<number, number[] | null> = {}
 const MAX_FIT_ZOOM = 15
 /** The zoom a single selected place opens at, matching the other renderers. */
 const SELECTED_PLACE_MIN_ZOOM = 14
+
+// AMap's tiles centre on mainland China — its world view is mostly empty ocean,
+// so the provider-neutral (0,0)/z2 default lands the user nowhere. Engine-local
+// default only: the shared mapDefaults stay provider-neutral, and a caller that
+// passes center/zoom still overrides these.
+const AMAP_DEFAULT_CENTER: [number, number] = [35.0, 103.0]
+const AMAP_DEFAULT_ZOOM = 4
 
 /** Plugin feature tone palette — the fourth copy of the plugin-contract colours
  * (MapPluginMarkers, MapPluginLayers, MapViewGL); see MapLayerFeature's tone. */
@@ -160,8 +166,8 @@ export function MapViewAMap({
   onPoiClick,
   onMapClick,
   onMapContextMenu = null,
-  center = DEFAULT_MAP_CENTER,
-  zoom = DEFAULT_MAP_ZOOM,
+  center = AMAP_DEFAULT_CENTER,
+  zoom = AMAP_DEFAULT_ZOOM,
   fitKey = 0,
   dayOrderMap = NO_DAY_ORDER,
   leftWidth = 0,
