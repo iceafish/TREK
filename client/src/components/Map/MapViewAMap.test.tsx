@@ -559,6 +559,30 @@ describe('MapViewAMap — camera effects', () => {
     expect(call.immediately).toBe(true)
     expect(call.zoom).toBe(12)
   })
+
+  it('keeps the map alive when a selection toggles the inspector padding', async () => {
+    // hasInspector is !!selectedPlace upstream: selecting a place widens the
+    // bottom padding. The map build must not depend on it — GL rebuilds on
+    // provider/style changes only, and a rebuild here reset the camera to the
+    // world view on every click.
+    const utils = await renderAMap({ places: [placeAt({ id: 1 })], hasInspector: false })
+    await settle()
+    expect(vi.mocked(fakeAMap.AMap.Map)).toHaveBeenCalledTimes(1)
+
+    await rerenderAMap(utils, { places: [placeAt({ id: 1 })], hasInspector: true, selectedPlaceId: 1 })
+    await settle()
+    expect(vi.mocked(fakeAMap.AMap.Map)).toHaveBeenCalledTimes(1)
+    expect(fakeMap.state.destroyed).toBe(false)
+    // The recentre still ran, on the same map instance.
+    const calls = fakeMap.state.zoomAndCenterCalls
+    expect(calls[calls.length - 1].zoom).toBe(14)
+
+    // Deselection shrinks the padding again — still no rebuild.
+    await rerenderAMap(utils, { places: [placeAt({ id: 1 })], hasInspector: false, selectedPlaceId: null })
+    await settle()
+    expect(vi.mocked(fakeAMap.AMap.Map)).toHaveBeenCalledTimes(1)
+    expect(fakeMap.state.destroyed).toBe(false)
+  })
 })
 
 describe('MapViewAMap — lifecycle', () => {

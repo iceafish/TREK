@@ -271,6 +271,12 @@ export function MapViewAMap({
     const bottom = hasInspector ? 320 : hasDayDetail ? 280 : 60
     return { top, right: rightWidth + 40, bottom, left: leftWidth + 40 }
   }, [leftWidth, rightWidth, hasInspector, hasDayDetail])
+  // The build effect reads padding through this ref, never directly: the panels
+  // toggle on every selection (hasInspector is !!selectedPlace), and a padding
+  // dependency there would tear the whole map down on each click. The GL
+  // renderer states the same rule — rebuild on provider/style changes only.
+  const paddingOptsRef = useRef(paddingOpts)
+  paddingOptsRef.current = paddingOpts
 
   const clearHover = useCallback(() => {
     hoverIdRef.current = null
@@ -280,7 +286,9 @@ export function MapViewAMap({
 
   // All fit maths lives in AMap's own API (getFitZoomAndCenterByBounds) with the
   // same panel padding the other renderers apply. `avoid` is 上、下、左、右 per
-  // the JSAPI docs — a different order than the padding box.
+  // the JSAPI docs — a different order than the padding box. Padding comes from
+  // the ref above: keeping this callback identity-stable is what keeps the map
+  // build effect from re-running on every selection.
   const fitToTargets = useCallback((targets: Place[]) => {
     const map = mapRef.current
     if (!map) return
@@ -292,10 +300,11 @@ export function MapViewAMap({
       [Math.min(...lngs), Math.min(...lats)],
       [Math.max(...lngs), Math.max(...lats)],
     )
-    const avoid = [paddingOpts.top, paddingOpts.bottom, paddingOpts.left, paddingOpts.right]
+    const p = paddingOptsRef.current
+    const avoid = [p.top, p.bottom, p.left, p.right]
     const [fitZoom, fitCenter] = map.getFitZoomAndCenterByBounds(bounds, avoid, MAX_FIT_ZOOM) as [number, AMap.LngLat]
     if (typeof fitZoom === 'number' && fitCenter) map.setZoomAndCenter(fitZoom, fitCenter, false, 400)
-  }, [AMap, paddingOpts])
+  }, [AMap])
 
   // ── Map + cluster lifecycle ────────────────────────────────────────────────
   useEffect(() => {
