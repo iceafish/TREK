@@ -10,8 +10,10 @@ import { useSettingsStore } from '../store/settingsStore'
 
 const { mocks } = vi.hoisted(() => ({
   mocks: {
-    upsertSyncMeta: vi.fn(async () => {}),
-    syncMetaGet: vi.fn(async () => undefined),
+    // Rest signatures: the wrappers below forward a spread unknown[] and a
+    // zero-arg vi.fn() tuple would refuse it.
+    upsertSyncMeta: vi.fn(async (..._a: unknown[]) => {}),
+    syncMetaGet: vi.fn(async (..._a: unknown[]) => undefined),
   },
 }))
 
