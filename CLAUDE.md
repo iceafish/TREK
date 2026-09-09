@@ -110,11 +110,13 @@ These principles come out of a verified 2026 full-repo audit and shape how all n
 iterate on this codebase for its own needs — currently a China-mainland localization
 (`docs/amap/` holds the in-progress AMap integration).
 
-`CONTRIBUTING.md` and `.github/PULL_REQUEST_TEMPLATE.md` are **inherited from upstream and
-describe that project's process for accepting outside contributions**. They do not govern work
-here: no Discord pitch, no linked issue, no PR-template requirement, no upstream branch policy.
-Do not go looking for an issue number to reference. The engineering standards below are this
-repository's own.
+`CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md` and the issue templates
+**describe this fork's own process** — they are maintained here and no longer
+carry upstream's rules (no Discord pitch, no linked-issue requirement, no
+upstream wiki links). Upstream's community-management automations
+(close-stale-*/close-untitled-issues workflows, `FUNDING.yml`) were removed;
+`enforce-target-branch.yml` runs on this repository and enforces the `dev`
+target below. The engineering standards are this repository's own.
 
 ## Conventions
 

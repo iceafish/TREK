@@ -15,37 +15,23 @@
 
 A self-hosted, real-time collaborative travel planner — with maps, budgets, packing lists, a journal, and AI built in.
 
+> **Independently maintained fork.** This repository is a fork of
+> [liketrek/TREK](https://github.com/liketrek/TREK), adapted for
+> China-mainland usage (AMap integration — see [`docs/amap/`](docs/amap/README.md)).
+> It does not track upstream releases, and prebuilt Docker images referenced
+> upstream are not published here.
+
 <br />
 
-<a href="https://demo.liketrek.com"><img alt="Demo" src="https://img.shields.io/badge/Demo-try-111827?style=for-the-badge" /></a>
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/iceafish/TREK/test.yml?branch=main&style=for-the-badge">
 &nbsp;
-<a href="https://hub.docker.com/r/mauriceboe/trek"><img alt="Docker" src="https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge" /></a>
-&nbsp;
-<a href="https://sonarcloud.io/project/overview?id=liketrek_TREK"><img alt="Sonar Quality Gate" src="https://img.shields.io/sonar/quality_gate/liketrek_TREK?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge" /></a>
-&nbsp;
-<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/liketrek/TREK/test.yml?branch=main&style=for-the-badge">
-&nbsp;
-<a href="https://discord.gg/NhZBDSd4qW"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?style=for-the-badge" /></a>
-&nbsp;
-<a href="https://kanban.pakulat.org/shared/I4wxF6inOOMB0C6hH6kQm3efyNxFjwyI"><img alt="Roadmap" src="https://img.shields.io/badge/Roadmap-view-0EA5E9?style=for-the-badge" /></a>
-&nbsp;
-<a href="https://ko-fi.com/mauriceboe"><img alt="Ko-fi" src="https://img.shields.io/badge/Ko--fi-support-FF5E5B?style=for-the-badge" /></a>
-&nbsp;
-<a href="https://www.buymeacoffee.com/mauriceboe"><img alt="BMAC" src="https://img.shields.io/badge/BMAC-support-FFDD00?style=for-the-badge" /></a>
 <br />
 <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL_v3-6B7280?style=flat-square" /></a>
-<a href="https://github.com/liketrek/TREK/releases"><img alt="Latest Release" src="https://img.shields.io/github/v/release/liketrek/trek?include_prereleases&style=flat-square&color=6B7280" /></a>
-<a href="https://hub.docker.com/r/mauriceboe/trek"><img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/mauriceboe/trek?style=flat-square&color=6B7280" /></a>
-<a href="https://github.com/liketrek/TREK"><img alt="Stars" src="https://img.shields.io/github/stars/liketrek/trek?style=flat-square&color=6B7280" /></a>
+<a href="https://github.com/iceafish/TREK/releases"><img alt="Latest Release" src="https://img.shields.io/github/v/release/iceafish/trek?include_prereleases&style=flat-square&color=6B7280" /></a>
+<a href="https://github.com/iceafish/TREK"><img alt="Stars" src="https://img.shields.io/github/stars/iceafish/trek?style=flat-square&color=6B7280" /></a>
 </div>
 
 ---
-
-<div align="center">
-
-<img src="https://github.com/mauriceboe/trek-media/releases/download/readme-assets/TREK1.webp" alt="TREK, a tour of the app" width="100%" />
-
-</div>
 
 <br />
 
@@ -192,24 +178,27 @@ Most of what follows is an addon an admin switches on or off. Lists, Costs, Docu
 ## AI usage
 
 We use LLM-assisted coding tools across parts of this codebase. Nothing ships that a
-maintainer has not read and understood: every change goes through a pull request, is
-reviewed and tested, and has a human who can answer for it. "The AI wrote that" is not
-an answer any of us would accept from ourselves.
-
-See [**How we use AI in TREK**](https://github.com/liketrek/TREK/discussions/1851) for
-the details.
+maintainer has not read and understood: every change is reviewed and tested, and has a
+human who can answer for it. "The AI wrote that" is not an answer any of us would
+accept from ourselves.
 
 <br />
 
 ## Get started in 30 seconds
 
+This fork does not publish Docker images — run it from source, or build the
+image yourself with the repo [`Dockerfile`](Dockerfile):
+
 ```bash
-ENCRYPTION_KEY=$(openssl rand -hex 32) docker run -d -p 3000:3000 \
-  -e ENCRYPTION_KEY=$ENCRYPTION_KEY \
-  -v ./data:/app/data -v ./uploads:/app/uploads mauriceboe/trek
+git clone https://github.com/iceafish/TREK && cd TREK
+corepack enable && pnpm install
+pnpm run dev
 ```
 
-Open `http://localhost:3000`. On first boot TREK seeds an admin account — if you set `ADMIN_EMAIL`/`ADMIN_PASSWORD` those are used, otherwise the credentials are printed to the container log (`docker logs trek`).
+Open `http://localhost:5173` (the Vite dev server proxies the API to the
+backend on `:3001`). On first boot TREK seeds an admin account — set
+`ADMIN_EMAIL`/`ADMIN_PASSWORD` (see `server/.env.example`) or read the
+credentials from the server log.
 
 <div align="center">
 
@@ -242,26 +231,27 @@ Real-time sync via WebSocket (`ws`). Backend on NestJS 11. State with Zustand. A
 <h2 id="docker-compose-production">Docker Compose (production)</h2>
 
 The repository ships a ready-to-use [`docker-compose.yml`](docker-compose.yml)
-with secure defaults and every option documented inline. Download it, then:
+with secure defaults and every option documented inline; it builds the image
+from this repository, then:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-See [Install with Docker Compose](https://github.com/liketrek/TREK/wiki/Install-Docker-Compose)
+See [Install with Docker Compose](https://github.com/iceafish/TREK/blob/main/wiki/Install-Docker-Compose.md)
 for the full walkthrough.
 
 <br />
 
 <h2 id="helm-kubernetes">Helm (Kubernetes)</h2>
 
+Install straight from the chart in this repository:
+
 ```bash
-helm repo add trek https://chart.liketrek.com
-helm repo update
-helm install trek trek/trek
+helm install trek ./charts/trek
 ```
 
-See [`charts/README.md`](https://github.com/liketrek/TREK/blob/main/charts/README.md) for values.
+See [`charts/README.md`](charts/README.md) for values.
 
 <br />
 
@@ -279,8 +269,9 @@ TREK then launches fullscreen with its own icon, just like a native app.
 
 ## Updating
 
-See [Updating](https://github.com/liketrek/TREK/wiki/Updating) — Docker Compose,
-Docker run, Helm, Portainer, Unraid and Proxmox, plus the encryption-key note.
+See [Updating](https://github.com/iceafish/TREK/blob/main/wiki/Updating.md) —
+Docker Compose, Docker run, Helm, Portainer, Unraid and Proxmox, plus the
+encryption-key note.
 
 <br />
 
@@ -288,7 +279,7 @@ Docker run, Helm, Portainer, Unraid and Proxmox, plus the encryption-key note.
 
 For production, put TREK behind a TLS-terminating reverse proxy. TREK uses WebSockets for real-time sync, so the proxy **must** support WebSocket upgrades on `/ws`.
 
-If you use the MCP addon, the proxy must also pass the `Mcp-Session-Id` header through in both directions on `/mcp` — Nginx and Caddy do this by default, but a proxy that strips it makes every tool call open a new session instead of reusing one. See the [Reverse Proxy wiki page](https://github.com/liketrek/TREK/wiki/Reverse-Proxy) for details.
+If you use the MCP addon, the proxy must also pass the `Mcp-Session-Id` header through in both directions on `/mcp` — Nginx and Caddy do this by default, but a proxy that strips it makes every tool call open a new session instead of reusing one. See the [Reverse Proxy wiki page](https://github.com/iceafish/TREK/blob/main/wiki/Reverse-Proxy.md) for details.
 
 <details>
 <summary>Nginx</summary>
@@ -363,17 +354,7 @@ Caddy handles TLS and WebSockets automatically.
 ## Environment variables
 
 Every variable, its default and what it does: see
-[Environment Variables](https://github.com/liketrek/TREK/wiki/Environment-Variables).
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=liketrek%2FTREK&type=date&legend=bottom-right">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=liketrek/TREK&type=date&theme=dark&legend=bottom-right&sealed_token=tW9agibKugOyPk0yPURgSdnizM7K72zbJENGD9iyk24ZcwYHtCUn-hk9jh1gdacO0O7xJ3Io7LaNrwYD3mChzcpzZIqDC8_HevYG1qnT0XNTmN6Ez4UZrQ" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=liketrek/TREK&type=date&legend=bottom-right&sealed_token=tW9agibKugOyPk0yPURgSdnizM7K72zbJENGD9iyk24ZcwYHtCUn-hk9jh1gdacO0O7xJ3Io7LaNrwYD3mChzcpzZIqDC8_HevYG1qnT0XNTmN6Ez4UZrQ" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=liketrek/TREK&type=date&legend=bottom-right&sealed_token=tW9agibKugOyPk0yPURgSdnizM7K72zbJENGD9iyk24ZcwYHtCUn-hk9jh1gdacO0O7xJ3Io7LaNrwYD3mChzcpzZIqDC8_HevYG1qnT0XNTmN6Ez4UZrQ" />
- </picture>
-</a>
+[Environment Variables](https://github.com/iceafish/TREK/blob/main/wiki/Environment-Variables.md).
 
 ## Data sources
 

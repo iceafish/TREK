@@ -1,6 +1,7 @@
 services:
   app:
-    image: mauriceboe/trek:latest
+    build: . # This fork publishes no prebuilt image — the image is built from this repository's Dockerfile
+    image: trek:local
     container_name: trek
     read_only: true
     security_opt:

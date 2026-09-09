@@ -1,21 +1,16 @@
 ## Description
-<!-- What does this PR do? Why? -->
-
-## Related Issue or Discussion
-<!-- This project requires an issue or an approved feature request before submitting a PR. -->
-<!-- For bug fixes: Closes #ISSUE_NUMBER -->
-<!-- For features: Addresses discussion #DISCUSSION_NUMBER -->
+<!-- What does this change do, and why? -->
 
 ## Type of Change
 - [ ] Bug fix
 - [ ] New feature
-- [ ] Breaking change
+- [ ] Breaking change (deliberate divergence from upstream — state the intent)
 - [ ] Documentation update
 
 ## Checklist
-- [ ] I have read the [Contributing Guidelines](https://github.com/liketrek/TREK/wiki/Contributing)
-- [ ] My branch is [up to date with `dev`](https://github.com/liketrek/TREK/wiki/Development-environment#3-keep-your-fork-up-to-date)
-- [ ] This PR targets the `dev` branch, not `main` *(wiki-only PRs are exempt)*
-- [ ] I have tested my changes locally
-- [ ] I have added/updated tests that prove my fix is effective or that my feature works
-- [ ] I have updated documentation if needed
+- [ ] This PR targets the `dev` branch, not `main`
+- [ ] Conventional commit(s), one focused change per commit
+- [ ] Tests added/updated; `server/src/nest/**` coverage stays ≥ 80%
+- [ ] Contract changes live in `shared/` and `@trek/shared` was rebuilt
+- [ ] New/changed i18n keys exist in every locale (`i18n:parity` passes)
+- [ ] Verified locally: typecheck, lint, and the relevant vitest suites pass
