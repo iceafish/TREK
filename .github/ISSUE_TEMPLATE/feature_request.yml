@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for this fork of TREK
+description: Suggest an idea for OhMyTrek
 title: "[FEATURE] "
 labels: []
 body:
@@ -8,7 +8,7 @@ body:
     attributes:
       label: Pre-flight checklist
       options:
-        - label: I have searched [existing issues](https://github.com/iceafish/TREK/issues) and this idea has not been proposed yet
+        - label: I have searched [existing issues](https://github.com/iceafish/ohmytrek/issues) and this idea has not been proposed yet
           required: true
 
   - type: textarea

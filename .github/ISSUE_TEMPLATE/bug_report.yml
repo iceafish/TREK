@@ -1,5 +1,5 @@
 name: Bug Report
-description: Create a report to help us improve TREK
+description: Create a report to help us improve OhMyTrek
 title: "[BUG] "
 labels: []
 body:
@@ -8,17 +8,17 @@ body:
     attributes:
       label: Pre-flight checklist
       options:
-        - label: I have searched [existing issues](https://github.com/iceafish/TREK/issues) and this bug has not been reported yet
+        - label: I have searched [existing issues](https://github.com/iceafish/ohmytrek/issues) and this bug has not been reported yet
           required: true
-        - label: I am running the latest available version of TREK
+        - label: I am running the latest available version of OhMyTrek
           required: true
-        - label: I have read the [Troubleshooting guide](https://github.com/iceafish/TREK/blob/main/wiki/Troubleshooting.md) and my issue is not covered there
+        - label: I have read the [Troubleshooting guide](https://github.com/iceafish/ohmytrek/blob/main/wiki/Troubleshooting.md) and my issue is not covered there
           required: true
 
   - type: input
     id: version
     attributes:
-      label: TREK version
+      label: OhMyTrek version
       description: Found in the Settings → About, or in the Docker image tag
       placeholder: "e.g. 2.8.0"
     validations:
@@ -77,7 +77,7 @@ body:
   - type: dropdown
     id: user_os
     attributes:
-      label: Accessing TREK from
+      label: Accessing OhMyTrek from
       options:
         - Desktop browser
         - Mobile browser
