@@ -62,7 +62,7 @@ represents a code of conduct violation, and this Code of Conduct reinforces enco
 avoid conflicts and minimize harm.
 
 When an incident does occur, it is important to report it promptly. To report a possible violation, **contact the
-maintainer via [GitHub](https://github.com/iceafish/TREK)** (open a private issue discussion with the repo owner,
+maintainer via [GitHub](https://github.com/iceafish/ohmytrek)** (open a private issue discussion with the repo owner,
 [@iceafish](https://github.com/iceafish)).
 
 Community Moderators take reports of violations seriously and will make every effort to respond in a timely manner. They

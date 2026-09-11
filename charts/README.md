@@ -1,9 +1,9 @@
-# TREK Helm Chart
+# OhMyTrek Helm Chart
 
-This is a minimal Helm chart for deploying the TREK app.
+This is a minimal Helm chart for deploying the OhMyTrek app.
 
 ## Features
-- Deploys the TREK container
+- Deploys the OhMyTrek container
 - Exposes port 3000 via Service
 - Optional persistent storage for `/app/data` and `/app/uploads`
 - Configurable environment variables and secrets

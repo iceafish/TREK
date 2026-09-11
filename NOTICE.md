@@ -1,6 +1,6 @@
 # Third-party data & attributions
 
-TREK bundles and uses third-party data that requires attribution.
+OhMyTrek bundles and uses third-party data that requires attribution.
 
 ## geoBoundaries — country & sub-national boundaries
 
@@ -17,7 +17,7 @@ geoBoundaries is licensed under **CC BY 4.0**
 (https://creativecommons.org/licenses/by/4.0/). Source: https://www.geoboundaries.org/
 
 The bundled files are simplified (coordinate-quantized) and re-tagged with the
-property names TREK consumes. Country borders (`admin0`) derive from the geoBoundaries
+property names OhMyTrek consumes. Country borders (`admin0`) derive from the geoBoundaries
 CGAZ composite; sub-national regions (`admin1`) derive from the per-country open
 (gbOpen) release.
 
@@ -34,7 +34,7 @@ Pictures offered for a place come from **Wikimedia Commons** (geosearch by
 coordinate) and are cached locally rather than hotlinked. Descriptions can come
 from **Wikipedia**, resolved from the place's OpenStreetMap `wikipedia` tag.
 
-Commons files carry their own licence, most often **CC BY** or **CC BY-SA**. TREK
+Commons files carry their own licence, most often **CC BY** or **CC BY-SA**. OhMyTrek
 shows the author, the licence and a link to the file description page next to
 every picture while it is being chosen, and keeps the author and licence with the
 cached file so the credit stays visible afterwards. Wikipedia article text is
@@ -45,7 +45,7 @@ cached file so the credit stays visible afterwards. Wikipedia article text is
 When an administrator configures a Google Maps API key, place search, details,
 pictures and editorial summaries can also come from the **Google Places API**,
 subject to Google's terms. Photos carry the author attribution Google supplies
-and no reusable licence; TREK displays that attribution and claims nothing
+and no reusable licence; OhMyTrek displays that attribution and claims nothing
 further. This path is off unless a key is configured, and each part of it has its
 own switch in the admin panel. https://cloud.google.com/maps-platform/terms
 

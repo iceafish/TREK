@@ -1,9 +1,11 @@
 <div align="center">
 
+English · [简体中文](README.zh-CN.md)
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/logo-trek-light.svg" />
   <source media="(prefers-color-scheme: light)" srcset="docs/logo-trek-dark.svg" />
-  <img src="docs/logo-trek-dark.svg" alt="TREK" height="96" />
+  <img src="docs/logo-trek-dark.svg" alt="OhMyTrek" height="96" />
 </picture>
 
 <br />
@@ -15,20 +17,21 @@
 
 A self-hosted, real-time collaborative travel planner — with maps, budgets, packing lists, a journal, and AI built in.
 
-> **Independently maintained fork.** This repository is a fork of
-> [liketrek/TREK](https://github.com/liketrek/TREK), adapted for
-> China-mainland usage (AMap integration — see [`docs/amap/`](docs/amap/README.md)).
+> **OhMyTrek is an independent project.** This repository started as a fork of
+> [liketrek/TREK](https://github.com/liketrek/TREK) and now iterates under its
+> own name, **OhMyTrek**, on its own roadmap. The current focus is a
+> China-mainland adaptation (AMap integration — see [`docs/amap/`](docs/amap/README.md)).
 > It does not track upstream releases, and prebuilt Docker images referenced
 > upstream are not published here.
 
 <br />
 
-<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/iceafish/TREK/test.yml?branch=main&style=for-the-badge">
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/iceafish/ohmytrek/test.yml?branch=main&style=for-the-badge">
 &nbsp;
 <br />
 <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL_v3-6B7280?style=flat-square" /></a>
-<a href="https://github.com/iceafish/TREK/releases"><img alt="Latest Release" src="https://img.shields.io/github/v/release/iceafish/trek?include_prereleases&style=flat-square&color=6B7280" /></a>
-<a href="https://github.com/iceafish/TREK"><img alt="Stars" src="https://img.shields.io/github/stars/iceafish/trek?style=flat-square&color=6B7280" /></a>
+<a href="https://github.com/iceafish/ohmytrek/releases"><img alt="Latest Release" src="https://img.shields.io/github/v/release/iceafish/ohmytrek?include_prereleases&style=flat-square&color=6B7280" /></a>
+<a href="https://github.com/iceafish/ohmytrek"><img alt="Stars" src="https://img.shields.io/github/stars/iceafish/ohmytrek?style=flat-square&color=6B7280" /></a>
 </div>
 
 ---
@@ -190,13 +193,13 @@ This fork does not publish Docker images — run it from source, or build the
 image yourself with the repo [`Dockerfile`](Dockerfile):
 
 ```bash
-git clone https://github.com/iceafish/TREK && cd TREK
+git clone https://github.com/iceafish/ohmytrek && cd ohmytrek
 corepack enable && pnpm install
 pnpm run dev
 ```
 
 Open `http://localhost:5173` (the Vite dev server proxies the API to the
-backend on `:3001`). On first boot TREK seeds an admin account — set
+backend on `:3001`). On first boot OhMyTrek seeds an admin account — set
 `ADMIN_EMAIL`/`ADMIN_PASSWORD` (see `server/.env.example`) or read the
 credentials from the server log.
 
@@ -238,7 +241,7 @@ from this repository, then:
 docker compose up -d --build
 ```
 
-See [Install with Docker Compose](https://github.com/iceafish/TREK/blob/main/wiki/Install-Docker-Compose.md)
+See [Install with Docker Compose](https://github.com/iceafish/ohmytrek/blob/main/wiki/Install-Docker-Compose.md)
 for the full walkthrough.
 
 <br />
@@ -257,19 +260,19 @@ See [`charts/README.md`](charts/README.md) for values.
 
 <h2 id="install-as-app-pwa">Install as App (PWA)</h2>
 
-TREK works as a Progressive Web App — no App Store needed.
+OhMyTrek works as a Progressive Web App — no App Store needed.
 
-1. Open TREK in the browser (HTTPS required)
+1. Open OhMyTrek in the browser (HTTPS required)
 2. **iOS**: Share ▸ *Add to Home Screen*
 3. **Android**: Menu ▸ *Install app* (or *Add to Home Screen*)
 
-TREK then launches fullscreen with its own icon, just like a native app.
+OhMyTrek then launches fullscreen with its own icon, just like a native app.
 
 <br />
 
 ## Updating
 
-See [Updating](https://github.com/iceafish/TREK/blob/main/wiki/Updating.md) —
+See [Updating](https://github.com/iceafish/ohmytrek/blob/main/wiki/Updating.md) —
 Docker Compose, Docker run, Helm, Portainer, Unraid and Proxmox, plus the
 encryption-key note.
 
@@ -277,9 +280,9 @@ encryption-key note.
 
 <h2 id="reverse-proxy">Reverse Proxy</h2>
 
-For production, put TREK behind a TLS-terminating reverse proxy. TREK uses WebSockets for real-time sync, so the proxy **must** support WebSocket upgrades on `/ws`.
+For production, put OhMyTrek behind a TLS-terminating reverse proxy. OhMyTrek uses WebSockets for real-time sync, so the proxy **must** support WebSocket upgrades on `/ws`.
 
-If you use the MCP addon, the proxy must also pass the `Mcp-Session-Id` header through in both directions on `/mcp` — Nginx and Caddy do this by default, but a proxy that strips it makes every tool call open a new session instead of reusing one. See the [Reverse Proxy wiki page](https://github.com/iceafish/TREK/blob/main/wiki/Reverse-Proxy.md) for details.
+If you use the MCP addon, the proxy must also pass the `Mcp-Session-Id` header through in both directions on `/mcp` — Nginx and Caddy do this by default, but a proxy that strips it makes every tool call open a new session instead of reusing one. See the [Reverse Proxy wiki page](https://github.com/iceafish/ohmytrek/blob/main/wiki/Reverse-Proxy.md) for details.
 
 <details>
 <summary>Nginx</summary>
@@ -287,13 +290,13 @@ If you use the MCP addon, the proxy must also pass the `Mcp-Session-Id` header t
 ```nginx
 server {
     listen 80;
-    server_name trek.yourdomain.com;
+    server_name ohmytrek.yourdomain.com;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name trek.yourdomain.com;
+    server_name ohmytrek.yourdomain.com;
 
     ssl_certificate     /etc/ssl/fullchain.pem;
     ssl_certificate_key /etc/ssl/privkey.pem;
@@ -340,7 +343,7 @@ server {
 <summary>Caddy</summary>
 
 ```caddy
-trek.yourdomain.com {
+ohmytrek.yourdomain.com {
     reverse_proxy localhost:3000
 }
 ```
@@ -354,7 +357,7 @@ Caddy handles TLS and WebSockets automatically.
 ## Environment variables
 
 Every variable, its default and what it does: see
-[Environment Variables](https://github.com/iceafish/TREK/blob/main/wiki/Environment-Variables.md).
+[Environment Variables](https://github.com/iceafish/ohmytrek/blob/main/wiki/Environment-Variables.md).
 
 ## Data sources
 
@@ -367,4 +370,4 @@ for full third-party attributions.
 
 ## License
 
-TREK is [AGPL v3](LICENSE). Self-host freely for personal or internal company use. If you modify and offer TREK as a network service to third parties, your modifications must be open-sourced under the same licence.
+OhMyTrek is [AGPL v3](LICENSE). Self-host freely for personal or internal company use. If you modify and offer OhMyTrek as a network service to third parties, your modifications must be open-sourced under the same licence.

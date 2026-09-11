@@ -1,9 +1,9 @@
 # Contributing
 
-This repository ([iceafish/TREK](https://github.com/iceafish/TREK)) is an
+This repository ([iceafish/ohmytrek](https://github.com/iceafish/ohmytrek)) is an
 independently maintained fork — development happens directly here, for this
 fork's own goals (currently a China-mainland localization). See
-[CONTRIBUTING.md](https://github.com/iceafish/TREK/blob/dev/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/iceafish/ohmytrek/blob/dev/CONTRIBUTING.md)
 for the full process; the short version:
 
 ## How this repository is run

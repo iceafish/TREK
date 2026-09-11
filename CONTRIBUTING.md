@@ -1,8 +1,9 @@
-# Contributing to TREK
+# Contributing to OhMyTrek
 
-This is **[iceafish/TREK](https://github.com/iceafish/TREK)** — an independently
-maintained fork of [liketrek/TREK](https://github.com/liketrek/TREK). Development
-happens directly in this repository, for this fork's own goals (currently a
+This is **[iceafish/ohmytrek](https://github.com/iceafish/ohmytrek)** (**OhMyTrek**) —
+an independent project that began as a fork of
+[liketrek/TREK](https://github.com/liketrek/TREK). Development
+happens directly in this repository, for this project's own goals (currently a
 China-mainland localization — see [`docs/amap/`](docs/amap/README.md)); nothing
 is sent back upstream, and upstream's contribution process (Discord pitch,
 issue-first PRs, wiki pages) does not apply here.

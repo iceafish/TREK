@@ -3,7 +3,7 @@
 How to update this fork of TREK to a newer version without losing data.
 
 > **Note:** This repository is an independently maintained fork
-> ([iceafish/TREK](https://github.com/iceafish/TREK)). It does not publish
+> ([iceafish/ohmytrek](https://github.com/iceafish/ohmytrek)). It does not publish
 > prebuilt Docker images and does not follow upstream releases — update from
 > this repository only.
 

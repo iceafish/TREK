@@ -15,13 +15,13 @@ If you discover a security vulnerability, please report it responsibly:
 
 1. **Do not** open a public issue
 2. Open a private security advisory at
-   [iceafish/TREK security advisories](https://github.com/iceafish/TREK/security/advisories/new)
+   [iceafish/ohmytrek security advisories](https://github.com/iceafish/ohmytrek/security/advisories/new)
 3. Include a description of the vulnerability and steps to reproduce
 
 Once confirmed, a fix will be released as soon as possible.
 
 ## Scope
 
-This policy covers the TREK application as built from this repository.
+This policy covers the OhMyTrek application as built from this repository.
 
 Third-party dependencies are monitored via GitHub Dependabot.

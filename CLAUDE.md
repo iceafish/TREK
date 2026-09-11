@@ -2,11 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What TREK is
+## What OhMyTrek is
 
-**This repository is an independently maintained fork (`iceafish/TREK`), not the upstream
-project** — see [Repository status](#repository-status) before following any contribution
-process you find in this repo.
+**This repository (`iceafish/ohmytrek`, project name **OhMyTrek**) is an independent project —
+it began as a fork of liketrek/TREK and now iterates under its own name** — see
+[Repository status](#repository-status) before following any contribution
+process you find in this repo. The rename is documentation-level for now:
+`@trek/*` package names, `TREK_*` env vars and other in-code identifiers still
+carry the old name and are not renamed casually.
 
 A self-hosted, real-time collaborative travel planner. pnpm-workspaces monorepo (pinned via `packageManager: pnpm@10.34.5` in the root package.json) with three workspaces:
 
@@ -73,7 +76,7 @@ Nest owns everything: the strangler migration **completed 2026-08-10**, and the 
 - **Trip-scoped routes** must verify trip access (404 on no access) and the relevant permission (403) — the standard shape is `@UseGuards(JwtAuthGuard, TripAccessGuard)` + `@RequirePermission('<action>')` per handler (a few domains still check inline; see `roadmap.md`) — and forward `X-Socket-Id` to the WebSocket broadcast so the originating client doesn't echo its own change. Never gate a multipart upload with a guard (ECONNRESET instead of 403 — check in the handler).
 - **DB** (`server/src/db/`): `better-sqlite3`, WAL mode, FK on. `database.ts` initializes; `schema.ts` creates tables; `migrations.ts` + `seeds.ts` run on boot. In `NODE_ENV=test` each vitest worker gets an isolated `:memory:` DB; the Playwright harness uses `TREK_DB_FILE` for a throwaway file DB.
 - **WebSocket** (`server/src/websocket.ts`): JWT-authed, room-per-trip (`tripId → Set<WebSocket>`), heartbeat keep-alive, per-connection rate limiting, served on `/ws`.
-- **MCP** (`server/src/mcp/`): OAuth 2.1-authenticated MCP server exposing TREK to AI assistants (150+ tools in `tools/`, resources, scopes, session manager). See `MCP.md`.
+- **MCP** (`server/src/mcp/`): OAuth 2.1-authenticated MCP server exposing OhMyTrek to AI assistants (150+ tools in `tools/`, resources, scopes, session manager). See `MCP.md`.
 - **Addons** are admin-toggleable feature modules keyed by `ADDON_IDS` in `server/src/addons.ts` (mcp, packing, budget, documents, vacay, atlas, collab, journey, airtrail, llm_parsing, collections).
 - **Plugins** (`server/src/nest/plugins/`): sandboxed third-party plugin runtime — one forked child process per plugin (`supervisor/`), permission-gated RPC (`host/rpc-host.ts` registers a handler only if the plugin holds the unlocking permission), install-time manifest/signature/egress checks (`install/`, `runtime/egress-policy.ts`). Author tooling lives in `plugin-sdk/`; the `trek-plugin-dev` skill covers plugin authoring.
 
@@ -105,10 +108,13 @@ These principles come out of a verified 2026 full-repo audit and shape how all n
 
 ## Repository status
 
-**This is an independently maintained fork, and it does not contribute back.** There is no
+**This is an independent project — OhMyTrek, renamed from the TREK fork — and it does not
+contribute back.** There is no
 `upstream` remote and no plan to open pull requests against the original project. The goal is to
 iterate on this codebase for its own needs — currently a China-mainland localization
-(`docs/amap/` holds the in-progress AMap integration).
+(`docs/amap/` holds the in-progress AMap integration). GitHub-facing docs (README,
+CONTRIBUTING, issue/PR templates) use the OhMyTrek name; in-code identifiers
+(`@trek/*`, `TREK_*`) keep the old name until a deliberate rename.
 
 `CONTRIBUTING.md`, `.github/PULL_REQUEST_TEMPLATE.md` and the issue templates
 **describe this fork's own process** — they are maintained here and no longer
