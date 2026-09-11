@@ -46,6 +46,7 @@ coding agent 或工程师。
 | 03 服务端 provider | [03-server-provider.md](03-server-provider.md) | 01 | Web服务 key |
 | 04 路径规划服务端化 | [04-routing.md](04-routing.md) | 03 | Web服务 key |
 | 05 降级面处置 | [05-degraded-surfaces.md](05-degraded-surfaces.md) | 02b | — |
+| 06 地点取图接入 | [06-place-photos.md](06-place-photos.md) | 03 | Web服务 key |
 
 `01` 是所有工作的地基，且是唯一一个做错了会**静默污染全系统**的部分（天气、时区、Atlas 国界
 判定都读同一组 lat/lng）。它必须单独先做、先测、先合入。`02` 与 `03` 在 `01` 合入后可并行。

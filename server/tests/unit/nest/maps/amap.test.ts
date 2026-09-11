@@ -149,6 +149,70 @@ describe('AmapProvider.details', () => {
     mockFetch(() => amapEnvelope({ pois: [] }));
     expect(await amapProvider.details({ key: KEY, placeId: 'amap:NOPE' })).toBeNull();
   });
+
+  it('AMAP-ID-001: search rows expose the poiid in the osm_id slot the client round-trips (docs/amap/06)', async () => {
+    mockFetch(() =>
+      amapEnvelope({ pois: [{ id: 'B0FFH1NP1X', name: '天安门', location: `${GCJ.lng},${GCJ.lat}` }] }),
+    );
+    const { places } = await amapProvider.search({ key: KEY, query: '天安门' });
+    // The pick handlers read google_place_id || osm_id — without this slot the
+    // id is lost the moment a result is picked, and every downstream photo /
+    // details request degenerates to bare coordinates.
+    expect((places[0] as Record<string, unknown>).osm_id).toBe('amap:B0FFH1NP1X');
+  });
+});
+
+describe('AmapProvider.photos', () => {
+  it('AMAP-PHOTO-001: queries place/detail with extensions=all and normalizes the candidates', async () => {
+    const fetchMock = mockFetch(() =>
+      amapEnvelope({
+        pois: [
+          {
+            id: 'B000A8UIN8',
+            photos: [
+              // The exact shapes the live API returns (docs/amap/06): a set
+              // title, a title as an EMPTY ARRAY, an http url, a non-http url,
+              // and an empty-array url.
+              { title: '春季', provider: [], url: 'http://store.is.autonavi.com/showpic/2f96' },
+              { title: [], provider: [], url: 'https://store.is.autonavi.com/showpic/ecaa' },
+              { title: [], provider: [], url: 'ftp://store.is.autonavi.com/showpic/ce04' },
+              { title: 'x', url: [] },
+            ],
+          },
+        ],
+      }),
+    );
+    const photos = await amapProvider.photos({ key: KEY, placeId: 'amap:B000A8UIN8' });
+    const url = fetchMock.mock.calls[0][0] as URL;
+    expect(url.pathname).toBe('/v3/place/detail');
+    expect(url.searchParams.get('id')).toBe('B000A8UIN8');
+    // The default `base` payload never carries photos — this channel only
+    // exists with extensions=all.
+    expect(url.searchParams.get('extensions')).toBe('all');
+    expect(photos).toEqual([
+      // http is rewritten to https (verified working on the image host)…
+      { title: '春季', url: 'https://store.is.autonavi.com/showpic/2f96' },
+      // …an empty-array title normalizes to null…
+      { title: null, url: 'https://store.is.autonavi.com/showpic/ecaa' },
+      // …and the ftp / empty-url entries are dropped.
+    ]);
+  });
+
+  it('AMAP-PHOTO-002: an id-less row (amap:unknown) short-circuits without a call', async () => {
+    const fetchMock = mockFetch(() => amapEnvelope({ pois: [] }));
+    expect(await amapProvider.photos({ key: KEY, placeId: 'amap:unknown' })).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('AMAP-PHOTO-003: a poi without photos returns an empty list', async () => {
+    mockFetch(() => amapEnvelope({ pois: [{ id: 'B001' }] }));
+    expect(await amapProvider.photos({ key: KEY, placeId: 'amap:B001' })).toEqual([]);
+  });
+
+  it('AMAP-PHOTO-004: a body-level rejection throws the shared 502 shape', async () => {
+    mockFetch(() => ({ ok: true, status: 200, json: async () => ({ status: '0', info: 'INVALID_PARAMS' }) }));
+    await expect(amapProvider.photos({ key: KEY, placeId: 'amap:B001' })).rejects.toMatchObject({ status: 502 });
+  });
 });
 
 describe('AmapProvider.reverse', () => {

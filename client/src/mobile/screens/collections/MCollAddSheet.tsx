@@ -40,6 +40,10 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<MapsPlace[]>([])
   const [searching, setSearching] = useState(false)
+  // A search that comes back empty must say so — the desktop dialog learned
+  // this in #1921: with the dropdown gone and no message, the sheet reads as
+  // dead and users re-tap the button.
+  const [noResults, setNoResults] = useState(false)
   const [picked, setPicked] = useState<MapsPlace | null>(null)
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
@@ -51,7 +55,7 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
 
   useEffect(() => {
     if (open) return
-    setQuery(''); setResults([]); setPicked(null); setName(''); setAddress(''); setCategoryId(null); setStatus('idea'); setDescription('')
+    setQuery(''); setResults([]); setNoResults(false); setPicked(null); setName(''); setAddress(''); setCategoryId(null); setStatus('idea'); setDescription('')
     setTargetId(null)
   }, [open])
 
@@ -68,9 +72,12 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
   const search = async () => {
     if (!query.trim() || searching) return
     setSearching(true)
+    setNoResults(false)
     try {
       const res = await mapsApi.search(query, language)
-      setResults((res.places as MapsPlace[]) || [])
+      const places = (res.places as MapsPlace[]) || []
+      setResults(places)
+      setNoResults(places.length === 0)
     } catch (err) {
       toast.error(getApiErrorMessage(err, t('places.mapsSearchError')))
     } finally {
@@ -83,6 +90,7 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
     setName(str(r.name) ?? '')
     setAddress(str(r.address) ?? '')
     setResults([])
+    setNoResults(false)
     setQuery(str(r.name) ?? query)
   }
 
@@ -158,7 +166,7 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
           <Search size={15} strokeWidth={2.2} className="flex-none text-m-muted" />
           <input
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={e => { setQuery(e.target.value); setNoResults(false) }}
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); search() } }}
             placeholder={t('collections.addPlaceSearch')}
             className="min-w-0 flex-1 bg-transparent py-2 font-[inherit] text-[0.8125rem] text-m-ink outline-none placeholder:text-m-faint"
@@ -173,25 +181,34 @@ export default function MCollAddSheet({ open, collectionId, collectionName, list
             {t('common.search')}
           </button>
         </div>
-        {results.length > 0 && (
+        {(results.length > 0 || noResults) && (
           <div className="mt-[6px] max-h-[210px] overflow-y-auto rounded-[14px] border border-[color:var(--m-rowbr)] bg-m-sheetop shadow-[0_20px_44px_-18px_rgba(0,0,0,.45)]">
             <div className="flex items-center justify-between px-[13px] pt-2">
               <Eyebrow>{t('common.search').toUpperCase()}</Eyebrow>
-              <button type="button" onClick={() => setResults([])} aria-label={t('common.close')} className="text-m-faint">
+              <button
+                type="button"
+                onClick={() => { setResults([]); setNoResults(false) }}
+                aria-label={t('common.close')}
+                className="text-m-faint"
+              >
                 <X size={13} strokeWidth={2.2} />
               </button>
             </div>
-            {results.map((r, i) => (
-              <button key={i} type="button" onClick={() => pick(r)} className="flex w-full items-center gap-[10px] px-[13px] py-[10px] text-left">
-                <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-lg bg-[color:var(--m-ic)] text-m-faint">
-                  <MapPin size={14} strokeWidth={2.2} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[0.8125rem] font-semibold text-m-ink">{str(r.name)}</span>
-                  {str(r.address) && <span className="block truncate font-geist text-[0.625rem] text-m-muted">{str(r.address)}</span>}
-                </span>
-              </button>
-            ))}
+            {noResults ? (
+              <p className="px-[13px] pb-3 pt-2 text-center text-[0.75rem] text-m-muted">{t('planner.noPlacesFound')}</p>
+            ) : (
+              results.map((r, i) => (
+                <button key={i} type="button" onClick={() => pick(r)} className="flex w-full items-center gap-[10px] px-[13px] py-[10px] text-left">
+                  <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-lg bg-[color:var(--m-ic)] text-m-faint">
+                    <MapPin size={14} strokeWidth={2.2} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[0.8125rem] font-semibold text-m-ink">{str(r.name)}</span>
+                    {str(r.address) && <span className="block truncate font-geist text-[0.625rem] text-m-muted">{str(r.address)}</span>}
+                  </span>
+                </button>
+              ))
+            )}
           </div>
         )}
 

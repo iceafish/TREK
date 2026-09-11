@@ -1,8 +1,10 @@
-import { Check, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import type { CollectionPlace, CollectionStatus } from '@trek/shared'
+import PlaceAvatar from '../../../components/shared/PlaceAvatar'
+import MSquareCheck from '../../components/MSquareCheck'
 import type { TranslationFn } from '../../../types'
 import { nextStatus } from '../../../pages/collections/collectionsModel'
-import { categoryMeta, STATUS_SPEC, tint, UNCATEGORIZED_META } from './collectionsMobileModel'
+import { categoryMeta, STATUS_SPEC, tint } from './collectionsMobileModel'
 
 interface MCollPlaceRowProps {
   place: CollectionPlace
@@ -16,16 +18,17 @@ interface MCollPlaceRowProps {
 }
 
 /**
- * A saved place: the main card (tinted category tile, name, address) next to
- * the status column with the status pill (tap = cycle Idea → Want to go →
- * Visited) and the category pill. In select mode a tap toggles the selection.
+ * A saved place: the avatar (place photo when one resolves, else the category
+ * colour/icon) with name and address next to the status column with the status
+ * pill (tap = cycle Idea → Want to go → Visited) and the category pill. In
+ * select mode a tap toggles the selection, shown by the leading checkbox — the
+ * same split the trip places browser uses.
  */
 export default function MCollPlaceRow({
   place, selectMode, selected, canEdit, onOpen, onToggleSelect, onSetStatus, t,
 }: MCollPlaceRowProps) {
   const cat = categoryMeta(place.category)
-  const meta = cat ?? UNCATEGORIZED_META
-  const TileIcon = meta.icon
+  const PillIcon = cat?.icon
   const status = STATUS_SPEC[place.status]
   const StatusIcon = status.icon
 
@@ -39,14 +42,13 @@ export default function MCollPlaceRow({
         onClick={() => (selectMode ? onToggleSelect(place.id) : onOpen(place.id))}
         aria-pressed={selectMode ? selected : undefined}
         className="flex min-w-0 flex-1 items-center gap-[11px] rounded-2xl border border-[color:var(--m-rowbr)] bg-m-sheetop px-3 py-[11px] text-left"
-        style={selected ? { boxShadow: 'inset 0 0 0 1.5px var(--m-act)' } : undefined}
       >
-        <span
-          className={`flex h-10 w-10 flex-none items-center justify-center rounded-xl ${selected ? 'bg-m-act text-m-actfg' : ''}`}
-          style={selected ? undefined : { background: tint(meta.color, '1f'), color: meta.color }}
-        >
-          {selected ? <Check size={17} strokeWidth={2.4} /> : <TileIcon size={17} strokeWidth={2.2} />}
-        </span>
+        {selectMode && <MSquareCheck big checked={selected} />}
+        <PlaceAvatar
+          place={place}
+          size={40}
+          category={place.category ? { color: place.category.color ?? undefined, icon: place.category.icon ?? undefined } : null}
+        />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[0.78125rem] font-bold text-m-ink">{place.name}</span>
           {place.address && (
@@ -72,7 +74,7 @@ export default function MCollPlaceRow({
         </button>
         {cat && place.category?.name && (
           <span className={pill} style={{ background: tint(cat.color, '18'), color: cat.color }}>
-            <TileIcon size={9} strokeWidth={2.6} className="flex-none" />
+            {PillIcon && <PillIcon size={9} strokeWidth={2.6} className="flex-none" />}
             <span className="truncate">{place.category.name}</span>
           </span>
         )}

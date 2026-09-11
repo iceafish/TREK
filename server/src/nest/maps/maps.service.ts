@@ -2042,6 +2042,53 @@ export class MapsService {
           return { attribution };
         };
 
+        // AMap POI photo for an `amap:` id (docs/amap/06). Key-gated exactly like
+        // the Google branch: an unconfigured channel must not place a single
+        // call, so it short-circuits here and the coordinate fallback below runs.
+        // Empty photos is the same "no photo anywhere" shape as Google's — a
+        // no-photo negative cache, not a provider error; only rejections and
+        // failed downloads count as providerFailed.
+        const fetchAmapPhoto = async (): Promise<{ attribution: string | null } | null> => {
+          const amapKey = this.resolveAmapKey();
+          if (!amapKey) return null;
+          try {
+            const candidates = await this.amap.photos({ key: amapKey, placeId });
+            if (!candidates.length) return null;
+            for (const candidate of candidates) {
+              try {
+                // Same redirect-revalidating fetch the Wikimedia path uses — the
+                // autonavi image host is external and untrusted like any other.
+                const imgRes = await safeFetchFollow(candidate.url, undefined, { bypassInternalIpAllowed: true });
+                if (!imgRes.ok) {
+                  providerFailed = true;
+                  continue;
+                }
+                const bytes = Buffer.from(await imgRes.arrayBuffer());
+                if (!bytes.length) {
+                  providerFailed = true;
+                  continue;
+                }
+                const cached = await this.photoCache.put(placeId, bytes, 'AMap');
+                return { attribution: cached.attribution };
+              } catch {
+                providerFailed = true;
+              }
+            }
+            return null;
+          } catch {
+            providerFailed = true;
+            return null;
+          }
+        };
+
+        // Route by id type, not preference: an `amap:` id never belongs to Google
+        // (NON_GOOGLE_PLACE_ID guarantees that), Google ids skip the AMap branch,
+        // and everything coordinate-ish goes straight to the fallback.
+        if (placeId.startsWith('amap:')) {
+          const amapPhoto = await fetchAmapPhoto();
+          if (amapPhoto) return amapPhoto;
+        }
+
         // Prefer the Google photo (higher quality); if Google yields nothing, fall
         // back to the same coordinate-based Wikipedia/OSM lookup that right-click
         // places use. Ids Google cannot resolve skip it entirely.

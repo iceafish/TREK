@@ -36,6 +36,8 @@ interface AmapPoi {
   tel?: string | unknown[];
   website?: string;
   biz_ext?: { rating?: string | unknown[]; cost?: string | unknown[] };
+  /** Only returned with extensions=all (docs/amap/06); `title`/`provider` may be []. */
+  photos?: Array<{ title?: string | unknown[]; provider?: unknown[]; url?: string }>;
 }
 
 interface AmapEnvelope {
@@ -98,11 +100,16 @@ function poiToRecord(poi: AmapPoi): Record<string, unknown> {
   const wgs = loc ? fromAmap(loc) : null;
   const rating = typeof poi.biz_ext?.rating === 'string' ? Number.parseFloat(poi.biz_ext.rating) : Number.NaN;
   return {
-    // Provider-shaped record, by analogy with the Google/OSM records: the id
-    // field the client round-trips into details is `amap_id` (details routes on
-    // the `amap:` prefix of the id, the same way OSM routes on its `type:id`).
+    // Provider-shaped record, by analogy with the Google/OSM records. `amap_id`
+    // is the provider's own slot (details routes on the `amap:` prefix of the
+    // id, the same way OSM routes on its `type:id`); `osm_id` mirrors the pois()
+    // parity convention — the client round-trips `google_place_id || osm_id`
+    // into details/photo requests and both places tables persist `osm_id`, so
+    // without it the id is lost the moment a search result is picked
+    // (docs/amap/06).
     google_place_id: null,
     amap_id: poi.id ? `amap:${poi.id}` : null,
+    osm_id: poi.id ? `amap:${poi.id}` : 'amap:unknown',
     name: poi.name || '',
     address: normalizeString(poi.address) || '',
     lat: wgs?.lat ?? null,
@@ -206,6 +213,35 @@ export class AmapProvider {
     const poi = data.pois?.[0];
     if (!poi) return null;
     return poiToRecord(poi);
+  }
+
+  /**
+   * POI 图片候选 — v3/place/detail with extensions=all (`docs/amap/06`).
+   *
+   * The default `base` payload never carries `photos`, so this is deliberately
+   * its own call rather than a flag on `details()`. The urls are autonavi image
+   * CDN direct links; they are normalized here (https, drop empties) but NOT
+   * handed to clients raw — the photo pipeline downloads and re-serves them
+   * through the shared bytes proxy.
+   */
+  async photos(opts: { key: string; placeId: string }): Promise<{ title: string | null; url: string }[]> {
+    const id = opts.placeId.startsWith('amap:') ? opts.placeId.slice('amap:'.length) : opts.placeId;
+    // "amap:unknown" — the id-less sentinel pois()/poiToRecord mint — has
+    // nothing to look up; the detail call would just bill a rejection.
+    if (!id || id === 'unknown') return [];
+    const data = await callAmap(opts.key, '/v3/place/detail', { id, extensions: 'all' });
+    const out: { title: string | null; url: string }[] = [];
+    for (const photo of data.pois?.[0]?.photos ?? []) {
+      const url = typeof photo?.url === 'string' ? photo.url.trim() : '';
+      if (!/^https?:\/\//i.test(url)) continue;
+      // store.is.autonavi.com serves both schemes; https is verified working,
+      // and the proxy's outbound fetch should not downgrade on principle.
+      out.push({
+        title: typeof photo.title === 'string' && photo.title ? photo.title : null,
+        url: url.replace(/^http:\/\//i, 'https://'),
+      });
+    }
+    return out;
   }
 
   /** 逆地理编码 — v3/geocode/regeo (extensions=all for the POI/AOI names). */

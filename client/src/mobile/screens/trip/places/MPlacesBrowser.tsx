@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import {
-  Bookmark, Check, CheckCheck, CheckCircle2, Download, ListChecks, Loader2, MapPin, Plus,
+  Bookmark, CheckCheck, CheckCircle2, Download, ListChecks, Loader2, MapPin, Plus,
   SlidersHorizontal, Tag, Trash2, X,
 } from 'lucide-react'
 import MDancingTrek from '../../../components/MDancingTrek'
+import MSquareCheck from '../../../components/MSquareCheck'
 import { useTripStore } from '../../../../store/tripStore'
 import { useAddonStore } from '../../../../store/addonStore'
 import { useToast } from '../../../../components/shared/Toast'
@@ -324,7 +325,7 @@ export default function MPlacesBrowser({ planner, shell }: MPlacesBrowserProps) 
             return (
               <div key={place.id} className="flex items-center gap-[11px] border-b border-[color:var(--m-rowbr)] px-[2px] py-[9px]">
                 <button type="button" onClick={() => openRow(place)} className="flex min-w-0 flex-1 items-center gap-[11px] text-left">
-                  {selectMode && <SquareCheck big checked={selectedIds.has(place.id)} />}
+                  {selectMode && <MSquareCheck big checked={selectedIds.has(place.id)} />}
                   <PlaceAvatar place={place} category={cat} size={40} />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-[6px]">
@@ -446,19 +447,6 @@ function BulkBtn({ label, onClick, disabled = false, children }: {
   )
 }
 
-/** 17px (panel) / 19px (row) square checkbox in the demo's act-fill style. */
-function SquareCheck({ checked, big = false }: { checked: boolean; big?: boolean }) {
-  return (
-    <span
-      className={`flex flex-none items-center justify-center border-[1.5px] ${
-        big ? 'h-[19px] w-[19px] rounded-[6px]' : 'h-[17px] w-[17px] rounded-[5px]'
-      } ${checked ? 'border-[color:var(--m-act)] bg-m-act text-m-actfg' : 'border-[color:var(--m-trackoff)] text-transparent'}`}
-    >
-      <Check size={big ? 12 : 11} strokeWidth={3} />
-    </span>
-  )
-}
-
 function CategoryFilterRow({ checked, onToggle, label, children }: {
   checked: boolean
   onToggle: () => void
@@ -473,7 +461,7 @@ function CategoryFilterRow({ checked, onToggle, label, children }: {
       aria-checked={checked}
       className="flex w-full items-center gap-[10px] border-b border-[color:var(--m-rowbr)] px-[13px] py-[10px] text-left last:border-b-0"
     >
-      <SquareCheck checked={checked} />
+      <MSquareCheck checked={checked} />
       {children}
       <span className="min-w-0 flex-1 truncate text-[0.78125rem] font-medium text-m-ink">{label}</span>
     </button>

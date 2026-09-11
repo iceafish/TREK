@@ -178,6 +178,9 @@ afterEach(() => {
   mockCacheSetInFlight.mockReset();
   mockServeFilePath.mockReset();
   mockServeFilePath.mockReturnValue(null);
+  // The AMap photo-channel tests stub AMAP_WEB_SERVICE_KEY (the operator-env
+  // tier of resolveAmapSecret); restore it so the stub cannot leak sideways.
+  vi.unstubAllEnvs();
 });
 
 // ── parseOpeningHours ─────────────────────────────────────────────────────────
@@ -2320,6 +2323,105 @@ describe('isGooglePlaceId', () => {
     expect(isGooglePlaceId('https://lh3.googleusercontent.com/photo.jpg')).toBe(false);
     // The collection views send the bare coordinate pair when a place has no ids.
     expect(isGooglePlaceId('36.7617499,-3.8448432')).toBe(false);
+    // AMap ids have a provider of their own — they must never reach Google,
+    // which bills the 400 INVALID_ARGUMENT it answers with (docs/amap/06).
+    expect(isGooglePlaceId('amap:B0FFH1NP1X')).toBe(false);
+  });
+});
+
+describe('getPlacePhoto amap channel (docs/amap/06)', () => {
+  const AMAP_ID = 'amap:B000A8UIN8';
+
+  it('MAPS-AMAPPHOTO-001: a key-configured amap id fetches via AMap and credits AMap', async () => {
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-key');
+    const fetchMock = vi
+      .fn()
+      // First call: the AMap place/detail lookup (extensions=all).
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: '1', pois: [{ id: 'B000A8UIN8', photos: [{ title: '春季', url: 'http://store.is.autonavi.com/showpic/a' }] }] }),
+      })
+      // Second call: the image bytes off the autonavi image host.
+      .mockResolvedValueOnce({ ok: true, arrayBuffer: async () => new ArrayBuffer(64) });
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await svc.getPlacePhoto(999, AMAP_ID, 39.9, 116.39, '故宫博物院');
+    expect(result.photoUrl).toBe(`/api/maps/place-photo/${encodeURIComponent(AMAP_ID)}/bytes`);
+    expect(result.attribution).toBe('AMap');
+    expect(mockCachePut).toHaveBeenCalledOnce();
+    const detailUrl = fetchMock.mock.calls[0][0] as URL;
+    expect(detailUrl.hostname).toBe('restapi.amap.com');
+    expect(detailUrl.pathname).toBe('/v3/place/detail');
+    expect(detailUrl.searchParams.get('extensions')).toBe('all');
+    // An amap id never belongs to Google — not one call may go there.
+    expect(fetchMock.mock.calls.every(([u]) => !String(u).includes('google'))).toBe(true);
+  });
+
+  it('MAPS-AMAPPHOTO-002: without a configured amap key the channel never places a call', async () => {
+    const fetchMock = vi
+      .fn()
+      // No amap key anywhere (the db seam starves amap_* rows, no env key), so
+      // the coordinate fallback answers instead: Wikimedia lookup, then bytes.
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ query: { pages: { '1': { thumbnail: { source: 'https://wiki.org/p.jpg' } } } } }) })
+      .mockResolvedValueOnce({ ok: true, arrayBuffer: async () => new ArrayBuffer(16) });
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await svc.getPlacePhoto(999, AMAP_ID, 48.8, 2.3, 'Place');
+    expect(result.photoUrl).toBe(`/api/maps/place-photo/${encodeURIComponent(AMAP_ID)}/bytes`);
+    expect(fetchMock.mock.calls.every(([u]) => !String(u).includes('restapi.amap.com'))).toBe(true);
+  });
+
+  it('MAPS-AMAPPHOTO-003: a place with no amap photos lands in the no-photo negative cache', async () => {
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-key');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ status: '1', pois: [{ id: 'B000A8UIN8' }] }) }),
+    );
+    await expect(svc.getPlacePhoto(999, AMAP_ID, 39.9, 116.39)).resolves.toEqual({ photoUrl: null, attribution: null });
+    expect(mockCacheMarkError).toHaveBeenCalledWith(AMAP_ID, 'no-photo');
+  });
+
+  it('MAPS-AMAPPHOTO-004: every candidate download failing counts as a provider error', async () => {
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-key');
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ status: '1', pois: [{ id: 'B000A8UIN8', photos: [{ url: 'https://store.is.autonavi.com/showpic/a' }] }] }),
+        })
+        .mockResolvedValue({ ok: false, status: 503 }),
+    );
+    await expect(svc.getPlacePhoto(999, AMAP_ID, 39.9, 116.39)).resolves.toEqual({ photoUrl: null, attribution: null });
+    expect(mockCacheMarkError).toHaveBeenCalledWith(AMAP_ID, 'provider-error');
+  });
+
+  it('MAPS-AMAPPHOTO-005: a detail rejection counts as a provider error', async () => {
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-key');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: '0', info: 'QUOTA_EXCEEDED' }) }),
+    );
+    await expect(svc.getPlacePhoto(999, AMAP_ID, 39.9, 116.39)).resolves.toEqual({ photoUrl: null, attribution: null });
+    expect(mockCacheMarkError).toHaveBeenCalledWith(AMAP_ID, 'provider-error');
+  });
+
+  it('MAPS-AMAPPHOTO-006: falls through to the next candidate when the first download fails', async () => {
+    vi.stubEnv('AMAP_WEB_SERVICE_KEY', 'amap-key');
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          status: '1',
+          pois: [{ id: 'B000A8UIN8', photos: [{ url: 'https://store.is.autonavi.com/showpic/a' }, { url: 'https://store.is.autonavi.com/showpic/b' }] }],
+        }),
+      })
+      .mockResolvedValueOnce({ ok: false, status: 404 })
+      .mockResolvedValueOnce({ ok: true, arrayBuffer: async () => new ArrayBuffer(64) });
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await svc.getPlacePhoto(999, AMAP_ID, 39.9, 116.39, 'Place');
+    expect(result.photoUrl).toBe(`/api/maps/place-photo/${encodeURIComponent(AMAP_ID)}/bytes`);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });
 
