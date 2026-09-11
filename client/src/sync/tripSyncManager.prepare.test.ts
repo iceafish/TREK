@@ -372,8 +372,7 @@ describe('tripSyncManager.syncAll — background tile pass', () => {
     const trip = buildTrip({ id: 620, end_date: dateOffset(4) })
     serveTrips([trip], { 620: bundleFor(trip) })
 
-    const total = await tripSyncManager.prepareForOffline()
-    expect(total).toBe(1)
+    expect(await tripSyncManager.prepareForOffline()).toEqual({ status: 'done', trips: 1 })
     expect(prefetchMock).not.toHaveBeenCalled()
   })
 })
