@@ -147,9 +147,23 @@ target below. The engineering standards are this repository's own.
   static sub-routes (`/reorder`, `/in-app/all`) **before** `:id` param routes. This governs
   refactors; a *deliberate* contract change is the bullet above.
 
+## Upstream sync (mandatory)
+
+This fork tracks upstream via a **patch stack**: `main` is a read-only mirror of upstream
+(never commit to it), and `dev` = `origin/main` + a linear stack of fork commits absorbed by
+**rebase, never merge**. The fork's complete delta is always `git diff origin/main...dev`.
+Before touching files shared with upstream, MCP code, or running any upstream sync, read and
+follow **`docs/upstream-sync/RULES.md`** — it defines the sync runbook, the conflict
+decision table, patch-shape rules (additive > seam > in-place; `server/src/mcp/**` and
+`server/src/nest-mcp/**` are zero-occupation zones), verification gates, and the stop
+conditions that require asking the user. Violating these invariants fails the task even if
+the feature works.
+
 ## Reference docs
 
 - `MCP.md` — MCP server/tools/scopes. `README.md` — deployment, env vars, reverse-proxy setup. `server/src/nest/README.md` — per-module blueprint and test layout (unit / parity / e2e).
+- `docs/upstream-sync/RULES.md` — the mandatory agent rules for upstream tracking and fork
+  patch organization (see *Upstream sync* above).
 - `docs/amap/` — the AMap (高德地图) integration: work packages, shared constraints, and the
   verified coordinate baseline. Start at `docs/amap/README.md`; every package brief requires
   `docs/amap/00-constraints.md` first.
